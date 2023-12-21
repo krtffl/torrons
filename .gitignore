@@ -22,3 +22,5 @@ go.work
 
 # UI
 public/
+
+logs/

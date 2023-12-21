@@ -33,9 +33,10 @@ func New(c *config.Config) *Torrons {
 
 	// A buffer pool is created to safely check template
 	// execution and properly handle the errors
-	_ = bpool.NewBufferPool(64)
+	bpool := bpool.NewBufferPool(64)
+	handler := http.NewHandler(bpool)
 
-	srv := http.New(c.Port)
+	srv := http.New(c.Port, handler)
 
 	return &Torrons{
 		cfg: c,

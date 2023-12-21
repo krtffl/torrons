@@ -21,4 +21,4 @@ database:
 logger:
   format: json 
   level: info 
-  path: logs/llobrekatzen.log 
+  path: logs/torro.log 

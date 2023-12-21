@@ -19,10 +19,13 @@ type Server struct {
 	shutdownFn context.CancelFunc
 
 	port uint
+
+	handler *Handler
 }
 
 func New(
 	port uint,
+	handler *Handler,
 ) *Server {
 	ctx, shutdownFn := context.WithCancel(context.Background())
 
@@ -30,6 +33,7 @@ func New(
 		ctx:        ctx,
 		shutdownFn: shutdownFn,
 		port:       port,
+		handler:    handler,
 	}
 }
 
@@ -43,13 +47,6 @@ func (srv *Server) Run() error {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.URLFormat)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
-
-	// ********** A P I **********
-	r.Route("/healthcheck", func(r chi.Router) {
-		r.Get("/", handleHealthcheck)
-	})
-
-	// **********     **********
 
 	assets, err := fs.Sub(torrons.Public, "public")
 	if err != nil {
@@ -65,6 +62,8 @@ func (srv *Server) Run() error {
 
 	// ********** W E B  U I **********
 	r.Route("/", func(r chi.Router) {
+		r.Get("/healthcheck", handleHealthcheck)
+		r.Get("/", srv.handler.index)
 	})
 	// **********        **********
 
