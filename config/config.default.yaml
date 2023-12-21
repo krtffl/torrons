@@ -1,0 +1,24 @@
+##############################################################
+# Global server configuration
+##############################################################
+port: "3000"
+images: path/to/folder
+
+##############################################################
+# Database
+##############################################################
+database:
+  host: localhost
+  port: 5432
+  user: myUser
+  password: myPassword
+  name: databaseName
+  ssl: disable #require, verify-full, verify-ca, disable  
+
+##############################################################
+# Logger 
+##############################################################
+logger:
+  format: json 
+  level: info 
+  path: logs/torro.log 
