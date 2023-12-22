@@ -1,0 +1,49 @@
+{{ if not .HX }}
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <title>TURRORÈNDUM 2023</title>
+    <style>
+        body {
+            font-family: 'Montserrat-Regular', sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+  </head>
+  <body>
+      {{ template "header" . }}
+      {{ template "topbar" . }}
+      {{ template "classes" . }}
+  </body>
+</html>
+{{ else }}
+      {{ template "classes" . }}
+{{ end }}
+
+{{ define "classes" }}
+<div id="classes" style="display: flex; align-items: center; justify-content: center; margin: 10px; height: 72vh; padding: 10px; flex-direction: column; gap: 25px;">
+{{ range .Classes }}
+    {{ template "class" . }}
+{{ end }}
+</div>
+{{ end }}
+
+
+{{ define "class" }}
+<div style="display: flex; align-items: center; justify-content: center; flex-direction: column;">
+    <div style="text-align: justify; margin: 10px;">
+        {{ .Description }}
+    </div>
+    <div hx-get="/classes/{{ .Id }}/vote" hx-trigger="click" hx-target="#classes" hx-swap="outerHTML" hx-push-url="classes/{{ .Id }}/vote" style="margin: 5px; background-color: #4E0011; color: #fff; padding: 15px 25px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px; cursor: pointer; width: 100px;">
+        {{ .Name }}
+    </div>
+</div>
+{{ end }}
