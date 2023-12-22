@@ -39,7 +39,7 @@
 </div>
 
 {{ define "torro" }}
-<div style="cursor: pointer; padding: 15px; box-shadow: 0 4px 8px rgba(78, 0, 17, 0.4); border-radius: 10px; transition: box-shadow 0.5s ease-in;" onclick="updateProgress(event);this.style.boxShadow='0 20px 40px rgba(24, 97, 55, 0.9)'" hx-post="/pairings/{{ .Pairing }}/vote?id={{ .Id }}" hx-trigger="click delay:0.5s" hx-target="#vote" hx-swap="outerHTML">
+<div style="width: 300px; cursor: pointer; padding: 15px; box-shadow: 0 4px 8px rgba(78, 0, 17, 0.4); border-radius: 10px; transition: box-shadow 0.25s ease-in;" onclick="updateProgress(event);this.style.boxShadow='0 20px 40px rgba(24, 97, 55, 0.9)'" hx-post="/pairings/{{ .Pairing }}/vote?id={{ .Id }}" hx-trigger="click delay:0.2s" hx-target="#vote" hx-swap="outerHTML">
     <div style="text-align: center ; margin: 5px;">
        {{ .Name  }}
    </div> 

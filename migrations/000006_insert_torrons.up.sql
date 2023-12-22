@@ -74,7 +74,7 @@ values
     (gen_random_uuid(), 'Cruixent de iogurt i coco', 'iogurt_coco.png', '2'),
     (gen_random_uuid(), 'Trufa a la taronja', 'taronja.jpg', '2'),
     (gen_random_uuid(), 'Trufa al brandy', 'brandy.png', '2'),
-    (gen_random_uuid(), 'Trufa al cafè', 'trufa_cafe.png', '2'),
+    (gen_random_uuid(), 'Trufa al cafè', 'trufa_cafe.jpg', '2'),
     (gen_random_uuid(), 'Trufa al marc de cava', 'trufa_cava.png', '2'),
     (gen_random_uuid(), 'Trufa la whisky', 'trufa_whisky.png', '2'),
     (gen_random_uuid(), 'Trufa amb guindes al licor', 'trufa_guindes.png', '2'),

@@ -29,14 +29,14 @@
 
 {{ define "header" }}
 <div id="header" style="background-color: #4E0011; display: flex; align-items: center; justify-content: center;">
-    <p style="color: #FFFFFF; font-size: 14px; line-height: 20px">turrorèndum 2023 - vota i escull el millor torró torró</p>
+    <p hx-get="/" hx-boost="true" hx-target="body" hx-push-url="/" style="color: #FFFFFF; font-size: 14px; line-height: 20px; cursor: pointer;">turrorèndum 2023 - vota i escull el millor torró torró</p>
 </div>
 {{ end }}
 
 
 {{ define "topbar" }}
 <div id="topbar" style="display: flex; align-items: center; justify-content: center; box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);">
-    <img style="margin: 20px; width: 80px;" src="/public/assets/logo.png" alt="">
+    <img hx-get="/" hx-boost="true" hx-target="body" hx-push-url="/" style="margin: 20px; width: 80px; cursor: pointer;" src="/public/assets/logo.png" alt="">
 </div>
 {{ end }}
 
