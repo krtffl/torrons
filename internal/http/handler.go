@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"html/template"
 	"math"
 	"net/http"
@@ -214,7 +213,6 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Print("Votació OK")
 	newP, err := h.pairingRepo.GetRandom(p.Class)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't get random pairing. %v", err)
