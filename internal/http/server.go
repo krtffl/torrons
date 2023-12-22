@@ -18,8 +18,7 @@ type Server struct {
 	ctx        context.Context
 	shutdownFn context.CancelFunc
 
-	port uint
-
+	port    uint
 	handler *Handler
 }
 
@@ -64,6 +63,7 @@ func (srv *Server) Run() error {
 	r.Route("/", func(r chi.Router) {
 		r.Get("/healthcheck", handleHealthcheck)
 		r.Get("/", srv.handler.index)
+		r.Get("/classes", srv.handler.classes)
 	})
 	// **********        **********
 

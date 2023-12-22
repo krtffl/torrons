@@ -5,9 +5,10 @@ type Torro struct {
 	Name   string  `db:"Name"   json:"name"`
 	Rating float64 `db:"Rating" json:"rating"`
 	Image  string  `db:"Image"  json:"image"`
+	Class  string  `db:"Class"  json:"class"`
 }
 
-type Pairing struct {
-	Torro1 Torro
-	Torro2 Torro
+type TorroRepo interface {
+	List() ([]*Torro, error)
+	ListByClass(classId string) ([]*Torro, error)
 }

@@ -13,8 +13,10 @@ import (
 
 	torrons "github.com/krtffl/torro"
 	"github.com/krtffl/torro/internal/config"
+	"github.com/krtffl/torro/internal/domain"
 	"github.com/krtffl/torro/internal/http"
 	"github.com/krtffl/torro/internal/logger"
+	"github.com/krtffl/torro/internal/repository"
 )
 
 type Torrons struct {
@@ -25,7 +27,7 @@ type Torrons struct {
 }
 
 func New(c *config.Config) *Torrons {
-	_, err := NewDatabaseConnection(c.Database)
+	db, err := NewDatabaseConnection(c.Database)
 	if err != nil {
 		logger.Fatal("[API - New] - "+
 			"Failed to connect to database. %v", err)
@@ -34,8 +36,17 @@ func New(c *config.Config) *Torrons {
 	// A buffer pool is created to safely check template
 	// execution and properly handle the errors
 	bpool := bpool.NewBufferPool(64)
-	handler := http.NewHandler(bpool)
 
+	paringRepo := repository.NewPairingRepo(db)
+	torroRepo := repository.NewTorroRepo(db)
+	classRepo := repository.NewClassRepo(db)
+
+	if err := CheckPairingsCreated(paringRepo, torroRepo, classRepo); err != nil {
+		logger.Fatal("[API - New] - "+
+			"Failed to check pairings. %v", err)
+	}
+
+	handler := http.NewHandler(bpool, paringRepo, torroRepo, classRepo)
 	srv := http.New(c.Port, handler)
 
 	return &Torrons{
@@ -58,6 +69,66 @@ func (t *Torrons) Run() {
 
 func (t *Torrons) Shutdown() {
 	t.srv.Shutdown()
+}
+
+func CheckPairingsCreated(
+	pairingRep domain.PairingRepo,
+	torroRep domain.TorroRepo,
+	classRep domain.ClassRepo,
+) error {
+	classes, err := classRep.List()
+	if err != nil {
+		return err
+	}
+
+	for _, c := range classes {
+		count, err := pairingRep.CountClass(c.Id)
+		if err != nil {
+			return err
+		}
+
+		if count < 1 {
+			logger.Info("[API - New] - "+
+				"%s - Creating pairings", c.Name)
+
+			t, err := torroRep.ListByClass(c.Id)
+			if err != nil {
+				return err
+			}
+
+			count := 0
+			for i := 0; i < len(t); i++ {
+				for j := i + 1; j < len(t); j++ {
+					pairing := domain.Pairing{
+						Torro1: t[i].Id,
+						Torro2: t[j].Id,
+						Class:  c.Id,
+					}
+
+					_, err := pairingRep.Create(&pairing)
+					if err != nil {
+						logger.Error("[API - New] - "+
+							"%s - Failed to create pairing (%s vs %s). %v",
+							c.Name,
+							t[i].Id,
+							t[j].Id,
+							err)
+						continue
+					}
+					count++
+				}
+			}
+
+			logger.Info("[API - New] - "+
+				"%s - Created %d pairings", c.Name, count)
+			continue
+		}
+
+		logger.Info("[API - New] - "+
+			"%s - %d pairings already created", c.Name, count)
+	}
+
+	return nil
 }
 
 func NewDatabaseConnection(c config.Database) (*sql.DB, error) {
