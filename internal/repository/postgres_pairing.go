@@ -18,6 +18,28 @@ func NewPairingRepo(db *sql.DB) domain.PairingRepo {
 	}
 }
 
+func (r *postgresPairingRepo) Get(id string) (*domain.Pairing, error) {
+	row := r.db.QueryRow(
+		`
+        SELECT * 
+        FROM "Pairings"
+        WHERE "Id" = $1`,
+		id,
+	)
+	pairing := &domain.Pairing{}
+	err := row.Scan(
+		&pairing.Id,
+		&pairing.Torro1,
+		&pairing.Torro2,
+		&pairing.Class,
+	)
+	if err != nil {
+		return nil, handleErrors(err)
+	}
+
+	return pairing, nil
+}
+
 func (r *postgresPairingRepo) Create(pairing *domain.Pairing) (
 	*domain.Pairing, error,
 ) {
@@ -99,6 +121,30 @@ func (r *postgresPairingRepo) ListByClass(classId string) ([]*domain.Pairing, er
 	}
 
 	return pairings, nil
+}
+
+func (r *postgresPairingRepo) GetRandom(classId string) (*domain.Pairing, error) {
+	row := r.db.QueryRow(
+		`
+        SELECT * 
+        FROM "Pairings"
+        WHERE "Class" = $1
+        ORDER BY RANDOM()
+        LIMIT 1`,
+		classId,
+	)
+	pairing := &domain.Pairing{}
+	err := row.Scan(
+		&pairing.Id,
+		&pairing.Torro1,
+		&pairing.Torro2,
+		&pairing.Class,
+	)
+	if err != nil {
+		return nil, handleErrors(err)
+	}
+
+	return pairing, nil
 }
 
 func (r *postgresPairingRepo) Count() (int, error) {

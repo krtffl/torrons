@@ -40,13 +40,20 @@ func New(c *config.Config) *Torrons {
 	paringRepo := repository.NewPairingRepo(db)
 	torroRepo := repository.NewTorroRepo(db)
 	classRepo := repository.NewClassRepo(db)
+	resultRepo := repository.NewResultRepo(db)
 
 	if err := CheckPairingsCreated(paringRepo, torroRepo, classRepo); err != nil {
 		logger.Fatal("[API - New] - "+
 			"Failed to check pairings. %v", err)
 	}
 
-	handler := http.NewHandler(bpool, paringRepo, torroRepo, classRepo)
+	handler := http.NewHandler(
+		bpool,
+		paringRepo,
+		torroRepo,
+		classRepo,
+		resultRepo,
+	)
 	srv := http.New(c.Port, handler)
 
 	return &Torrons{

@@ -77,3 +77,52 @@ func (r *postgresTorroRepo) ListByClass(classId string) ([]*domain.Torro, error)
 
 	return torrons, nil
 }
+
+func (r *postgresTorroRepo) Get(id string) (*domain.Torro, error) {
+	row := r.db.QueryRow(
+		`
+        SELECT * 
+        FROM "Torrons"
+        WHERE "Id" = $1`,
+		id,
+	)
+
+	torro := &domain.Torro{}
+	err := row.Scan(
+		&torro.Id,
+		&torro.Name,
+		&torro.Rating,
+		&torro.Image,
+		&torro.Class,
+	)
+	if err != nil {
+		return nil, handleErrors(err)
+	}
+	return torro, nil
+}
+
+func (r *postgresTorroRepo) Update(id string, rating float64) (
+	*domain.Torro, error,
+) {
+	updatedTorro := &domain.Torro{}
+
+	err := r.db.QueryRow(
+		`
+        UPDATE "Torrons" SET
+        "Rating" = $2
+        WHERE "Id" = $1
+        RETURNING *`,
+		id,
+		rating,
+	).Scan(
+		&updatedTorro.Id,
+		&updatedTorro.Name,
+		&updatedTorro.Rating,
+		&updatedTorro.Image,
+		&updatedTorro.Class,
+	)
+	if err != nil {
+		return nil, handleErrors(err)
+	}
+	return updatedTorro, nil
+}

@@ -62,8 +62,13 @@ func (srv *Server) Run() error {
 	// ********** W E B  U I **********
 	r.Route("/", func(r chi.Router) {
 		r.Get("/healthcheck", handleHealthcheck)
+
 		r.Get("/", srv.handler.index)
+
 		r.Get("/classes", srv.handler.classes)
+		r.Get("/classes/{id}/vote", srv.handler.vote)
+
+		r.Post("/pairings/{id}/vote", srv.handler.result)
 	})
 	// **********        **********
 
