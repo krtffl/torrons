@@ -20,9 +20,4 @@
 # Go workspace file
 go.work
 
-# UI
-public/images/*
-public/assets/*
-public/icons/*
-
 logs/
