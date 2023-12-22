@@ -220,14 +220,14 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newt1, err := h.torroRepo.Get(p.Torro1)
+	newt1, err := h.torroRepo.Get(newP.Torro1)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't get torro. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
 		return
 	}
 
-	newt2, err := h.torroRepo.Get(p.Torro2)
+	newt2, err := h.torroRepo.Get(newP.Torro2)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't get torro. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
