@@ -39,7 +39,7 @@
 
 {{ define "class" }}
 <div style="display: flex; align-items: center; justify-content: center; flex-direction: column;">
-    <div style="text-align: justify; margin: 10px;">
+    <div style="text-align: center; margin: 10px; font-weight: lighter;">
         {{ .Description }}
     </div>
     <div hx-get="/classes/{{ .Id }}/vote" hx-trigger="click" hx-target="#classes" hx-swap="outerHTML" hx-push-url="classes/{{ .Id }}/vote" style="margin: 5px; background-color: #4E0011; color: #fff; padding: 15px 25px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px; cursor: pointer; width: 100px;">

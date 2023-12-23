@@ -6,7 +6,7 @@
     <link rel="icon" href="public/icons/favicon.ico" type="image/x-icon">
     <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
-    <title>TURRORÈNDUM 2023</title>
+    <title>TORRORÈNDUM 2023</title>
     <style>
         body {
             font-family: 'Montserrat-Regular', sans-serif;
@@ -29,7 +29,7 @@
 
 {{ define "header" }}
 <div id="header" style="background-color: #4E0011; display: flex; align-items: center; justify-content: center;">
-    <p hx-get="/" hx-boost="true" hx-target="body" hx-push-url="/" style="color: #FFFFFF; font-size: 14px; line-height: 20px; cursor: pointer;">turrorèndum 2023 - vota i escull el millor torró torró</p>
+    <p hx-get="/" hx-boost="true" hx-target="body" hx-push-url="/" style="color: #FFFFFF; font-size: 14px; line-height: 20px; cursor: pointer;">torrorèndum 2023 - vota i escull el millor torró torró</p>
 </div>
 {{ end }}
 
@@ -43,8 +43,17 @@
 
 {{ define "description" }}
 <div id="description" style="display: flex; align-items: center; justify-content: center; margin: 10px; height: 60vh; padding: 10px; flex-direction: column">
-    <div style="text-align: justify; margin: 15px;">
-       S'ha elaborat un sistema per escollir de manera definitiva quin és el millor torró torró de l'any 2023. N'hi ha tants (més de 100!) que s'han hagut de dividir en categories. En escollir una categoria se't mostraran de manera aleatòria dos torrons vicens, indica quin dels dos és millor per tu i se te'n mostraran dos més de diferents. Pots votar tants cops com vulguis, i és recomanable que ho facis com a mínim 20 cops per garantir uns bons resultats.
+    <div style="text-align: center; font-weight: lighter; margin: 10px; font-size: 1.5rem;">
+        TORRORÈNDUM 2023
+    </div>
+    <div style="text-align: center; font-weight: bold; margin: 10px;">
+        Quin és el millor torró de l'any 2023?
+    </div>
+    <div style="text-align: justify; margin: 15px; font-weight: lighter;">
+      Escull de manera definitiva quin és el millor torró torró de l'any 2023.
+      N'hi ha tants (més de 100!) que s'han hagut de dividir en categories. 
+      En escollir una categoria se't mostraran de manera aleatòria dos torrons Vicens, i has d'indicar quin dels dos és millor per tu.
+       Pots votar tants cops com vulguis, però és recomanable que ho votis un mínim de 25 vegades per garantir uns bons resultats.
     </div>
     <div hx-get="/classes" hx-trigger="click" hx-target="#description" hx-swap="outerHTML" hx-push-url="/classes" style="margin: 25px; background-color: #4E0011; color: #fff; padding: 15px 25px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px; cursor: pointer;">
     Comença

@@ -34,9 +34,6 @@ type Config struct {
 	// Port is the port the HTTP server will listen to
 	Port uint `mapstructure:"port" yaml:"port"`
 
-	// Images is the directory containing the assets
-	Images string `mapstructure:"images" yaml:"images"`
-
 	// Database contains the configuration to connect to the
 	// database instance
 	Database Database `mapstructure:"database" yaml:"database"`
