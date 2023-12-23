@@ -14,7 +14,7 @@ import (
 	"github.com/krtffl/torro/internal/logger"
 )
 
-const K = 33
+const K = 42
 
 type Content struct {
 	Torrons  []*domain.Torro
