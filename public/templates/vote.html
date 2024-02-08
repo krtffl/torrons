@@ -16,6 +16,16 @@
             width: 100%;
             height: 100vh;
         }
+        #vote {
+            flex-direction: column;
+            margin: 15px auto;
+        }
+        @media screen and (min-width:  1024px) {
+            #vote{
+                flex-direction: row;
+                height: 55vh;
+            }
+        }
     </style>
   </head>
   <body>
@@ -31,7 +41,7 @@
 {{ end }}
 
 {{ define "vote" }}
-<div id="vote" style="display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 25px;">
+<div id="vote" style="display: flex; align-items: center; justify-content: center; gap: 25px;">
     {{ range .Torrons }}
             {{ template "torro" . }}
     {{ end }}
