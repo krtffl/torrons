@@ -16,6 +16,12 @@ import (
 	"github.com/krtffl/torro/internal/logger"
 )
 
+// K is the K-factor for ELO rating calculations
+// Value of 42 provides:
+// - Fast convergence for new items (larger rating changes)
+// - Balanced sensitivity for established items
+// - Standard K-factor is 32 for masters, 40 for beginners
+// - 42 chosen for this system's moderate volatility needs
 const K = 42
 
 type Content struct {
@@ -203,7 +209,12 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Calculate ELO ratings
+	// Calculate ELO ratings using standard ELO formula:
+	// Expected score = 1 / (1 + 10^((opponent_rating - player_rating) / 400))
+	// Constants explained:
+	// - 400: Rating points difference for 10x win probability (ELO standard)
+	// - 10: Base for exponential scaling (ELO standard)
+	// - These values create the S-curve that models competitive outcomes
 	exp1 := 1.0 / (1.0 + math.Pow(10, (t2.Rating-t1.Rating)/400))
 	exp2 := 1.0 / (1.0 + math.Pow(10, (t1.Rating-t2.Rating)/400))
 

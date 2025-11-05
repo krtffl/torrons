@@ -38,6 +38,10 @@ func New(c *config.Config) *Torrons {
 
 	// A buffer pool is created to safely check template
 	// execution and properly handle the errors
+	// Pool size of 64 balances memory usage with concurrency:
+	// - Allows up to 64 concurrent template renderings
+	// - Reduces GC pressure by reusing buffers
+	// - Typical size for applications with moderate concurrent requests
 	bpool := bpool.NewBufferPool(64)
 
 	paringRepo := repository.NewPairingRepo(db)
