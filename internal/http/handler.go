@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
-	"math"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -209,23 +208,8 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Calculate ELO ratings using standard ELO formula:
-	// Expected score = 1 / (1 + 10^((opponent_rating - player_rating) / 400))
-	// Constants explained:
-	// - 400: Rating points difference for 10x win probability (ELO standard)
-	// - 10: Base for exponential scaling (ELO standard)
-	// - These values create the S-curve that models competitive outcomes
-	exp1 := 1.0 / (1.0 + math.Pow(10, (t2.Rating-t1.Rating)/400))
-	exp2 := 1.0 / (1.0 + math.Pow(10, (t1.Rating-t2.Rating)/400))
-
-	var new1, new2 float64
-	if winnerId == t1.Id {
-		new1 = t1.Rating + K*(1-exp1)
-		new2 = t2.Rating + K*(0-exp2)
-	} else {
-		new1 = t1.Rating + K*(0-exp1)
-		new2 = t2.Rating + K*(1-exp2)
-	}
+	// Calculate new ELO ratings based on match result
+	new1, new2 := UpdateRatings(t1.Rating, t2.Rating, winnerId == t1.Id, K)
 
 	// Create result record within transaction
 	_, err = h.resultRepo.CreateTx(tx, r.Context(), &domain.Result{
