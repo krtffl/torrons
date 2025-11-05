@@ -46,20 +46,52 @@
     <div class="title">
         TORRORÈNDUM 2025
     </div>
+
+    <!-- Countdown Widget -->
+    <div id="countdown-widget"
+         hx-get="/api/campaign/countdown/widget"
+         hx-trigger="load, every 60s"
+         hx-swap="innerHTML">
+        <div class="loading"></div>
+    </div>
+
     <div class="subtitle">
         Quin és el millor torró de l'any 2025?
     </div>
+
+    <!-- How it works -->
+    <div class="how-it-works">
+        <div class="how-it-works-step">
+            <span class="step-number">1</span>
+            <span class="step-text">Escull una categoria</span>
+        </div>
+        <div class="how-it-works-step">
+            <span class="step-number">2</span>
+            <span class="step-text">Compara dos torrons</span>
+        </div>
+        <div class="how-it-works-step">
+            <span class="step-number">3</span>
+            <span class="step-text">Vota pel teu favorit</span>
+        </div>
+        <div class="how-it-works-step">
+            <span class="step-number">4</span>
+            <span class="step-text">Descobreix els resultats</span>
+        </div>
+    </div>
+
     <div class="description-text">
       Escull de manera definitiva quin és el millor torró de Torrons Vicens de l'any 2025.
       N'hi ha tants (més de 100!) que s'han hagut de dividir en categories.
       En escollir una categoria se't mostraran de manera aleatòria dos torrons, i has d'indicar quin dels dos és millor per tu.
       Pots votar tants cops com vulguis, però és recomanable que ho votis un mínim de 25 vegades per garantir uns bons resultats.
     </div>
+
     <div class="important-note">
         IMPORTANT: els torrons es poden repetir durant la votació.
     </div>
-    <button class="btn" hx-get="/classes" hx-trigger="click" hx-target="#description" hx-swap="outerHTML" hx-push-url="/classes">
-        Comença
+
+    <button class="btn btn-large" hx-get="/classes" hx-trigger="click" hx-target="#description" hx-swap="outerHTML" hx-push-url="/classes">
+        Comença a votar
     </button>
 </div>
 {{ end }}
