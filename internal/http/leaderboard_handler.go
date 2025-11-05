@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"net/http"
+	"net/url"
 
 	"github.com/krtffl/torro/internal/domain"
 	"github.com/krtffl/torro/internal/logger"
@@ -31,6 +32,8 @@ type LeaderboardContent struct {
 	Entries             []LeaderboardEntry
 	Error               string
 	MinVotes            int
+	ShareText           string // URL-encoded text for social sharing
+	ShareUrl            string // URL to share
 }
 
 // leaderboard handles the main leaderboard page with view and category selection
@@ -48,7 +51,7 @@ func (h *Handler) leaderboard(w http.ResponseWriter, r *http.Request) {
 		category = "global" // Default to global category
 	}
 
-	userId := getUserId(r)
+	userId := GetUserIDFromContext(r.Context())
 	if userId == "" {
 		logger.Error("[Handler - Leaderboard] No user ID in context")
 		http.Error(w, "User not found", http.StatusUnauthorized)
@@ -103,6 +106,14 @@ func (h *Handler) leaderboard(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Generate share content (for personal view with results)
+	shareText := ""
+	shareUrl := "https://torro.cat" // Default to homepage
+	if viewType == "personal" && len(entries) > 0 {
+		shareText = h.generateShareText(entries, category)
+		shareUrl = fmt.Sprintf("https://torro.cat/leaderboard?view=personal&category=%s", category)
+	}
+
 	content := LeaderboardContent{
 		HX:                 isHX(r),
 		Title:              title,
@@ -113,6 +124,8 @@ func (h *Handler) leaderboard(w http.ResponseWriter, r *http.Request) {
 		Entries:            entries,
 		Error:              errorMsg,
 		MinVotes:           minVotes,
+		ShareText:          url.QueryEscape(shareText),
+		ShareUrl:           url.QueryEscape(shareUrl),
 	}
 
 	buf := h.bpool.Get()
@@ -156,11 +169,11 @@ func (h *Handler) fetchPersonalLeaderboard(r *http.Request, userId, category str
 	}
 
 	// Fetch personalized leaderboard
-	var apiEntries []domain.UserLeaderboardEntry
+	var apiEntries []*domain.UserLeaderboardEntry
 	if category == "global" {
-		apiEntries, err = h.userEloRepo.GetUserGlobalLeaderboard(r.Context(), userId, 100)
+		apiEntries, err = h.userEloRepo.GetUserGlobalLeaderboard(r.Context(), userId)
 	} else {
-		apiEntries, err = h.userEloRepo.GetUserLeaderboard(r.Context(), userId, category, 100)
+		apiEntries, err = h.userEloRepo.GetUserLeaderboard(r.Context(), userId, category)
 	}
 
 	if err != nil {
@@ -239,4 +252,26 @@ func (h *Handler) getClassName(classes []*domain.Class, classId string) string {
 		}
 	}
 	return "Desconegut"
+}
+
+// generateShareText creates a shareable message with top torrons
+func (h *Handler) generateShareText(entries []LeaderboardEntry, category string) string {
+	if len(entries) == 0 {
+		return "He votat al Torrorèndum 2025! Descobreix quin és el millor torró de Torrons Vicens"
+	}
+
+	// Build message with top 3 torrons
+	message := "Els meus torrons favorits al Torrorèndum 2025:\n"
+	limit := 3
+	if len(entries) < 3 {
+		limit = len(entries)
+	}
+
+	medals := []string{"🥇", "🥈", "🥉"}
+	for i := 0; i < limit; i++ {
+		message += fmt.Sprintf("%s %s\n", medals[i], entries[i].TorronName)
+	}
+
+	message += "\nVota els teus favorits!"
+	return message
 }

@@ -1378,6 +1378,307 @@ body {
 }
 
 /* ========================================
+   Voting History Page
+   ======================================== */
+
+#history-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+    animation: fadeIn 0.5s ease-in;
+}
+
+.history-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.history-title {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.history-subtitle {
+    font-size: var(--font-size-base);
+    color: var(--color-text-light);
+}
+
+/* Filter buttons */
+.history-filters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-xl);
+}
+
+.filter-btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-white);
+    color: var(--color-text);
+    border: 2px solid var(--color-primary);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+}
+
+.filter-btn:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-white);
+}
+
+.filter-btn.active {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+/* History list */
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.history-item {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+    animation: slideUp 0.3s ease-out;
+}
+
+.history-item:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.history-timestamp {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-sm);
+}
+
+.history-comparison {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+}
+
+.history-torron {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex: 1;
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    transition: all var(--transition-fast);
+}
+
+.history-torron.winner {
+    background-color: rgba(76, 175, 80, 0.1);
+    border: 2px solid #4CAF50;
+}
+
+.history-torron.loser {
+    opacity: 0.6;
+}
+
+.history-torron-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+}
+
+.history-torron-info {
+    flex: 1;
+}
+
+.history-torron-name {
+    font-weight: 700;
+    color: var(--color-primary);
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-xs);
+}
+
+.winner-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #4CAF50;
+    padding: 2px 8px;
+    background-color: rgba(76, 175, 80, 0.1);
+    border-radius: var(--border-radius);
+}
+
+.history-vs {
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+    color: var(--color-text-light);
+}
+
+.history-category {
+    text-align: center;
+}
+
+.category-badge {
+    display: inline-block;
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-xs) var(--spacing-md);
+    background-color: var(--color-background);
+    border-radius: var(--border-radius);
+    color: var(--color-text);
+}
+
+/* Empty state */
+.history-empty {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin: var(--spacing-xl) auto;
+    max-width: 500px;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.empty-message {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-sm);
+}
+
+.empty-hint {
+    font-size: var(--font-size-base);
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Load more & footer */
+.history-load-more,
+.history-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--spacing-xl);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .history-comparison {
+        flex-direction: column;
+    }
+
+    .history-vs {
+        transform: rotate(90deg);
+        margin: var(--spacing-sm) 0;
+    }
+
+    .history-torron {
+        width: 100%;
+    }
+
+    .history-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-btn {
+        width: 100%;
+    }
+}
+
+/* ========================================
+   Share Functionality
+   ======================================== */
+
+.share-section {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    margin: var(--spacing-xl) 0;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+}
+
+.share-title {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.share-buttons {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--color-white);
+    transition: all var(--transition-fast);
+}
+
+.share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.share-btn-twitter {
+    background-color: #1DA1F2;
+}
+
+.share-btn-facebook {
+    background-color: #4267B2;
+}
+
+.share-btn-whatsapp {
+    background-color: #25D366;
+}
+
+.share-btn-copy {
+    background-color: var(--color-text-light);
+}
+
+.share-btn-copy.copied {
+    background-color: #4CAF50;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .share-buttons {
+        flex-direction: column;
+    }
+
+    .share-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ========================================
    Utility Classes
    ======================================== */
 

@@ -42,7 +42,7 @@ type StatsContent struct {
 func (h *Handler) stats(w http.ResponseWriter, r *http.Request) {
 	logger.Info("[Handler - Stats] Incoming request")
 
-	userId := getUserId(r)
+	userId := GetUserIDFromContext(r.Context())
 	if userId == "" {
 		logger.Error("[Handler - Stats] No user ID in context")
 		http.Error(w, "User not found", http.StatusUnauthorized)

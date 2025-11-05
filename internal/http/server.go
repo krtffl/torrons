@@ -129,6 +129,9 @@ func (srv *Server) Run() error {
 
 		// User statistics page
 		r.Get("/stats", srv.handler.stats)
+
+		// Voting history page
+		r.Get("/history", srv.handler.history)
 	})
 	// **********        **********
 
