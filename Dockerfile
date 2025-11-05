@@ -1,8 +1,9 @@
-FROM --platform=$BUILDPLATFORM golang:1.20 AS builder
+FROM --platform=$BUILDPLATFORM golang:1.24-alpine AS builder
 
 ARG TARGETARCH
 
-RUN apt-get update && apt-get install -y gcc-aarch64-linux-gnu
+# Install git for version detection in Makefile
+RUN apk add --no-cache git make
 
 WORKDIR /app
 
@@ -10,9 +11,10 @@ COPY . /app/
 
 RUN if [ "$TARGETARCH" = "arm64" ]; then make dist-arm64 ; else make dist ; fi
 
-FROM ubuntu:20.04
+FROM alpine:3.21
 
-RUN apt-get update && apt-get install -y ca-certificates
+# Install ca-certificates for HTTPS connections
+RUN apk add --no-cache ca-certificates
 
 COPY --from=builder /app/out/* /app/
 

@@ -53,7 +53,7 @@ func Load(v *viper.Viper, file string) *Config {
 			err,
 		)
 
-		if err := os.MkdirAll(filepath.Dir(file), 0770); err != nil {
+		if err := os.MkdirAll(filepath.Dir(file), 0750); err != nil {
 			logger.Fatal("[Config - Load] "+
 				"- Couldn't create default config dir. %v", err)
 		}

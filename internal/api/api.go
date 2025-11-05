@@ -1,8 +1,10 @@
 package api
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -22,6 +24,7 @@ import (
 type Torrons struct {
 	cfg *config.Config
 	srv *http.Server
+	db  *sql.DB
 
 	eCh chan error
 }
@@ -35,6 +38,10 @@ func New(c *config.Config) *Torrons {
 
 	// A buffer pool is created to safely check template
 	// execution and properly handle the errors
+	// Pool size of 64 balances memory usage with concurrency:
+	// - Allows up to 64 concurrent template renderings
+	// - Reduces GC pressure by reusing buffers
+	// - Typical size for applications with moderate concurrent requests
 	bpool := bpool.NewBufferPool(64)
 
 	paringRepo := repository.NewPairingRepo(db)
@@ -48,6 +55,7 @@ func New(c *config.Config) *Torrons {
 	}
 
 	handler := http.NewHandler(
+		db,
 		bpool,
 		paringRepo,
 		torroRepo,
@@ -59,6 +67,7 @@ func New(c *config.Config) *Torrons {
 	return &Torrons{
 		cfg: c,
 		srv: srv,
+		db:  db,
 		eCh: make(chan error, 1),
 	}
 }
@@ -75,7 +84,19 @@ func (t *Torrons) Run() {
 }
 
 func (t *Torrons) Shutdown() {
+	logger.Info("[API - Shutdown] Shutting down gracefully")
+
+	// Shutdown HTTP server first (stop accepting new requests)
 	t.srv.Shutdown()
+
+	// Close database connection
+	if err := t.db.Close(); err != nil {
+		logger.Error("[API - Shutdown] Failed to close database connection. %v", err)
+	} else {
+		logger.Info("[API - Shutdown] Database connection closed")
+	}
+
+	logger.Info("[API - Shutdown] Shutdown complete")
 }
 
 func CheckPairingsCreated(
@@ -83,13 +104,14 @@ func CheckPairingsCreated(
 	torroRep domain.TorroRepo,
 	classRep domain.ClassRepo,
 ) error {
-	classes, err := classRep.List()
+	ctx := context.Background()
+	classes, err := classRep.List(ctx)
 	if err != nil {
 		return err
 	}
 
 	for _, c := range classes {
-		count, err := pairingRep.CountClass(c.Id)
+		count, err := pairingRep.CountClass(ctx, c.Id)
 		if err != nil {
 			return err
 		}
@@ -98,7 +120,7 @@ func CheckPairingsCreated(
 			logger.Info("[API - New] - "+
 				"%s - Creating pairings", c.Name)
 
-			t, err := torroRep.ListByClass(c.Id)
+			t, err := torroRep.ListByClass(ctx, c.Id)
 			if err != nil {
 				return err
 			}
@@ -112,7 +134,7 @@ func CheckPairingsCreated(
 						Class:  c.Id,
 					}
 
-					_, err := pairingRep.Create(&pairing)
+					_, err := pairingRep.Create(ctx, &pairing)
 					if err != nil {
 						logger.Error("[API - New] - "+
 							"%s - Failed to create pairing (%s vs %s). %v",
@@ -140,12 +162,13 @@ func CheckPairingsCreated(
 
 func NewDatabaseConnection(c config.Database) (*sql.DB, error) {
 	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
+		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
 		c.Host,
 		c.User,
 		c.Password,
 		c.Name,
 		c.Port,
+		c.SSLMode,
 	)
 
 	// creates the connection but does not validate it
@@ -158,6 +181,12 @@ func NewDatabaseConnection(c config.Database) (*sql.DB, error) {
 	if err := dbConnection.Ping(); err != nil {
 		return nil, err
 	}
+
+	// Configure connection pool to prevent resource exhaustion
+	dbConnection.SetMaxOpenConns(25)                        // Maximum total connections (in-use + idle)
+	dbConnection.SetMaxIdleConns(5)                         // Maximum idle connections in pool
+	dbConnection.SetConnMaxLifetime(5 * time.Minute)        // Maximum connection age
+	dbConnection.SetConnMaxIdleTime(1 * time.Minute)        // Maximum idle time before close
 
 	driver, err := postgres.WithInstance(dbConnection, &postgres.Config{})
 	if err != nil {

@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"io/fs"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/httprate"
 	"github.com/go-chi/render"
 
 	torrons "github.com/krtffl/torro"
@@ -47,6 +49,44 @@ func (srv *Server) Run() error {
 	r.Use(middleware.URLFormat)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
+	// Rate limiting middleware (100 requests per minute per IP)
+	r.Use(httprate.Limit(
+		100,                       // requests
+		1*time.Minute,             // per duration
+		httprate.WithKeyFuncs(httprate.KeyByIP), // per IP address
+		httprate.WithLimitHandler(func(w http.ResponseWriter, r *http.Request) {
+			logger.Warn("[HTTP Server] Rate limit exceeded for IP: %s", r.RemoteAddr)
+			http.Error(w, "Rate limit exceeded. Please try again later.", http.StatusTooManyRequests)
+		}),
+	))
+
+	// Security headers middleware
+	r.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Prevent MIME sniffing
+			w.Header().Set("X-Content-Type-Options", "nosniff")
+
+			// Prevent clickjacking
+			w.Header().Set("X-Frame-Options", "DENY")
+
+			// Enable XSS filter
+			w.Header().Set("X-XSS-Protection", "1; mode=block")
+
+			// Control referrer information
+			w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
+
+			// Content Security Policy (configured for HTMX app)
+			w.Header().Set("Content-Security-Policy",
+				"default-src 'self'; "+
+					"script-src 'self' 'unsafe-inline' https://unpkg.com; "+
+					"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "+
+					"font-src 'self' https://fonts.gstatic.com; "+
+					"img-src 'self' data:")
+
+			next.ServeHTTP(w, r)
+		})
+	})
+
 	assets, err := fs.Sub(torrons.Public, "public")
 	if err != nil {
 		logger.Fatal("[HTTP Server] - Failed to run templates. %v", err)
@@ -73,8 +113,12 @@ func (srv *Server) Run() error {
 	// **********        **********
 
 	httpServer := &http.Server{
-		Addr:    fmt.Sprintf(":%d", srv.port),
-		Handler: r,
+		Addr:           fmt.Sprintf(":%d", srv.port),
+		Handler:        r,
+		ReadTimeout:    15 * time.Second,
+		WriteTimeout:   15 * time.Second,
+		IdleTimeout:    60 * time.Second,
+		MaxHeaderBytes: 1 << 20, // 1 MB
 	}
 
 	go func() {

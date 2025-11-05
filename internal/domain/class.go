@@ -1,5 +1,7 @@
 package domain
 
+import "context"
+
 type Class struct {
 	Id          string `db:"Id"          json:"id"`
 	Name        string `db:"Name"        json:"name"`
@@ -7,5 +9,5 @@ type Class struct {
 }
 
 type ClassRepo interface {
-	List() ([]*Class, error)
+	List(ctx context.Context) ([]*Class, error)
 }

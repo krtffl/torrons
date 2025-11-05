@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/krtffl/torro/internal/domain"
@@ -16,10 +17,10 @@ func NewTorroRepo(db *sql.DB) domain.TorroRepo {
 	}
 }
 
-func (r *postgresTorroRepo) List() ([]*domain.Torro, error) {
-	rows, err := r.db.Query(
+func (r *postgresTorroRepo) List(ctx context.Context) ([]*domain.Torro, error) {
+	rows, err := r.db.QueryContext(ctx,
 		`
-        SELECT * 
+        SELECT "Id", "Name", "Rating", "Image", "Class"
         FROM "Torrons"`,
 	)
 	if err != nil {
@@ -46,10 +47,10 @@ func (r *postgresTorroRepo) List() ([]*domain.Torro, error) {
 	return torrons, nil
 }
 
-func (r *postgresTorroRepo) ListByClass(classId string) ([]*domain.Torro, error) {
-	rows, err := r.db.Query(
+func (r *postgresTorroRepo) ListByClass(ctx context.Context, classId string) ([]*domain.Torro, error) {
+	rows, err := r.db.QueryContext(ctx,
 		`
-        SELECT * 
+        SELECT "Id", "Name", "Rating", "Image", "Class"
         FROM "Torrons"
         WHERE "Class" = $1`,
 		classId,
@@ -78,10 +79,10 @@ func (r *postgresTorroRepo) ListByClass(classId string) ([]*domain.Torro, error)
 	return torrons, nil
 }
 
-func (r *postgresTorroRepo) Get(id string) (*domain.Torro, error) {
-	row := r.db.QueryRow(
+func (r *postgresTorroRepo) Get(ctx context.Context, id string) (*domain.Torro, error) {
+	row := r.db.QueryRowContext(ctx,
 		`
-        SELECT * 
+        SELECT "Id", "Name", "Rating", "Image", "Class"
         FROM "Torrons"
         WHERE "Id" = $1`,
 		id,
@@ -101,12 +102,61 @@ func (r *postgresTorroRepo) Get(id string) (*domain.Torro, error) {
 	return torro, nil
 }
 
-func (r *postgresTorroRepo) Update(id string, rating float64) (
+func (r *postgresTorroRepo) Update(ctx context.Context, id string, rating float64) (
 	*domain.Torro, error,
 ) {
 	updatedTorro := &domain.Torro{}
 
-	err := r.db.QueryRow(
+	err := r.db.QueryRowContext(ctx,
+		`
+        UPDATE "Torrons" SET
+        "Rating" = $2
+        WHERE "Id" = $1
+        RETURNING *`,
+		id,
+		rating,
+	).Scan(
+		&updatedTorro.Id,
+		&updatedTorro.Name,
+		&updatedTorro.Rating,
+		&updatedTorro.Image,
+		&updatedTorro.Class,
+	)
+	if err != nil {
+		return nil, handleErrors(err)
+	}
+	return updatedTorro, nil
+}
+
+// Transaction methods
+
+func (r *postgresTorroRepo) GetTx(tx *sql.Tx, ctx context.Context, id string) (*domain.Torro, error) {
+	row := tx.QueryRowContext(ctx,
+		`
+        SELECT "Id", "Name", "Rating", "Image", "Class"
+        FROM "Torrons"
+        WHERE "Id" = $1`,
+		id,
+	)
+
+	torro := &domain.Torro{}
+	err := row.Scan(
+		&torro.Id,
+		&torro.Name,
+		&torro.Rating,
+		&torro.Image,
+		&torro.Class,
+	)
+	if err != nil {
+		return nil, handleErrors(err)
+	}
+	return torro, nil
+}
+
+func (r *postgresTorroRepo) UpdateTx(tx *sql.Tx, ctx context.Context, id string, rating float64) (*domain.Torro, error) {
+	updatedTorro := &domain.Torro{}
+
+	err := tx.QueryRowContext(ctx,
 		`
         UPDATE "Torrons" SET
         "Rating" = $2

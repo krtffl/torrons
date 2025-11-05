@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/krtffl/torro/internal/domain"
@@ -16,10 +17,10 @@ func NewClassRepo(db *sql.DB) domain.ClassRepo {
 	}
 }
 
-func (r *postgresClassRepo) List() ([]*domain.Class, error) {
-	rows, err := r.db.Query(
+func (r *postgresClassRepo) List(ctx context.Context) ([]*domain.Class, error) {
+	rows, err := r.db.QueryContext(ctx,
 		`
-        SELECT * 
+        SELECT "Id", "Name", "Description"
         FROM "Classes"
         ORDER BY "Id" ASC`,
 	)
