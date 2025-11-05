@@ -39,6 +39,7 @@ type Handler struct {
 	torroRepo   domain.TorroRepo
 	classRepo   domain.ClassRepo
 	resultRepo  domain.ResultRepo
+	userRepo    domain.UserRepo
 }
 
 func NewHandler(
@@ -48,6 +49,7 @@ func NewHandler(
 	torroRepo domain.TorroRepo,
 	classRepo domain.ClassRepo,
 	resultRepo domain.ResultRepo,
+	userRepo domain.UserRepo,
 ) *Handler {
 	tmpls, err := template.New("").ParseFS(torrons.Public, "public/templates/*.html")
 	if err != nil {
@@ -62,6 +64,7 @@ func NewHandler(
 		torroRepo:   torroRepo,
 		classRepo:   classRepo,
 		resultRepo:  resultRepo,
+		userRepo:    userRepo,
 	}
 }
 
@@ -168,6 +171,13 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	pairingId := chi.URLParam(r, "id")
 	winnerId := r.URL.Query().Get("id")
 
+	// Get user ID from context (set by UserMiddleware)
+	userId := GetUserIDFromContext(r.Context())
+	if userId == "" {
+		logger.Warn("[Handler - Result] No user ID in context")
+		// Continue without user tracking for backward compatibility
+	}
+
 	p, err := h.pairingRepo.Get(r.Context(), pairingId)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't get pairing with ID %s. %v", pairingId, err)
@@ -211,6 +221,12 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	// Calculate new ELO ratings based on match result
 	new1, new2 := UpdateRatings(t1.Rating, t2.Rating, winnerId == t1.Id, K)
 
+	// Prepare user ID pointer for result record (nullable)
+	var userIdPtr *string
+	if userId != "" {
+		userIdPtr = &userId
+	}
+
 	// Create result record within transaction
 	_, err = h.resultRepo.CreateTx(tx, r.Context(), &domain.Result{
 		Pairing: pairingId,
@@ -219,11 +235,21 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		Winner:  winnerId,
 		Rat1Aft: new1,
 		Rat2Aft: new2,
+		UserId:  userIdPtr, // Track which user cast this vote
 	})
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't create result. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
 		return
+	}
+
+	// Update user vote count if user tracking is enabled
+	if userId != "" && p.Class != "" {
+		if err := h.userRepo.IncrementVoteCountTx(tx, r.Context(), userId, p.Class); err != nil {
+			logger.Error("[Handler - Result] Couldn't increment user vote count. %v", err)
+			render.Render(w, r, domain.ErrInternal(err))
+			return
+		}
 	}
 
 	// Update ratings within transaction
