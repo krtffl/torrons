@@ -33,6 +33,10 @@
 {{ define "topbar" }}
 <div id="topbar">
     <img hx-get="/" hx-boost="true" hx-target="body" hx-push-url="/" src="/public/assets/logo.png" alt="Torrons Vicens Logo">
+    <nav class="topbar-nav">
+        <a href="/leaderboard" class="nav-link" hx-get="/leaderboard" hx-boost="true" hx-target="body" hx-push-url="/leaderboard">Classificació</a>
+        <a href="/classes" class="nav-link" hx-get="/classes" hx-boost="true" hx-target="body" hx-push-url="/classes">Vota</a>
+    </nav>
 </div>
 {{ end }}
 

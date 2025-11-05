@@ -123,6 +123,9 @@ func (srv *Server) Run() error {
 		r.Get("/classes/{id}/vote", srv.handler.vote)
 
 		r.Post("/pairings/{id}/vote", srv.handler.result)
+
+		// Leaderboard visualization
+		r.Get("/leaderboard", srv.handler.leaderboard)
 	})
 	// **********        **********
 
