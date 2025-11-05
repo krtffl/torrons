@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"html/template"
 	"math"
 	"net/http"
@@ -147,11 +148,21 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	logger.Info("[Handler - Result] Incoming request")
 
 	pairingId := chi.URLParam(r, "id")
+	winnerId := r.URL.Query().Get("id")
 
 	p, err := h.pairingRepo.Get(pairingId)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't get pairing with ID %s. %v", pairingId, err)
 		render.Render(w, r, domain.ErrInternal(err))
+		return
+	}
+
+	// Validate that the winner ID matches one of the torros in the pairing
+	if winnerId != p.Torro1 && winnerId != p.Torro2 {
+		logger.Error("[Handler - Result] Invalid winner ID %s for pairing %s (expected %s or %s)",
+			winnerId, pairingId, p.Torro1, p.Torro2)
+		render.Render(w, r, domain.ErrBadRequest(
+			fmt.Errorf("%s: Winner ID does not match pairing torros", domain.ValidationError)))
 		return
 	}
 
@@ -172,10 +183,8 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	exp1 := 1.0 / (1.0 + math.Pow(10, (t2.Rating-t1.Rating)/400))
 	exp2 := 1.0 / (1.0 + math.Pow(10, (t1.Rating-t2.Rating)/400))
 
-	winnderId := r.URL.Query().Get("id")
-
 	var new1, new2 float64
-	if winnderId == t1.Id {
+	if winnerId == t1.Id {
 		new1 = t1.Rating + K*(1-exp1)
 		new2 = t2.Rating + K*(0-exp2)
 	} else {
@@ -187,7 +196,7 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		Pairing: pairingId,
 		Rat1Bef: t1.Rating,
 		Rat2Bef: t2.Rating,
-		Winner:  winnderId,
+		Winner:  winnerId,
 		Rat1Aft: new1,
 		Rat2Aft: new2,
 	})

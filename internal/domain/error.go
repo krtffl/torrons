@@ -16,6 +16,8 @@ type (
 
 const (
 	// Handled exceptions
+	// Validation errors
+	ValidationError        ErrorMsg = "ValidationError"
 	// PostgreSQL errors
 	NonExistentTableError  ErrorMsg = "NonExistentPostgreSQLTableError"
 	NonExistentColumnError ErrorMsg = "NonExistentPostgreSQLColumnError"
@@ -26,6 +28,8 @@ const (
 )
 
 var ErrorCodes = map[ErrorMsg]ErrorCode{
+	// Validation
+	ValidationError:        2400,
 	// PostgresQL
 	NonExistentTableError:  2501,
 	NonExistentColumnError: 2502,
