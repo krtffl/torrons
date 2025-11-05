@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 	"math/rand"
 
@@ -19,8 +20,8 @@ func NewPairingRepo(db *sql.DB) domain.PairingRepo {
 	}
 }
 
-func (r *postgresPairingRepo) Get(id string) (*domain.Pairing, error) {
-	row := r.db.QueryRow(
+func (r *postgresPairingRepo) Get(ctx context.Context, id string) (*domain.Pairing, error) {
+	row := r.db.QueryRowContext(ctx,
 		`
         SELECT "Id", "Torro1", "Torro2", "Class"
         FROM "Pairings"
@@ -41,10 +42,10 @@ func (r *postgresPairingRepo) Get(id string) (*domain.Pairing, error) {
 	return pairing, nil
 }
 
-func (r *postgresPairingRepo) Create(pairing *domain.Pairing) (
+func (r *postgresPairingRepo) Create(ctx context.Context, pairing *domain.Pairing) (
 	*domain.Pairing, error,
 ) {
-	err := r.db.QueryRow(
+	err := r.db.QueryRowContext(ctx,
 		`
         INSERT INTO "Pairings"
         ("Id", "Torro1", "Torro2", "Class")
@@ -64,8 +65,8 @@ func (r *postgresPairingRepo) Create(pairing *domain.Pairing) (
 	return pairing, nil
 }
 
-func (r *postgresPairingRepo) List() ([]*domain.Pairing, error) {
-	rows, err := r.db.Query(
+func (r *postgresPairingRepo) List(ctx context.Context) ([]*domain.Pairing, error) {
+	rows, err := r.db.QueryContext(ctx,
 		`
         SELECT "Id", "Torro1", "Torro2", "Class"
         FROM "Pairings"`,
@@ -93,8 +94,8 @@ func (r *postgresPairingRepo) List() ([]*domain.Pairing, error) {
 	return pairings, nil
 }
 
-func (r *postgresPairingRepo) ListByClass(classId string) ([]*domain.Pairing, error) {
-	rows, err := r.db.Query(
+func (r *postgresPairingRepo) ListByClass(ctx context.Context, classId string) ([]*domain.Pairing, error) {
+	rows, err := r.db.QueryContext(ctx,
 		`
         SELECT "Id", "Torro1", "Torro2", "Class"
         FROM "Pairings"
@@ -124,9 +125,9 @@ func (r *postgresPairingRepo) ListByClass(classId string) ([]*domain.Pairing, er
 	return pairings, nil
 }
 
-func (r *postgresPairingRepo) GetRandom(classId string) (*domain.Pairing, error) {
+func (r *postgresPairingRepo) GetRandom(ctx context.Context, classId string) (*domain.Pairing, error) {
 	// Get count of pairings for this class
-	count, err := r.CountClass(classId)
+	count, err := r.CountClass(ctx, classId)
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +140,7 @@ func (r *postgresPairingRepo) GetRandom(classId string) (*domain.Pairing, error)
 	// Generate random offset in application (more efficient than ORDER BY RANDOM())
 	offset := rand.Intn(count)
 
-	row := r.db.QueryRow(
+	row := r.db.QueryRowContext(ctx,
 		`
         SELECT "Id", "Torro1", "Torro2", "Class"
         FROM "Pairings"
@@ -162,11 +163,11 @@ func (r *postgresPairingRepo) GetRandom(classId string) (*domain.Pairing, error)
 	return pairing, nil
 }
 
-func (r *postgresPairingRepo) Count() (int, error) {
+func (r *postgresPairingRepo) Count(ctx context.Context) (int, error) {
 	var count int
-	err := r.db.QueryRow(
+	err := r.db.QueryRowContext(ctx,
 		`
-        SELECT COUNT(*) 
+        SELECT COUNT(*)
         FROM "Pairings"`,
 	).Scan(
 		&count,
@@ -178,11 +179,11 @@ func (r *postgresPairingRepo) Count() (int, error) {
 	return count, nil
 }
 
-func (r *postgresPairingRepo) CountClass(classId string) (int, error) {
+func (r *postgresPairingRepo) CountClass(ctx context.Context, classId string) (int, error) {
 	var count int
-	err := r.db.QueryRow(
+	err := r.db.QueryRowContext(ctx,
 		`
-        SELECT COUNT(*) 
+        SELECT COUNT(*)
         FROM "Pairings"
         WHERE "Class" = $1`,
 		classId,

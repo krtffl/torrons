@@ -1,6 +1,9 @@
 package domain
 
-import "database/sql"
+import (
+	"context"
+	"database/sql"
+)
 
 type Result struct {
 	Id      string  `db:"Id"`
@@ -13,7 +16,7 @@ type Result struct {
 }
 
 type ResultRepo interface {
-	Create(*Result) (*Result, error)
+	Create(ctx context.Context, result *Result) (*Result, error)
 	// Transaction method
-	CreateTx(tx *sql.Tx, result *Result) (*Result, error)
+	CreateTx(tx *sql.Tx, ctx context.Context, result *Result) (*Result, error)
 }

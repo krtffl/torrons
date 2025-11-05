@@ -1,5 +1,7 @@
 package domain
 
+import "context"
+
 type Pairing struct {
 	Id     string `db:"Id"`
 	Torro1 string `db:"Torro1"`
@@ -8,11 +10,11 @@ type Pairing struct {
 }
 
 type PairingRepo interface {
-	Get(id string) (*Pairing, error)
-	List() ([]*Pairing, error)
-	ListByClass(classId string) ([]*Pairing, error)
-	GetRandom(classId string) (*Pairing, error)
-	Count() (int, error)
-	CountClass(classId string) (int, error)
-	Create(pairing *Pairing) (*Pairing, error)
+	Get(ctx context.Context, id string) (*Pairing, error)
+	List(ctx context.Context) ([]*Pairing, error)
+	ListByClass(ctx context.Context, classId string) ([]*Pairing, error)
+	GetRandom(ctx context.Context, classId string) (*Pairing, error)
+	Count(ctx context.Context) (int, error)
+	CountClass(ctx context.Context, classId string) (int, error)
+	Create(ctx context.Context, pairing *Pairing) (*Pairing, error)
 }

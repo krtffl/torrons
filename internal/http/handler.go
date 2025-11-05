@@ -82,7 +82,7 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) classes(w http.ResponseWriter, r *http.Request) {
 	logger.Info("[Handler - Classes] Incoming request")
 
-	classes, err := h.classRepo.List()
+	classes, err := h.classRepo.List(r.Context())
 	if err != nil {
 		logger.Error("[Handler - Classes] Couldn't list classes. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
@@ -113,21 +113,21 @@ func (h *Handler) vote(w http.ResponseWriter, r *http.Request) {
 
 	classId := chi.URLParam(r, "id")
 
-	p, err := h.pairingRepo.GetRandom(classId)
+	p, err := h.pairingRepo.GetRandom(r.Context(), classId)
 	if err != nil {
 		logger.Error("[Handler - Vote] Couldn't get random pairing. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
 		return
 	}
 
-	t1, err := h.torroRepo.Get(p.Torro1)
+	t1, err := h.torroRepo.Get(r.Context(), p.Torro1)
 	if err != nil {
 		logger.Error("[Handler - Vote] Couldn't get torro. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
 		return
 	}
 
-	t2, err := h.torroRepo.Get(p.Torro2)
+	t2, err := h.torroRepo.Get(r.Context(), p.Torro2)
 	if err != nil {
 		logger.Error("[Handler - Vote] Couldn't get torro. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
@@ -163,7 +163,7 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	pairingId := chi.URLParam(r, "id")
 	winnerId := r.URL.Query().Get("id")
 
-	p, err := h.pairingRepo.Get(pairingId)
+	p, err := h.pairingRepo.Get(r.Context(), pairingId)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't get pairing with ID %s. %v", pairingId, err)
 		render.Render(w, r, domain.ErrInternal(err))
@@ -189,14 +189,14 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	defer tx.Rollback() // Rollback if not committed
 
 	// Get both torros within transaction (ensures consistent read)
-	t1, err := h.torroRepo.GetTx(tx, p.Torro1)
+	t1, err := h.torroRepo.GetTx(tx, r.Context(), p.Torro1)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't get torro. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
 		return
 	}
 
-	t2, err := h.torroRepo.GetTx(tx, p.Torro2)
+	t2, err := h.torroRepo.GetTx(tx, r.Context(), p.Torro2)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't get torro. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
@@ -217,7 +217,7 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create result record within transaction
-	_, err = h.resultRepo.CreateTx(tx, &domain.Result{
+	_, err = h.resultRepo.CreateTx(tx, r.Context(), &domain.Result{
 		Pairing: pairingId,
 		Rat1Bef: t1.Rating,
 		Rat2Bef: t2.Rating,
@@ -232,14 +232,14 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update ratings within transaction
-	_, err = h.torroRepo.UpdateTx(tx, t1.Id, new1)
+	_, err = h.torroRepo.UpdateTx(tx, r.Context(), t1.Id, new1)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't update rating: %s. %v", t1.Id, err)
 		render.Render(w, r, domain.ErrInternal(err))
 		return
 	}
 
-	_, err = h.torroRepo.UpdateTx(tx, t2.Id, new2)
+	_, err = h.torroRepo.UpdateTx(tx, r.Context(), t2.Id, new2)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't update rating: %s. %v", t2.Id, err)
 		render.Render(w, r, domain.ErrInternal(err))
@@ -253,21 +253,21 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newP, err := h.pairingRepo.GetRandom(p.Class)
+	newP, err := h.pairingRepo.GetRandom(r.Context(), p.Class)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't get random pairing. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
 		return
 	}
 
-	newt1, err := h.torroRepo.Get(newP.Torro1)
+	newt1, err := h.torroRepo.Get(r.Context(), newP.Torro1)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't get torro. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
 		return
 	}
 
-	newt2, err := h.torroRepo.Get(newP.Torro2)
+	newt2, err := h.torroRepo.Get(r.Context(), newP.Torro2)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't get torro. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))

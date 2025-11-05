@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/google/uuid"
@@ -18,10 +19,10 @@ func NewResultRepo(db *sql.DB) domain.ResultRepo {
 	}
 }
 
-func (r *postgresResultRepo) Create(result *domain.Result) (
+func (r *postgresResultRepo) Create(ctx context.Context, result *domain.Result) (
 	*domain.Result, error,
 ) {
-	err := r.db.QueryRow(
+	err := r.db.QueryRowContext(ctx,
 		`
         INSERT INTO "Results"
         ("Id", "Pairing", "Torro1RatingBefore", "Torro2RatingBefore",
@@ -46,10 +47,10 @@ func (r *postgresResultRepo) Create(result *domain.Result) (
 
 // Transaction method
 
-func (r *postgresResultRepo) CreateTx(tx *sql.Tx, result *domain.Result) (
+func (r *postgresResultRepo) CreateTx(tx *sql.Tx, ctx context.Context, result *domain.Result) (
 	*domain.Result, error,
 ) {
-	err := tx.QueryRow(
+	err := tx.QueryRowContext(ctx,
 		`
         INSERT INTO "Results"
         ("Id", "Pairing", "Torro1RatingBefore", "Torro2RatingBefore",

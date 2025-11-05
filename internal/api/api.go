@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
@@ -99,13 +100,14 @@ func CheckPairingsCreated(
 	torroRep domain.TorroRepo,
 	classRep domain.ClassRepo,
 ) error {
-	classes, err := classRep.List()
+	ctx := context.Background()
+	classes, err := classRep.List(ctx)
 	if err != nil {
 		return err
 	}
 
 	for _, c := range classes {
-		count, err := pairingRep.CountClass(c.Id)
+		count, err := pairingRep.CountClass(ctx, c.Id)
 		if err != nil {
 			return err
 		}
@@ -114,7 +116,7 @@ func CheckPairingsCreated(
 			logger.Info("[API - New] - "+
 				"%s - Creating pairings", c.Name)
 
-			t, err := torroRep.ListByClass(c.Id)
+			t, err := torroRep.ListByClass(ctx, c.Id)
 			if err != nil {
 				return err
 			}
@@ -128,7 +130,7 @@ func CheckPairingsCreated(
 						Class:  c.Id,
 					}
 
-					_, err := pairingRep.Create(&pairing)
+					_, err := pairingRep.Create(ctx, &pairing)
 					if err != nil {
 						logger.Error("[API - New] - "+
 							"%s - Failed to create pairing (%s vs %s). %v",
