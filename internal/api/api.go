@@ -49,6 +49,7 @@ func New(c *config.Config) *Torrons {
 	classRepo := repository.NewClassRepo(db)
 	resultRepo := repository.NewResultRepo(db)
 	userRepo := repository.NewUserRepo(db)
+	userEloRepo := repository.NewUserEloSnapshotRepo(db)
 
 	if err := CheckPairingsCreated(paringRepo, torroRepo, classRepo); err != nil {
 		logger.Fatal("[API - New] - "+
@@ -63,6 +64,7 @@ func New(c *config.Config) *Torrons {
 		classRepo,
 		resultRepo,
 		userRepo,
+		userEloRepo,
 	)
 	srv := http.New(c.Port, handler)
 
