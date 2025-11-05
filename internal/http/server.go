@@ -48,6 +48,33 @@ func (srv *Server) Run() error {
 	r.Use(middleware.URLFormat)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
+	// Security headers middleware
+	r.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Prevent MIME sniffing
+			w.Header().Set("X-Content-Type-Options", "nosniff")
+
+			// Prevent clickjacking
+			w.Header().Set("X-Frame-Options", "DENY")
+
+			// Enable XSS filter
+			w.Header().Set("X-XSS-Protection", "1; mode=block")
+
+			// Control referrer information
+			w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
+
+			// Content Security Policy (configured for HTMX app)
+			w.Header().Set("Content-Security-Policy",
+				"default-src 'self'; "+
+					"script-src 'self' 'unsafe-inline' https://unpkg.com; "+
+					"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "+
+					"font-src 'self' https://fonts.gstatic.com; "+
+					"img-src 'self' data:")
+
+			next.ServeHTTP(w, r)
+		})
+	})
+
 	assets, err := fs.Sub(torrons.Public, "public")
 	if err != nil {
 		logger.Fatal("[HTTP Server] - Failed to run templates. %v", err)
