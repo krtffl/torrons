@@ -3,19 +3,15 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="public/icons/favicon.ico" type="image/x-icon">
+    <meta name="description" content="Vota i escull el millor torró Torrons Vicens 2025">
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
-    <title>TORRORÈNDUM 2023</title>
-    <style>
-        body {
-            font-family: 'Montserrat-Regular', sans-serif;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100vh;
-        }
-    </style>
+    <title>Torrorèndum 2025 - Torrons Vicens</title>
   </head>
   <body>
       {{ template "header" . }}
@@ -28,39 +24,39 @@
 </html>
 
 {{ define "header" }}
-<div id="header" style="background-color: #4E0011; display: flex; align-items: center; justify-content: center;">
-    <p hx-get="/" hx-boost="true" hx-target="body" hx-push-url="/" style="color: #FFFFFF; font-size: 14px; line-height: 20px; cursor: pointer;">torrorèndum 2023 - vota i escull el millor torró torró</p>
+<div id="header">
+    <p hx-get="/" hx-boost="true" hx-target="body" hx-push-url="/">torrorèndum 2025 - vota i escull el millor torró</p>
 </div>
 {{ end }}
 
 
 {{ define "topbar" }}
-<div id="topbar" style="display: flex; align-items: center; justify-content: center; box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);">
-    <img hx-get="/" hx-boost="true" hx-target="body" hx-push-url="/" style="margin: 20px; width: 80px; cursor: pointer;" src="/public/assets/logo.png" alt="">
+<div id="topbar">
+    <img hx-get="/" hx-boost="true" hx-target="body" hx-push-url="/" src="/public/assets/logo.png" alt="Torrons Vicens Logo">
 </div>
 {{ end }}
 
 
 {{ define "description" }}
-<div id="description" style="display: flex; align-items: center; justify-content: center; margin: 10px auto; height: 60vh; padding: 10px; flex-direction: column; max-width: 650px;">
-    <div style="text-align: center; font-weight: lighter; margin: 10px; font-size: 1.5rem;">
-        TORRORÈNDUM 2023
+<div id="description">
+    <div class="title">
+        TORRORÈNDUM 2025
     </div>
-    <div style="text-align: center; font-weight: bold; margin: 10px;">
-        Quin és el millor torró de l'any 2023?
+    <div class="subtitle">
+        Quin és el millor torró de l'any 2025?
     </div>
-    <div style="text-align: justify; margin: 15px; font-weight: lighter;">
-      Escull de manera definitiva quin és el millor torró torró de l'any 2023.
-      N'hi ha tants (més de 100!) que s'han hagut de dividir en categories. 
-      En escollir una categoria se't mostraran de manera aleatòria dos torrons Vicens, i has d'indicar quin dels dos és millor per tu.
-       Pots votar tants cops com vulguis, però és recomanable que ho votis un mínim de 25 vegades per garantir uns bons resultats.
+    <div class="description-text">
+      Escull de manera definitiva quin és el millor torró de Torrons Vicens de l'any 2025.
+      N'hi ha tants (més de 100!) que s'han hagut de dividir en categories.
+      En escollir una categoria se't mostraran de manera aleatòria dos torrons, i has d'indicar quin dels dos és millor per tu.
+      Pots votar tants cops com vulguis, però és recomanable que ho votis un mínim de 25 vegades per garantir uns bons resultats.
     </div>
-    <div style="font-weight: bold; font-size: 0.8rem;">
+    <div class="important-note">
         IMPORTANT: els torrons es poden repetir durant la votació.
     </div>
-    <div hx-get="/classes" hx-trigger="click" hx-target="#description" hx-swap="outerHTML" hx-push-url="/classes" style="margin: 25px; background-color: #4E0011; color: #fff; padding: 15px 25px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px; cursor: pointer;">
-    Comença
-    </div>
+    <button class="btn" hx-get="/classes" hx-trigger="click" hx-target="#description" hx-swap="outerHTML" hx-push-url="/classes">
+        Comença
+    </button>
 </div>
 {{ end }}
 
