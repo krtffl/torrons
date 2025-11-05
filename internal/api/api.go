@@ -140,12 +140,13 @@ func CheckPairingsCreated(
 
 func NewDatabaseConnection(c config.Database) (*sql.DB, error) {
 	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
+		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
 		c.Host,
 		c.User,
 		c.Password,
 		c.Name,
 		c.Port,
+		c.SSLMode,
 	)
 
 	// creates the connection but does not validate it
