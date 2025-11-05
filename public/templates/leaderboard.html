@@ -1,0 +1,145 @@
+{{ if not .HX }}
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Classificació dels millors torrons Vicens 2025">
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <title>Classificació - Torrorèndum 2025</title>
+  </head>
+  <body>
+      {{ template "header" . }}
+      {{ template "topbar" . }}
+      {{ template "leaderboard" . }}
+  </body>
+</html>
+{{ else }}
+      {{ template "leaderboard" . }}
+{{ end }}
+
+{{ define "leaderboard" }}
+<div id="leaderboard-container">
+    {{ if .Error }}
+    <div class="leaderboard-error">
+        <div class="error-icon">⚠️</div>
+        <div class="error-message">{{ .Error }}</div>
+        {{ if .MinVotes }}
+        <div class="error-hint">Necessites almenys {{ .MinVotes }} vots en aquesta categoria per veure els resultats.</div>
+        <button class="btn mt-lg" hx-get="/classes" hx-trigger="click" hx-target="#leaderboard-container" hx-swap="outerHTML" hx-push-url="/classes">
+            Torna a votar
+        </button>
+        {{ end }}
+    </div>
+    {{ else }}
+
+    <!-- Category selector -->
+    <div class="leaderboard-header">
+        <h1 class="leaderboard-title">{{ .Title }}</h1>
+        {{ if .ShowCategoryFilter }}
+        <div class="category-selector">
+            <button class="category-btn {{ if eq .SelectedCategory "global" }}active{{ end }}"
+                    hx-get="/leaderboard?view={{ .ViewType }}&category=global"
+                    hx-trigger="click"
+                    hx-target="#leaderboard-container"
+                    hx-swap="outerHTML"
+                    hx-push-url="/leaderboard?view={{ .ViewType }}&category=global">
+                Global
+            </button>
+            {{ range .Categories }}
+            <button class="category-btn {{ if eq $.SelectedCategory .Id }}active{{ end }}"
+                    hx-get="/leaderboard?view={{ $.ViewType }}&category={{ .Id }}"
+                    hx-trigger="click"
+                    hx-target="#leaderboard-container"
+                    hx-swap="outerHTML"
+                    hx-push-url="/leaderboard?view={{ $.ViewType }}&category={{ .Id }}">
+                {{ .Name }}
+            </button>
+            {{ end }}
+        </div>
+        {{ end }}
+
+        <!-- View toggle -->
+        <div class="view-toggle">
+            <button class="toggle-btn {{ if eq .ViewType "personal" }}active{{ end }}"
+                    hx-get="/leaderboard?view=personal&category={{ .SelectedCategory }}"
+                    hx-trigger="click"
+                    hx-target="#leaderboard-container"
+                    hx-swap="outerHTML"
+                    hx-push-url="/leaderboard?view=personal&category={{ .SelectedCategory }}">
+                Els meus resultats
+            </button>
+            <button class="toggle-btn {{ if eq .ViewType "global" }}active{{ end }}"
+                    hx-get="/leaderboard?view=global&category={{ .SelectedCategory }}"
+                    hx-trigger="click"
+                    hx-target="#leaderboard-container"
+                    hx-swap="outerHTML"
+                    hx-push-url="/leaderboard?view=global&category={{ .SelectedCategory }}">
+                Resultats globals
+            </button>
+        </div>
+    </div>
+
+    <!-- Leaderboard entries -->
+    <div class="leaderboard-list">
+        {{ range .Entries }}
+        {{ template "leaderboard-entry" . }}
+        {{ end }}
+    </div>
+
+    <!-- Back to voting -->
+    <div class="leaderboard-footer">
+        <button class="btn" hx-get="/classes" hx-trigger="click" hx-target="#leaderboard-container" hx-swap="outerHTML" hx-push-url="/classes">
+            Continua votant
+        </button>
+    </div>
+
+    {{ end }}
+</div>
+{{ end }}
+
+{{ define "leaderboard-entry" }}
+<div class="leaderboard-entry rank-{{ .Rank }}">
+    <div class="rank-badge">
+        {{ if eq .Rank 1 }}
+        <span class="rank-number gold">🥇</span>
+        {{ else if eq .Rank 2 }}
+        <span class="rank-number silver">🥈</span>
+        {{ else if eq .Rank 3 }}
+        <span class="rank-number bronze">🥉</span>
+        {{ else }}
+        <span class="rank-number">{{ .Rank }}</span>
+        {{ end }}
+    </div>
+
+    <div class="entry-image">
+        <img src="/public/images/{{ .TorronImage }}" alt="{{ .TorronName }}">
+    </div>
+
+    <div class="entry-details">
+        <div class="entry-name">{{ .TorronName }}</div>
+        <div class="entry-stats">
+            <span class="stat-item">
+                <span class="stat-label">ELO:</span>
+                <span class="stat-value">{{ printf "%.0f" .Rating }}</span>
+            </span>
+            <span class="stat-item">
+                <span class="stat-label">Vots:</span>
+                <span class="stat-value">{{ .VoteCount }}</span>
+            </span>
+        </div>
+    </div>
+
+    <div class="entry-rating">
+        <div class="rating-bar">
+            <div class="rating-fill" style="width: {{ .RatingPercentage }}%"></div>
+        </div>
+    </div>
+</div>
+{{ end }}
