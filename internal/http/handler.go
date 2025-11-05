@@ -32,15 +32,16 @@ type Content struct {
 }
 
 type Handler struct {
-	db          *sql.DB
-	template    *template.Template
-	bpool       *bpool.BufferPool
-	pairingRepo domain.PairingRepo
-	torroRepo   domain.TorroRepo
-	classRepo   domain.ClassRepo
-	resultRepo  domain.ResultRepo
-	userRepo    domain.UserRepo
-	userEloRepo domain.UserEloSnapshotRepo
+	db           *sql.DB
+	template     *template.Template
+	bpool        *bpool.BufferPool
+	pairingRepo  domain.PairingRepo
+	torroRepo    domain.TorroRepo
+	classRepo    domain.ClassRepo
+	resultRepo   domain.ResultRepo
+	userRepo     domain.UserRepo
+	userEloRepo  domain.UserEloSnapshotRepo
+	campaignRepo domain.CampaignRepo
 }
 
 func NewHandler(
@@ -52,6 +53,7 @@ func NewHandler(
 	resultRepo domain.ResultRepo,
 	userRepo domain.UserRepo,
 	userEloRepo domain.UserEloSnapshotRepo,
+	campaignRepo domain.CampaignRepo,
 ) *Handler {
 	tmpls, err := template.New("").ParseFS(torrons.Public, "public/templates/*.html")
 	if err != nil {
@@ -59,15 +61,16 @@ func NewHandler(
 	}
 
 	return &Handler{
-		db:          db,
-		template:    tmpls,
-		bpool:       bpool,
-		pairingRepo: pairingRep,
-		torroRepo:   torroRepo,
-		classRepo:   classRepo,
-		resultRepo:  resultRepo,
-		userRepo:    userRepo,
-		userEloRepo: userEloRepo,
+		db:           db,
+		template:     tmpls,
+		bpool:        bpool,
+		pairingRepo:  pairingRep,
+		torroRepo:    torroRepo,
+		classRepo:    classRepo,
+		resultRepo:   resultRepo,
+		userRepo:     userRepo,
+		userEloRepo:  userEloRepo,
+		campaignRepo: campaignRepo,
 	}
 }
 
