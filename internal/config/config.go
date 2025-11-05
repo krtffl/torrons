@@ -4,7 +4,9 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 
 	torrons "github.com/krtffl/torro"
@@ -43,7 +45,13 @@ type Config struct {
 }
 
 // Load loads custom config from specified file or creates a new default one.
+// Environment variables take precedence over config file values.
 func Load(v *viper.Viper, file string) *Config {
+	// Try to load .env file (ignore error if not found)
+	if err := godotenv.Load(); err != nil {
+		log.Printf("[Config - Load] - No .env file found, using config file and environment variables")
+	}
+
 	v.SetConfigFile(file)
 
 	if err := v.ReadInConfig(); err != nil {
@@ -77,6 +85,9 @@ func Load(v *viper.Viper, file string) *Config {
 			"- Couldn't unmarshall config file. %v", err)
 	}
 
+	// Override config with environment variables if they exist
+	overrideWithEnvVars(config)
+
 	if config.Logger.Format != Common &&
 		config.Logger.Format != JSON {
 		config.Logger.Format = Common
@@ -84,6 +95,50 @@ func Load(v *viper.Viper, file string) *Config {
 
 	initializeLogger(config.Logger)
 	return config
+}
+
+// overrideWithEnvVars overrides configuration with environment variables
+// Environment variables take precedence over config file values
+func overrideWithEnvVars(config *Config) {
+	// Server configuration
+	if port := os.Getenv("PORT"); port != "" {
+		if p, err := strconv.ParseUint(port, 10, 32); err == nil {
+			config.Port = uint(p)
+		}
+	}
+
+	// Database configuration
+	if host := os.Getenv("DB_HOST"); host != "" {
+		config.Database.Host = host
+	}
+	if port := os.Getenv("DB_PORT"); port != "" {
+		if p, err := strconv.ParseUint(port, 10, 32); err == nil {
+			config.Database.Port = uint(p)
+		}
+	}
+	if user := os.Getenv("DB_USER"); user != "" {
+		config.Database.User = user
+	}
+	if password := os.Getenv("DB_PASSWORD"); password != "" {
+		config.Database.Password = password
+	}
+	if dbName := os.Getenv("DB_NAME"); dbName != "" {
+		config.Database.Name = dbName
+	}
+	if sslMode := os.Getenv("DB_SSL_MODE"); sslMode != "" {
+		config.Database.SSLMode = sslMode
+	}
+
+	// Logger configuration
+	if format := os.Getenv("LOGGER_FORMAT"); format != "" {
+		config.Logger.Format = format
+	}
+	if level := os.Getenv("LOGGER_LEVEL"); level != "" {
+		config.Logger.Level = level
+	}
+	if path := os.Getenv("LOGGER_PATH"); path != "" {
+		config.Logger.Path = path
+	}
 }
 
 func initializeLogger(cfg Logger) {

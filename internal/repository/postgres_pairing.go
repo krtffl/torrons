@@ -2,8 +2,9 @@ package repository
 
 import (
 	"context"
+	"crypto/rand"
 	"database/sql"
-	"math/rand"
+	"math/big"
 
 	"github.com/google/uuid"
 
@@ -137,8 +138,13 @@ func (r *postgresPairingRepo) GetRandom(ctx context.Context, classId string) (*d
 		return nil, handleErrors(sql.ErrNoRows)
 	}
 
-	// Generate random offset in application (more efficient than ORDER BY RANDOM())
-	offset := rand.Intn(count)
+	// Generate cryptographically secure random offset
+	// Using crypto/rand instead of math/rand for better security
+	offsetBig, err := rand.Int(rand.Reader, big.NewInt(int64(count)))
+	if err != nil {
+		return nil, handleErrors(err)
+	}
+	offset := int(offsetBig.Int64())
 
 	row := r.db.QueryRowContext(ctx,
 		`

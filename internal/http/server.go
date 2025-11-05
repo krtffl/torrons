@@ -63,6 +63,11 @@ func (srv *Server) Run() error {
 	// Security headers middleware
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// HSTS: Force HTTPS for 1 year, including subdomains
+			// Note: Only enable after deploying with HTTPS!
+			// Uncomment in production with HTTPS enabled
+			// w.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload")
+
 			// Prevent MIME sniffing
 			w.Header().Set("X-Content-Type-Options", "nosniff")
 
@@ -74,6 +79,12 @@ func (srv *Server) Run() error {
 
 			// Control referrer information
 			w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
+
+			// Permissions Policy: Restrict browser features
+			w.Header().Set("Permissions-Policy", "geolocation=(), microphone=(), camera=()")
+
+			// X-Permitted-Cross-Domain-Policies
+			w.Header().Set("X-Permitted-Cross-Domain-Policies", "none")
 
 			// Content Security Policy (configured for HTMX app)
 			w.Header().Set("Content-Security-Policy",
