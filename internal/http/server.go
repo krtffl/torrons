@@ -126,6 +126,19 @@ func (srv *Server) Run() error {
 	})
 	// **********        **********
 
+	// ********** U S E R  A P I **********
+	r.Route("/api/user", func(r chi.Router) {
+		// Get current user's statistics
+		r.Get("/stats", srv.handler.handleUserStats)
+
+		// Get personalized leaderboard for a class
+		r.Get("/leaderboard/class/{classId}", srv.handler.handleUserLeaderboard)
+
+		// Get personalized global leaderboard
+		r.Get("/leaderboard/global", srv.handler.handleUserGlobalLeaderboard)
+	})
+	// **********           **********
+
 	httpServer := &http.Server{
 		Addr:           fmt.Sprintf(":%d", srv.port),
 		Handler:        r,

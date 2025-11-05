@@ -40,6 +40,7 @@ type Handler struct {
 	classRepo   domain.ClassRepo
 	resultRepo  domain.ResultRepo
 	userRepo    domain.UserRepo
+	userEloRepo domain.UserEloSnapshotRepo
 }
 
 func NewHandler(
@@ -50,6 +51,7 @@ func NewHandler(
 	classRepo domain.ClassRepo,
 	resultRepo domain.ResultRepo,
 	userRepo domain.UserRepo,
+	userEloRepo domain.UserEloSnapshotRepo,
 ) *Handler {
 	tmpls, err := template.New("").ParseFS(torrons.Public, "public/templates/*.html")
 	if err != nil {
@@ -65,6 +67,7 @@ func NewHandler(
 		classRepo:   classRepo,
 		resultRepo:  resultRepo,
 		userRepo:    userRepo,
+		userEloRepo: userEloRepo,
 	}
 }
 
@@ -250,9 +253,45 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 			render.Render(w, r, domain.ErrInternal(err))
 			return
 		}
+
+		// Calculate and update personalized ELO ratings for this user
+		// Get or create user ELO snapshots for both torrons
+		userElo1, err := h.userEloRepo.GetOrCreateTx(tx, r.Context(), userId, t1.Id)
+		if err != nil {
+			logger.Error("[Handler - Result] Couldn't get user ELO for torron 1. %v", err)
+			render.Render(w, r, domain.ErrInternal(err))
+			return
+		}
+
+		userElo2, err := h.userEloRepo.GetOrCreateTx(tx, r.Context(), userId, t2.Id)
+		if err != nil {
+			logger.Error("[Handler - Result] Couldn't get user ELO for torron 2. %v", err)
+			render.Render(w, r, domain.ErrInternal(err))
+			return
+		}
+
+		// Calculate new personalized ELO ratings (same formula as global)
+		userNew1, userNew2 := UpdateRatings(userElo1.Rating, userElo2.Rating, winnerId == t1.Id, K)
+
+		// Update user ELO snapshots
+		userElo1.Rating = userNew1
+		userElo1.VoteCount++
+		if _, err := h.userEloRepo.UpdateTx(tx, r.Context(), userElo1); err != nil {
+			logger.Error("[Handler - Result] Couldn't update user ELO for torron 1. %v", err)
+			render.Render(w, r, domain.ErrInternal(err))
+			return
+		}
+
+		userElo2.Rating = userNew2
+		userElo2.VoteCount++
+		if _, err := h.userEloRepo.UpdateTx(tx, r.Context(), userElo2); err != nil {
+			logger.Error("[Handler - Result] Couldn't update user ELO for torron 2. %v", err)
+			render.Render(w, r, domain.ErrInternal(err))
+			return
+		}
 	}
 
-	// Update ratings within transaction
+	// Update global ratings within transaction
 	_, err = h.torroRepo.UpdateTx(tx, r.Context(), t1.Id, new1)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't update rating: %s. %v", t1.Id, err)
