@@ -98,6 +98,9 @@ func (srv *Server) Run() error {
 		})
 	})
 
+	// User tracking middleware - identifies users via cookies
+	r.Use(srv.handler.UserMiddleware)
+
 	assets, err := fs.Sub(torrons.Public, "public")
 	if err != nil {
 		logger.Fatal("[HTTP Server] - Failed to run templates. %v", err)
