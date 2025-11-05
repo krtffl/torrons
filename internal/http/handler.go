@@ -68,12 +68,15 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 
 	if err := h.template.ExecuteTemplate(buf, "index.html", Content{}); err != nil {
 		logger.Error("[Handler - Index] Couldn't execute template. %v", err)
-		h.template.ExecuteTemplate(w, "error.html", Content{})
+		w.WriteHeader(http.StatusInternalServerError)
+		if execErr := h.template.ExecuteTemplate(w, "error.html", Content{}); execErr != nil {
+			logger.Error("[Handler - Index] Failed to render error page. %v", execErr)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
 		return
 	}
 
 	buf.WriteTo(w)
-	return
 }
 
 func (h *Handler) classes(w http.ResponseWriter, r *http.Request) {
@@ -93,13 +96,16 @@ func (h *Handler) classes(w http.ResponseWriter, r *http.Request) {
 		Classes: classes,
 		HX:      isHX(r),
 	}); err != nil {
-		logger.Error("[Handler - Classes ] Couldn't execute template. %v", err)
-		h.template.ExecuteTemplate(w, "error.html", Content{})
+		logger.Error("[Handler - Classes] Couldn't execute template. %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		if execErr := h.template.ExecuteTemplate(w, "error.html", Content{}); execErr != nil {
+			logger.Error("[Handler - Classes] Failed to render error page. %v", execErr)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
 		return
 	}
 
 	buf.WriteTo(w)
-	return
 }
 
 func (h *Handler) vote(w http.ResponseWriter, r *http.Request) {
@@ -139,13 +145,16 @@ func (h *Handler) vote(w http.ResponseWriter, r *http.Request) {
 		Torrons: []*domain.Torro{t1, t2},
 		HX:      isHX(r),
 	}); err != nil {
-		logger.Error("[Handler - Classes ] Couldn't execute template. %v", err)
-		h.template.ExecuteTemplate(w, "error.html", Content{})
+		logger.Error("[Handler - Vote] Couldn't execute template. %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		if execErr := h.template.ExecuteTemplate(w, "error.html", Content{}); execErr != nil {
+			logger.Error("[Handler - Vote] Failed to render error page. %v", execErr)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
 		return
 	}
 
 	buf.WriteTo(w)
-	return
 }
 
 func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
@@ -276,13 +285,16 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		Torrons: []*domain.Torro{newt1, newt2},
 		HX:      isHX(r),
 	}); err != nil {
-		logger.Error("[Handler - Classes ] Couldn't execute template. %v", err)
-		h.template.ExecuteTemplate(w, "error.html", Content{})
+		logger.Error("[Handler - Result] Couldn't execute template. %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		if execErr := h.template.ExecuteTemplate(w, "error.html", Content{}); execErr != nil {
+			logger.Error("[Handler - Result] Failed to render error page. %v", execErr)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
 		return
 	}
 
 	buf.WriteTo(w)
-	return
 }
 
 func isHX(r *http.Request) bool {
