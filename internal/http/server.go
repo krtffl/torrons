@@ -126,6 +126,9 @@ func (srv *Server) Run() error {
 
 		// Leaderboard visualization
 		r.Get("/leaderboard", srv.handler.leaderboard)
+
+		// User statistics page
+		r.Get("/stats", srv.handler.stats)
 	})
 	// **********        **********
 

@@ -975,6 +975,292 @@ body {
 }
 
 /* ========================================
+   User Stats Page
+   ======================================== */
+
+#stats-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+    animation: fadeIn 0.5s ease-in;
+}
+
+.stats-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.stats-title {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.stats-subtitle {
+    font-size: var(--font-size-base);
+    color: var(--color-text-light);
+}
+
+/* Stats summary cards */
+.stats-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.stats-card {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+}
+
+.stats-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stats-icon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.stats-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.stats-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    font-weight: 500;
+}
+
+/* Category progress */
+.category-progress-list {
+    margin-bottom: var(--spacing-xl);
+}
+
+.section-title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.category-progress-item {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+    border-left: 4px solid #ccc;
+}
+
+.category-progress-item.unlocked {
+    border-left-color: #4CAF50;
+}
+
+.category-progress-item:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.category-progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.category-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.category-icon {
+    font-size: 1.5rem;
+}
+
+.category-name {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.category-votes {
+    font-size: var(--font-size-base);
+    color: var(--color-text-light);
+}
+
+.votes-current {
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.votes-separator {
+    margin: 0 var(--spacing-xs);
+}
+
+.votes-required {
+    font-weight: 500;
+}
+
+.votes-label {
+    margin-left: var(--spacing-xs);
+}
+
+.category-progress-bar {
+    height: 12px;
+    background-color: #f0f0f0;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    margin-bottom: var(--spacing-sm);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--color-primary), var(--color-primary-light));
+    transition: width 0.5s ease;
+}
+
+.category-progress-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-status {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.progress-status.unlocked {
+    color: #4CAF50;
+}
+
+.progress-status.locked {
+    color: var(--color-text-light);
+}
+
+.btn-small {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    transition: all var(--transition-fast);
+    display: inline-block;
+}
+
+.btn-small:hover {
+    background-color: var(--color-primary-light);
+    transform: translateY(-1px);
+}
+
+/* Achievements */
+.achievements-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.achievement-badge {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-md);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+}
+
+.achievement-badge.unlocked {
+    border: 2px solid #FFD700;
+}
+
+.achievement-badge.locked {
+    opacity: 0.5;
+    filter: grayscale(100%);
+}
+
+.achievement-badge:hover {
+    transform: scale(1.05);
+}
+
+.achievement-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.achievement-name {
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+}
+
+.achievement-description {
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+}
+
+/* Stats footer */
+.stats-footer {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stats-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .category-progress-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+
+    .category-progress-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+
+    .btn-small {
+        width: 100%;
+    }
+
+    .stats-footer {
+        flex-direction: column;
+    }
+
+    .stats-footer .btn {
+        width: 100%;
+    }
+
+    .achievements-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+}
+
+/* ========================================
    Utility Classes
    ======================================== */
 
