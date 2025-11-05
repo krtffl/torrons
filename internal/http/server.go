@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/httprate"
 	"github.com/go-chi/render"
 
 	torrons "github.com/krtffl/torro"
@@ -47,6 +48,17 @@ func (srv *Server) Run() error {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.URLFormat)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
+
+	// Rate limiting middleware (100 requests per minute per IP)
+	r.Use(httprate.Limit(
+		100,                       // requests
+		1*time.Minute,             // per duration
+		httprate.WithKeyFuncs(httprate.KeyByIP), // per IP address
+		httprate.WithLimitHandler(func(w http.ResponseWriter, r *http.Request) {
+			logger.Warn("[HTTP Server] Rate limit exceeded for IP: %s", r.RemoteAddr)
+			http.Error(w, "Rate limit exceeded. Please try again later.", http.StatusTooManyRequests)
+		}),
+	))
 
 	// Security headers middleware
 	r.Use(func(next http.Handler) http.Handler {
