@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -162,6 +163,12 @@ func NewDatabaseConnection(c config.Database) (*sql.DB, error) {
 	if err := dbConnection.Ping(); err != nil {
 		return nil, err
 	}
+
+	// Configure connection pool to prevent resource exhaustion
+	dbConnection.SetMaxOpenConns(25)                        // Maximum total connections (in-use + idle)
+	dbConnection.SetMaxIdleConns(5)                         // Maximum idle connections in pool
+	dbConnection.SetConnMaxLifetime(5 * time.Minute)        // Maximum connection age
+	dbConnection.SetConnMaxIdleTime(1 * time.Minute)        // Maximum idle time before close
 
 	driver, err := postgres.WithInstance(dbConnection, &postgres.Config{})
 	if err != nil {
