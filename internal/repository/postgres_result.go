@@ -43,3 +43,31 @@ func (r *postgresResultRepo) Create(result *domain.Result) (
 
 	return result, nil
 }
+
+// Transaction method
+
+func (r *postgresResultRepo) CreateTx(tx *sql.Tx, result *domain.Result) (
+	*domain.Result, error,
+) {
+	err := tx.QueryRow(
+		`
+        INSERT INTO "Results"
+        ("Id", "Pairing", "Torro1RatingBefore", "Torro2RatingBefore",
+        "Winner", "Torro1RatingAfter", "Torro2RatingAfter")
+        VALUES
+        ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING "Id"`,
+		uuid.NewString(),
+		result.Pairing,
+		result.Rat1Bef,
+		result.Rat2Bef,
+		result.Winner,
+		result.Rat1Aft,
+		result.Rat2Aft,
+	).Scan(&result.Id)
+	if err != nil {
+		return nil, handleErrors(err)
+	}
+
+	return result, nil
+}

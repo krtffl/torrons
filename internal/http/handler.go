@@ -1,6 +1,7 @@
 package http
 
 import (
+	"database/sql"
 	"fmt"
 	"html/template"
 	"math"
@@ -26,6 +27,7 @@ type Content struct {
 }
 
 type Handler struct {
+	db          *sql.DB
 	template    *template.Template
 	bpool       *bpool.BufferPool
 	pairingRepo domain.PairingRepo
@@ -35,6 +37,7 @@ type Handler struct {
 }
 
 func NewHandler(
+	db *sql.DB,
 	bpool *bpool.BufferPool,
 	pairingRep domain.PairingRepo,
 	torroRepo domain.TorroRepo,
@@ -47,6 +50,7 @@ func NewHandler(
 	}
 
 	return &Handler{
+		db:          db,
 		template:    tmpls,
 		bpool:       bpool,
 		pairingRepo: pairingRep,
@@ -166,20 +170,31 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t1, err := h.torroRepo.Get(p.Torro1)
+	// Start transaction to prevent race conditions in concurrent votes
+	tx, err := h.db.Begin()
 	if err != nil {
-		logger.Error("[Handler - Vote] Couldn't get torro. %v", err)
+		logger.Error("[Handler - Result] Couldn't start transaction. %v", err)
+		render.Render(w, r, domain.ErrInternal(err))
+		return
+	}
+	defer tx.Rollback() // Rollback if not committed
+
+	// Get both torros within transaction (ensures consistent read)
+	t1, err := h.torroRepo.GetTx(tx, p.Torro1)
+	if err != nil {
+		logger.Error("[Handler - Result] Couldn't get torro. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
 		return
 	}
 
-	t2, err := h.torroRepo.Get(p.Torro2)
+	t2, err := h.torroRepo.GetTx(tx, p.Torro2)
 	if err != nil {
-		logger.Error("[Handler - Vote] Couldn't get torro. %v", err)
+		logger.Error("[Handler - Result] Couldn't get torro. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
 		return
 	}
 
+	// Calculate ELO ratings
 	exp1 := 1.0 / (1.0 + math.Pow(10, (t2.Rating-t1.Rating)/400))
 	exp2 := 1.0 / (1.0 + math.Pow(10, (t1.Rating-t2.Rating)/400))
 
@@ -192,7 +207,8 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		new2 = t2.Rating + K*(1-exp2)
 	}
 
-	_, err = h.resultRepo.Create(&domain.Result{
+	// Create result record within transaction
+	_, err = h.resultRepo.CreateTx(tx, &domain.Result{
 		Pairing: pairingId,
 		Rat1Bef: t1.Rating,
 		Rat2Bef: t2.Rating,
@@ -204,20 +220,26 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		logger.Error("[Handler - Result] Couldn't create result. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
 		return
-
 	}
 
-	_, err = h.torroRepo.Update(t1.Id, new1)
+	// Update ratings within transaction
+	_, err = h.torroRepo.UpdateTx(tx, t1.Id, new1)
 	if err != nil {
-		logger.Error("[Handler - Result] Coulnd't update rating: %s. %v", t1.Id, err)
+		logger.Error("[Handler - Result] Couldn't update rating: %s. %v", t1.Id, err)
 		render.Render(w, r, domain.ErrInternal(err))
 		return
-
 	}
 
-	_, err = h.torroRepo.Update(t2.Id, new2)
+	_, err = h.torroRepo.UpdateTx(tx, t2.Id, new2)
 	if err != nil {
-		logger.Error("[Handler - Result] Coulnd't update rating: %s. %v", t2.Id, err)
+		logger.Error("[Handler - Result] Couldn't update rating: %s. %v", t2.Id, err)
+		render.Render(w, r, domain.ErrInternal(err))
+		return
+	}
+
+	// Commit transaction (makes all changes visible atomically)
+	if err := tx.Commit(); err != nil {
+		logger.Error("[Handler - Result] Couldn't commit transaction. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
 		return
 	}

@@ -22,6 +22,7 @@ import (
 type Torrons struct {
 	cfg *config.Config
 	srv *http.Server
+	db  *sql.DB
 
 	eCh chan error
 }
@@ -48,6 +49,7 @@ func New(c *config.Config) *Torrons {
 	}
 
 	handler := http.NewHandler(
+		db,
 		bpool,
 		paringRepo,
 		torroRepo,
@@ -59,6 +61,7 @@ func New(c *config.Config) *Torrons {
 	return &Torrons{
 		cfg: c,
 		srv: srv,
+		db:  db,
 		eCh: make(chan error, 1),
 	}
 }
