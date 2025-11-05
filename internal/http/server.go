@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/fs"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -73,8 +74,12 @@ func (srv *Server) Run() error {
 	// **********        **********
 
 	httpServer := &http.Server{
-		Addr:    fmt.Sprintf(":%d", srv.port),
-		Handler: r,
+		Addr:           fmt.Sprintf(":%d", srv.port),
+		Handler:        r,
+		ReadTimeout:    15 * time.Second,
+		WriteTimeout:   15 * time.Second,
+		IdleTimeout:    60 * time.Second,
+		MaxHeaderBytes: 1 << 20, // 1 MB
 	}
 
 	go func() {
