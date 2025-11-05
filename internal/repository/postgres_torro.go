@@ -19,7 +19,7 @@ func NewTorroRepo(db *sql.DB) domain.TorroRepo {
 func (r *postgresTorroRepo) List() ([]*domain.Torro, error) {
 	rows, err := r.db.Query(
 		`
-        SELECT * 
+        SELECT "Id", "Name", "Rating", "Image", "Class"
         FROM "Torrons"`,
 	)
 	if err != nil {
@@ -49,7 +49,7 @@ func (r *postgresTorroRepo) List() ([]*domain.Torro, error) {
 func (r *postgresTorroRepo) ListByClass(classId string) ([]*domain.Torro, error) {
 	rows, err := r.db.Query(
 		`
-        SELECT * 
+        SELECT "Id", "Name", "Rating", "Image", "Class"
         FROM "Torrons"
         WHERE "Class" = $1`,
 		classId,
@@ -81,7 +81,7 @@ func (r *postgresTorroRepo) ListByClass(classId string) ([]*domain.Torro, error)
 func (r *postgresTorroRepo) Get(id string) (*domain.Torro, error) {
 	row := r.db.QueryRow(
 		`
-        SELECT * 
+        SELECT "Id", "Name", "Rating", "Image", "Class"
         FROM "Torrons"
         WHERE "Id" = $1`,
 		id,
@@ -132,7 +132,7 @@ func (r *postgresTorroRepo) Update(id string, rating float64) (
 func (r *postgresTorroRepo) GetTx(tx *sql.Tx, id string) (*domain.Torro, error) {
 	row := tx.QueryRow(
 		`
-        SELECT *
+        SELECT "Id", "Name", "Rating", "Image", "Class"
         FROM "Torrons"
         WHERE "Id" = $1`,
 		id,

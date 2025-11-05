@@ -21,7 +21,7 @@ func NewPairingRepo(db *sql.DB) domain.PairingRepo {
 func (r *postgresPairingRepo) Get(id string) (*domain.Pairing, error) {
 	row := r.db.QueryRow(
 		`
-        SELECT * 
+        SELECT "Id", "Torro1", "Torro2", "Class"
         FROM "Pairings"
         WHERE "Id" = $1`,
 		id,
@@ -66,7 +66,7 @@ func (r *postgresPairingRepo) Create(pairing *domain.Pairing) (
 func (r *postgresPairingRepo) List() ([]*domain.Pairing, error) {
 	rows, err := r.db.Query(
 		`
-        SELECT * 
+        SELECT "Id", "Torro1", "Torro2", "Class"
         FROM "Pairings"`,
 	)
 	if err != nil {
@@ -95,7 +95,7 @@ func (r *postgresPairingRepo) List() ([]*domain.Pairing, error) {
 func (r *postgresPairingRepo) ListByClass(classId string) ([]*domain.Pairing, error) {
 	rows, err := r.db.Query(
 		`
-        SELECT * 
+        SELECT "Id", "Torro1", "Torro2", "Class"
         FROM "Pairings"
         WHERE "Class" = $1`,
 		classId,
@@ -126,7 +126,7 @@ func (r *postgresPairingRepo) ListByClass(classId string) ([]*domain.Pairing, er
 func (r *postgresPairingRepo) GetRandom(classId string) (*domain.Pairing, error) {
 	row := r.db.QueryRow(
 		`
-        SELECT * 
+        SELECT "Id", "Torro1", "Torro2", "Class"
         FROM "Pairings"
         WHERE "Class" = $1
         ORDER BY RANDOM()

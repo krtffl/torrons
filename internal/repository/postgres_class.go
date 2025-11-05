@@ -19,7 +19,7 @@ func NewClassRepo(db *sql.DB) domain.ClassRepo {
 func (r *postgresClassRepo) List() ([]*domain.Class, error) {
 	rows, err := r.db.Query(
 		`
-        SELECT * 
+        SELECT "Id", "Name", "Description"
         FROM "Classes"
         ORDER BY "Id" ASC`,
 	)
