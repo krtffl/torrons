@@ -105,6 +105,100 @@ func (t *Torrons) Shutdown() {
 	logger.Info("[API - Shutdown] Shutdown complete")
 }
 
+// createGlobalPairings creates strategic pairings for the global category
+// Instead of all O(n²) combinations, this creates O(n*k) pairings where:
+// - Each torron is compared with top torrons from other categories
+// - This allows ELO to converge to a global ranking efficiently
+func createGlobalPairings(
+	ctx context.Context,
+	pairingRep domain.PairingRepo,
+	torroRep domain.TorroRepo,
+	globalClassId string,
+) (int, error) {
+	// Get torrons from each category (1-4), sorted by rating (best first)
+	categories := []string{"1", "2", "3", "4"}
+	torronsByCategory := make(map[string][]*domain.Torro)
+
+	for _, categoryId := range categories {
+		torrons, err := torroRep.ListByClass(ctx, categoryId)
+		if err != nil {
+			return 0, err
+		}
+		// Filter out discontinued torrons
+		var activeTorrons []*domain.Torro
+		for _, t := range torrons {
+			if !t.Discontinued {
+				activeTorrons = append(activeTorrons, t)
+			}
+		}
+		torronsByCategory[categoryId] = activeTorrons
+	}
+
+	pairingsCreated := 0
+	pairingsMap := make(map[string]bool) // Prevent duplicates
+
+	// Strategy: Each torron competes with representatives from other categories
+	// For thorough comparison, pair each torron with:
+	// - Top 5 from each other category (if available)
+	// - This ensures cross-category comparisons while keeping count manageable
+	const pairingsPerCategory = 5
+
+	for categoryId, torrons := range torronsByCategory {
+		for _, torron := range torrons {
+			// Pair this torron with top torrons from OTHER categories
+			for otherCategoryId, otherTorrons := range torronsByCategory {
+				if otherCategoryId == categoryId {
+					continue // Skip same category
+				}
+
+				// Pair with top N torrons from this other category
+				limit := pairingsPerCategory
+				if len(otherTorrons) < limit {
+					limit = len(otherTorrons)
+				}
+
+				for i := 0; i < limit; i++ {
+					otherTorron := otherTorrons[i]
+
+					// Create pairing key to prevent duplicates (order-independent)
+					var pairingKey string
+					if torron.Id < otherTorron.Id {
+						pairingKey = torron.Id + ":" + otherTorron.Id
+					} else {
+						pairingKey = otherTorron.Id + ":" + torron.Id
+					}
+
+					// Skip if already created
+					if pairingsMap[pairingKey] {
+						continue
+					}
+
+					pairing := domain.Pairing{
+						Torro1: torron.Id,
+						Torro2: otherTorron.Id,
+						Class:  globalClassId,
+					}
+
+					_, err := pairingRep.Create(ctx, &pairing)
+					if err != nil {
+						logger.Error("[API - createGlobalPairings] - "+
+							"Failed to create pairing (%s vs %s). %v",
+							torron.Id,
+							otherTorron.Id,
+							err)
+						continue
+					}
+
+					pairingsMap[pairingKey] = true
+					pairingsCreated++
+				}
+			}
+		}
+	}
+
+	return pairingsCreated, nil
+}
+
 func CheckPairingsCreated(
 	pairingRep domain.PairingRepo,
 	torroRep domain.TorroRepo,
@@ -126,6 +220,18 @@ func CheckPairingsCreated(
 			logger.Info("[API - New] - "+
 				"%s - Creating pairings", c.Name)
 
+			// Global category uses smart pairing strategy
+			if c.Id == "5" {
+				createdCount, err := createGlobalPairings(ctx, pairingRep, torroRep, c.Id)
+				if err != nil {
+					return err
+				}
+				logger.Info("[API - New] - "+
+					"%s - Created %d strategic pairings", c.Name, createdCount)
+				continue
+			}
+
+			// Regular categories use all-pairs strategy
 			t, err := torroRep.ListByClass(ctx, c.Id)
 			if err != nil {
 				return err

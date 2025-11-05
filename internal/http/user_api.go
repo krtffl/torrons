@@ -173,7 +173,7 @@ func getMinVotesForClass(classId string) int {
 		return 30
 	case "4": // Albert Adrià
 		return 40
-	case "5": // Global (future)
+	case "5": // Global
 		return 50
 	default:
 		return 25
