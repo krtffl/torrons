@@ -93,6 +93,45 @@
         {{ end }}
     </div>
 
+    <!-- Share section (only for personal view with results) -->
+    {{ if and (eq .ViewType "personal") (gt (len .Entries) 0) }}
+    <div class="share-section">
+        <h2 class="share-title">Comparteix els teus resultats</h2>
+        <p class="share-description">Mostra als teus amics els teus torrons favorits!</p>
+
+        <div class="share-buttons">
+            <a href="https://twitter.com/intent/tweet?text={{ .ShareText }}&url={{ .ShareUrl }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="share-btn share-btn-twitter">
+                <span class="share-icon">🐦</span>
+                <span>Twitter</span>
+            </a>
+
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ .ShareUrl }}&quote={{ .ShareText }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="share-btn share-btn-facebook">
+                <span class="share-icon">📘</span>
+                <span>Facebook</span>
+            </a>
+
+            <a href="https://api.whatsapp.com/send?text={{ .ShareText }}%20{{ .ShareUrl }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="share-btn share-btn-whatsapp">
+                <span class="share-icon">💬</span>
+                <span>WhatsApp</span>
+            </a>
+
+            <button class="share-btn share-btn-copy" onclick="copyToClipboard('{{ .ShareUrl }}', this)">
+                <span class="share-icon">🔗</span>
+                <span class="copy-text">Copia enllaç</span>
+            </button>
+        </div>
+    </div>
+    {{ end }}
+
     <!-- Back to voting -->
     <div class="leaderboard-footer">
         <button class="btn" hx-get="/classes" hx-trigger="click" hx-target="#leaderboard-container" hx-swap="outerHTML" hx-push-url="/classes">
@@ -143,3 +182,24 @@
     </div>
 </div>
 {{ end }}
+
+<script>
+function copyToClipboard(text, button) {
+    navigator.clipboard.writeText(text).then(function() {
+        // Change button text temporarily
+        const textSpan = button.querySelector('.copy-text');
+        const originalText = textSpan.textContent;
+        textSpan.textContent = '✓ Copiat!';
+        button.classList.add('copied');
+
+        // Reset after 2 seconds
+        setTimeout(function() {
+            textSpan.textContent = originalText;
+            button.classList.remove('copied');
+        }, 2000);
+    }).catch(function(err) {
+        console.error('Error copying to clipboard:', err);
+        alert('No s\'ha pogut copiar l\'enllaç');
+    });
+}
+</script>

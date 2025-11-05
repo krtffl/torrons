@@ -218,10 +218,25 @@ func (h *Handler) handleClassLeaderboard(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Get class info
-	class, err := h.classRepo.Get(r.Context(), classId)
+	// Get all classes to find the class name
+	classes, err := h.classRepo.List(r.Context())
 	if err != nil {
-		logger.Error("[Class Leaderboard] Class not found: %v", err)
+		logger.Error("[Class Leaderboard] Failed to list classes: %v", err)
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, map[string]string{"error": "Internal server error"})
+		return
+	}
+
+	// Find the requested class
+	var className string
+	for _, class := range classes {
+		if class.Id == classId {
+			className = class.Name
+			break
+		}
+	}
+
+	if className == "" {
 		render.Status(r, http.StatusNotFound)
 		render.JSON(w, r, map[string]string{"error": "Class not found"})
 		return
@@ -263,13 +278,13 @@ func (h *Handler) handleClassLeaderboard(w http.ResponseWriter, r *http.Request)
 			logger.Error("[Class Leaderboard] Scan error: %v", err)
 			continue
 		}
-		entry.ClassName = class.Name
+		entry.ClassName = className
 		entries = append(entries, entry)
 	}
 
 	response := map[string]interface{}{
 		"class_id":      classId,
-		"class_name":    class.Name,
+		"class_name":    className,
 		"entries":       entries,
 		"total_entries": len(entries),
 		"timestamp":     time.Now().UTC().Format(time.RFC3339),
