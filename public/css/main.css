@@ -208,6 +208,137 @@ body {
 }
 
 /* ========================================
+   Countdown Widget
+   ======================================== */
+
+#countdown-widget {
+    margin: var(--spacing-lg) 0;
+    width: 100%;
+}
+
+.countdown-active,
+.countdown-ended,
+.countdown-inactive {
+    text-align: center;
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    border-radius: var(--border-radius-lg);
+    color: var(--color-white);
+    box-shadow: var(--shadow-lg);
+}
+
+.countdown-label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: var(--spacing-sm);
+    opacity: 0.9;
+}
+
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin: var(--spacing-md) 0;
+}
+
+.countdown-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+}
+
+.countdown-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.countdown-unit-label {
+    font-size: var(--font-size-sm);
+    font-weight: 400;
+    margin-top: var(--spacing-xs);
+    opacity: 0.9;
+}
+
+.countdown-date {
+    font-size: var(--font-size-sm);
+    opacity: 0.8;
+    margin-top: var(--spacing-sm);
+}
+
+.countdown-icon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.countdown-text {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    margin-bottom: var(--spacing-xs);
+}
+
+.countdown-subtext {
+    font-size: var(--font-size-base);
+    opacity: 0.9;
+}
+
+.countdown-error {
+    text-align: center;
+    color: var(--color-text-light);
+    font-size: var(--font-size-sm);
+}
+
+/* ========================================
+   How It Works Section
+   ======================================== */
+
+.how-it-works {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    margin: var(--spacing-xl) 0;
+    padding: var(--spacing-lg);
+    background-color: var(--color-background);
+    border-radius: var(--border-radius-lg);
+    max-width: 600px;
+}
+
+.how-it-works-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+    min-width: 100px;
+}
+
+.step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+.step-text {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+/* ========================================
    Buttons
    ======================================== */
 
@@ -239,6 +370,28 @@ body {
 .btn:active {
     transform: translateY(0);
     box-shadow: var(--shadow-sm);
+}
+
+.btn-large {
+    font-size: var(--font-size-lg);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    min-width: 200px;
+}
+
+.btn-with-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.btn-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.btn-text {
+    line-height: 1;
 }
 
 /* ========================================

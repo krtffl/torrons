@@ -144,8 +144,11 @@ func (srv *Server) Run() error {
 
 	// ********** C A M P A I G N  A P I **********
 	r.Route("/api/campaign", func(r chi.Router) {
-		// Get countdown to campaign end
+		// Get countdown to campaign end (JSON)
 		r.Get("/countdown", srv.handler.handleCountdown)
+
+		// Get countdown widget (HTML)
+		r.Get("/countdown/widget", srv.handler.handleCountdownWidget)
 
 		// Get active campaign information
 		r.Get("/info", srv.handler.handleCampaignInfo)

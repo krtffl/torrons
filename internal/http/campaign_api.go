@@ -89,6 +89,73 @@ func (h *Handler) handleCountdown(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, response)
 }
 
+// handleCountdownWidget returns the countdown widget HTML for homepage
+func (h *Handler) handleCountdownWidget(w http.ResponseWriter, r *http.Request) {
+	// Get active campaign
+	campaign, err := h.campaignRepo.GetActive(r.Context())
+
+	content := struct {
+		IsActive         bool
+		HasEnded         bool
+		DaysRemaining    int
+		HoursRemaining   int
+		MinutesRemaining int
+		EndDateFormatted string
+	}{
+		IsActive: false,
+		HasEnded: true,
+	}
+
+	if err == nil {
+		// Parse end date
+		endTime, err := time.Parse(time.RFC3339, campaign.EndDate)
+		if err == nil {
+			now := time.Now().UTC()
+			timeRemaining := endTime.Sub(now)
+
+			// Check if campaign has ended
+			hasEnded := timeRemaining <= 0
+
+			if !hasEnded {
+				// Calculate days, hours, minutes
+				days := int(timeRemaining.Hours() / 24)
+				hours := int(timeRemaining.Hours()) % 24
+				minutes := int(timeRemaining.Minutes()) % 60
+
+				// Format end date in Catalan format
+				endDateFormatted := endTime.Format("2 January 2006")
+
+				content = struct {
+					IsActive         bool
+					HasEnded         bool
+					DaysRemaining    int
+					HoursRemaining   int
+					MinutesRemaining int
+					EndDateFormatted string
+				}{
+					IsActive:         true,
+					HasEnded:         false,
+					DaysRemaining:    days,
+					HoursRemaining:   hours,
+					MinutesRemaining: minutes,
+					EndDateFormatted: endDateFormatted,
+				}
+			}
+		}
+	}
+
+	buf := h.bpool.Get()
+	defer h.bpool.Put(buf)
+
+	if err := h.template.ExecuteTemplate(buf, "countdown.html", content); err != nil {
+		logger.Error("[Handler - CountdownWidget] Couldn't execute template. %v", err)
+		w.Write([]byte("<div class='countdown-error'>Error carregant comptador</div>"))
+		return
+	}
+
+	buf.WriteTo(w)
+}
+
 // handleGlobalLeaderboard returns the global leaderboard (all categories)
 func (h *Handler) handleGlobalLeaderboard(w http.ResponseWriter, r *http.Request) {
 	// Get top torrons by rating across all categories

@@ -38,8 +38,9 @@
     <div class="class-description">
         {{ .Description }}
     </div>
-    <button class="btn" hx-get="/classes/{{ .Id }}/vote" hx-trigger="click" hx-target="#classes" hx-swap="outerHTML" hx-push-url="classes/{{ .Id }}/vote">
-        {{ .Name }}
+    <button class="btn btn-with-icon" hx-get="/classes/{{ .Id }}/vote" hx-trigger="click" hx-target="#classes" hx-swap="outerHTML" hx-push-url="classes/{{ .Id }}/vote">
+        <span class="btn-icon">{{ if eq .Id "1" }}🏛️{{ else if eq .Id "2" }}✨{{ else if eq .Id "3" }}🍫{{ else if eq .Id "4" }}👨‍🍳{{ else if eq .Id "5" }}🌍{{ end }}</span>
+        <span class="btn-text">{{ .Name }}</span>
     </button>
 </div>
 {{ end }}
