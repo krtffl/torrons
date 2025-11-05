@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"math/rand"
 
 	"github.com/google/uuid"
 
@@ -124,17 +125,31 @@ func (r *postgresPairingRepo) ListByClass(classId string) ([]*domain.Pairing, er
 }
 
 func (r *postgresPairingRepo) GetRandom(classId string) (*domain.Pairing, error) {
+	// Get count of pairings for this class
+	count, err := r.CountClass(classId)
+	if err != nil {
+		return nil, err
+	}
+
+	// Handle edge case: no pairings available
+	if count == 0 {
+		return nil, handleErrors(sql.ErrNoRows)
+	}
+
+	// Generate random offset in application (more efficient than ORDER BY RANDOM())
+	offset := rand.Intn(count)
+
 	row := r.db.QueryRow(
 		`
         SELECT "Id", "Torro1", "Torro2", "Class"
         FROM "Pairings"
         WHERE "Class" = $1
-        ORDER BY RANDOM()
-        LIMIT 1`,
+        LIMIT 1 OFFSET $2`,
 		classId,
+		offset,
 	)
 	pairing := &domain.Pairing{}
-	err := row.Scan(
+	err = row.Scan(
 		&pairing.Id,
 		&pairing.Torro1,
 		&pairing.Torro2,
