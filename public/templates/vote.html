@@ -27,7 +27,11 @@
 {{ end }}
 
 {{ define "vote" }}
-<div class="torron-comparison">
+<!-- Hidden instructions for screen readers -->
+<div id="voting-instructions" class="sr-only">
+    Escull un dels dos torrons fent clic o prement Enter. També pots usar Tab per navegar entre opcions.
+</div>
+<div class="torron-comparison" role="group" aria-label="Comparació de torrons">
     {{ range .Torrons }}
         {{ template "torro" . }}
     {{ end }}
@@ -35,7 +39,17 @@
 {{ end }}
 
 {{ define "torro" }}
-<div class="torron-card" onclick="updateProgress(event);" hx-post="/pairings/{{ .Pairing }}/vote?id={{ .Id }}" hx-trigger="click delay:0.2s" hx-target=".torron-comparison" hx-swap="outerHTML" tabindex="0" role="button" aria-label="Vota per {{ .Name }}">
+<div class="torron-card"
+     onclick="updateProgress(event);"
+     onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"
+     hx-post="/pairings/{{ .Pairing }}/vote?id={{ .Id }}"
+     hx-trigger="click delay:0.2s"
+     hx-target=".torron-comparison"
+     hx-swap="outerHTML"
+     tabindex="0"
+     role="button"
+     aria-label="Vota per {{ .Name }}"
+     aria-describedby="voting-instructions">
     <div class="torron-name">
        {{ .Name }}
     </div>

@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"net/http"
@@ -19,6 +20,8 @@ type LeaderboardEntry struct {
 	Rating           float64 `json:"rating"`
 	VoteCount        int     `json:"vote_count"`
 	RatingPercentage int     `json:"rating_percentage"` // For visual bar (0-100)
+	RankChange       int     // Positive = up, Negative = down, 0 = no change, 999 = new
+	RankChangeSymbol string  // "↑" or "↓" or "—" or "NEW"
 }
 
 // LeaderboardContent holds data for template rendering
@@ -88,6 +91,11 @@ func (h *Handler) leaderboard(w http.ResponseWriter, r *http.Request) {
 			className := h.getClassName(classes, category)
 			title = fmt.Sprintf("Resultats globals - %s", className)
 		}
+	}
+
+	// Track rank changes (only for personal view with entries)
+	if viewType == "personal" && len(entries) > 0 {
+		entries = h.calculateRankChanges(r, w, entries, category)
 	}
 
 	// Calculate rating percentages for visual bars
@@ -274,4 +282,55 @@ func (h *Handler) generateShareText(entries []LeaderboardEntry, category string)
 
 	message += "\nVota els teus favorits!"
 	return message
+}
+
+// calculateRankChanges compares current ranks with previous visit and updates entries
+func (h *Handler) calculateRankChanges(r *http.Request, w http.ResponseWriter, entries []LeaderboardEntry, category string) []LeaderboardEntry {
+	cookieName := fmt.Sprintf("ranks_%s", category)
+
+	// Read previous ranks from cookie
+	previousRanks := make(map[string]int)
+	if cookie, err := r.Cookie(cookieName); err == nil && cookie.Value != "" {
+		decodedValue, _ := url.QueryUnescape(cookie.Value)
+		json.Unmarshal([]byte(decodedValue), &previousRanks)
+	}
+
+	// Create new ranks map for storing
+	currentRanks := make(map[string]int)
+
+	// Calculate changes and update entries
+	for i := range entries {
+		currentRanks[entries[i].TorronId] = entries[i].Rank
+
+		if prevRank, exists := previousRanks[entries[i].TorronId]; exists {
+			change := prevRank - entries[i].Rank // Positive = moved up, negative = moved down
+			entries[i].RankChange = change
+
+			if change > 0 {
+				entries[i].RankChangeSymbol = "↑"
+			} else if change < 0 {
+				entries[i].RankChangeSymbol = "↓"
+			} else {
+				entries[i].RankChangeSymbol = "—"
+			}
+		} else {
+			// New entry (wasn't in previous rankings)
+			entries[i].RankChange = 999
+			entries[i].RankChangeSymbol = "NOU"
+		}
+	}
+
+	// Store current ranks in cookie for next visit
+	ranksJSON, _ := json.Marshal(currentRanks)
+	http.SetCookie(w, &http.Cookie{
+		Name:     cookieName,
+		Value:    url.QueryEscape(string(ranksJSON)),
+		Path:     "/",
+		MaxAge:   30 * 24 * 60 * 60, // 30 days
+		HttpOnly: true,
+		Secure:   r.TLS != nil,
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	return entries
 }
