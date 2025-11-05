@@ -79,7 +79,19 @@ func (t *Torrons) Run() {
 }
 
 func (t *Torrons) Shutdown() {
+	logger.Info("[API - Shutdown] Shutting down gracefully")
+
+	// Shutdown HTTP server first (stop accepting new requests)
 	t.srv.Shutdown()
+
+	// Close database connection
+	if err := t.db.Close(); err != nil {
+		logger.Error("[API - Shutdown] Failed to close database connection. %v", err)
+	} else {
+		logger.Info("[API - Shutdown] Database connection closed")
+	}
+
+	logger.Info("[API - Shutdown] Shutdown complete")
 }
 
 func CheckPairingsCreated(
