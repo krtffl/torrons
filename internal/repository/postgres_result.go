@@ -25,9 +25,9 @@ func (r *postgresResultRepo) Create(result *domain.Result) (
 		`
         INSERT INTO "Results"
         ("Id", "Pairing", "Torro1RatingBefore", "Torro2RatingBefore",
-        "Winner", "Torro1RatingAfter", "Torro2RatingAfter")
+        "Winner", "Torro1RatingAfter", "Torro2RatingAfter", "SessionId")
         VALUES
-        ($1, $2, $3, $4, $5, $6, $7)
+        ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING "Id"`,
 		uuid.NewString(),
 		result.Pairing,
@@ -36,6 +36,7 @@ func (r *postgresResultRepo) Create(result *domain.Result) (
 		result.Winner,
 		result.Rat1Aft,
 		result.Rat2Aft,
+		result.SessionId,
 	).Scan(&result.Id)
 	if err != nil {
 		return nil, handleErrors(err)
