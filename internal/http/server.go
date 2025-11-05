@@ -139,6 +139,24 @@ func (srv *Server) Run() error {
 	})
 	// **********           **********
 
+	// ********** C A M P A I G N  A P I **********
+	r.Route("/api/campaign", func(r chi.Router) {
+		// Get countdown to campaign end
+		r.Get("/countdown", srv.handler.handleCountdown)
+
+		// Get active campaign information
+		r.Get("/info", srv.handler.handleCampaignInfo)
+	})
+
+	r.Route("/api/leaderboard", func(r chi.Router) {
+		// Get global leaderboard across all categories
+		r.Get("/global", srv.handler.handleGlobalLeaderboard)
+
+		// Get class-specific global leaderboard
+		r.Get("/class/{classId}", srv.handler.handleClassLeaderboard)
+	})
+	// **********                **********
+
 	httpServer := &http.Server{
 		Addr:           fmt.Sprintf(":%d", srv.port),
 		Handler:        r,
