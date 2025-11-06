@@ -41,35 +41,48 @@ LOGGER_FORMAT=common
 LOGGER_LEVEL=info
 ```
 
-### Step 3: Run Migrations
+### Step 3: Start the Application (Migrations Run Automatically!)
 
 ```bash
-# Install golang-migrate if not already installed
-# macOS
-brew install golang-migrate
-
-# Linux
-curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-amd64.tar.gz | tar xvz
-sudo mv migrate /usr/local/bin/
-
-# Run migrations
-migrate -path migrations -database "postgresql://postgres:yourpassword@localhost:5432/torrons?sslmode=disable" up
-```
-
-### Step 4: Start the Application
-
-```bash
-# Run with makefile
+# The server now runs migrations automatically on startup!
 make run
 
 # Or run directly
 go run cmd/server/main.go
+
+# To skip automatic migrations (production use):
+go run cmd/server/main.go --skip-migrations
 ```
 
-### Step 5: Open in Browser
+**✨ NEW:** Migrations now run automatically on server startup! No manual migration step needed.
+
+### Step 4: Open in Browser
 
 ```
 http://localhost:3000
+```
+
+---
+
+## 📦 Migration Commands (Optional)
+
+If you need to run migrations manually:
+
+```bash
+# Run all pending migrations
+make migrate
+
+# Rollback last migration
+make migrate-down
+
+# Create a new migration
+make migrate-create
+
+# Check current version
+make migrate-version
+
+# See all available commands
+make help
 ```
 
 ---

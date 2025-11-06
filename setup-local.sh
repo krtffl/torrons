@@ -121,67 +121,13 @@ else
 fi
 
 echo ""
-
-# Install golang-migrate if needed
-echo "🔧 Checking migration tool..."
-if ! command -v migrate &> /dev/null; then
-    echo "Installing golang-migrate..."
-
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS
-        if command -v brew &> /dev/null; then
-            brew install golang-migrate
-        else
-            echo -e "${RED}❌ Homebrew not found${NC}"
-            echo "Install manually: https://github.com/golang-migrate/migrate/releases"
-            exit 1
-        fi
-    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        # Linux
-        curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-amd64.tar.gz | tar xvz
-        sudo mv migrate /usr/local/bin/ 2>/dev/null || mv migrate ~/bin/
-    else
-        echo -e "${RED}❌ Unsupported OS${NC}"
-        echo "Install manually: https://github.com/golang-migrate/migrate/releases"
-        exit 1
-    fi
-fi
-echo -e "${GREEN}✅ Migration tool ready${NC}"
-
-echo ""
-
-# Run migrations
-echo "🚀 Running database migrations..."
-MIGRATE_CMD="migrate -path migrations -database \"postgresql://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME?sslmode=disable\""
-
-if eval $MIGRATE_CMD up; then
-    echo -e "${GREEN}✅ Migrations completed${NC}"
-else
-    echo -e "${RED}❌ Migration failed${NC}"
-    exit 1
-fi
-
-# Verify data
-echo ""
-echo "🔍 Verifying data..."
-TORRON_COUNT=$(PGPASSWORD=$DB_PASSWORD psql -U $DB_USER -h localhost -d $DB_NAME -t -c 'SELECT COUNT(*) FROM "Torrons";' | xargs)
-CLASS_COUNT=$(PGPASSWORD=$DB_PASSWORD psql -U $DB_USER -h localhost -d $DB_NAME -t -c 'SELECT COUNT(*) FROM "Classes";' | xargs)
-
-echo "  - Classes: $CLASS_COUNT"
-echo "  - Torrons: $TORRON_COUNT"
-
-if [ "$TORRON_COUNT" -lt "50" ]; then
-    echo -e "${YELLOW}⚠️  Low torron count. Expected 100+${NC}"
-else
-    echo -e "${GREEN}✅ Data looks good${NC}"
-fi
-
-echo ""
 echo "================================="
 echo -e "${GREEN}🎉 Setup Complete!${NC}"
 echo ""
+echo -e "${YELLOW}✨ Note: Migrations now run automatically on server startup!${NC}"
+echo ""
 echo "Next steps:"
-echo "  1. Start the server:"
+echo "  1. Start the server (migrations will run automatically):"
 echo "     ${GREEN}make run${NC}"
 echo "     or"
 echo "     ${GREEN}go run cmd/server/main.go${NC}"
@@ -191,5 +137,10 @@ echo "     ${GREEN}http://localhost:3000${NC}"
 echo ""
 echo "  3. Test the features:"
 echo "     See LOCAL_TESTING_GUIDE.md for complete testing checklist"
+echo ""
+echo "Optional: Run migrations manually with:"
+echo "  ${GREEN}make migrate${NC}        - Run all pending migrations"
+echo "  ${GREEN}make migrate-down${NC}   - Rollback last migration"
+echo "  ${GREEN}make help${NC}           - See all available commands"
 echo ""
 echo "Happy testing! 🚀"
