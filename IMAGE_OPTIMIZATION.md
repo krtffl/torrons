@@ -1,5 +1,26 @@
 # Image Optimization Guide
 
+## Quick Start
+
+**Ready-to-use script provided!** Simply run:
+
+```bash
+./optimize-images.sh
+```
+
+This script will:
+- ✅ Automatically install ImageMagick if needed
+- ✅ Create a backup of original images
+- ✅ Optimize all PNG and JPG files
+- ✅ Resize to max 800x800px (preserves aspect ratio)
+- ✅ Compress with 85% quality
+- ✅ Strip metadata (EXIF, color profiles)
+- ✅ Show before/after size comparison
+
+**Note:** Image optimization is optional for launch. The app works perfectly with current images. This is purely a performance enhancement that can be done anytime.
+
+---
+
 ## Current Status
 
 The application has **20 images larger than 200KB**, with some exceeding 1MB. These should be optimized before production deployment for better performance.
