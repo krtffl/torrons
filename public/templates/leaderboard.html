@@ -157,7 +157,7 @@
         {{ end }}
         {{ if .RankChangeSymbol }}
         <span class="rank-change {{ if eq .RankChangeSymbol "↑" }}rank-up{{ else if eq .RankChangeSymbol "↓" }}rank-down{{ else if eq .RankChangeSymbol "NOU" }}rank-new{{ else }}rank-same{{ end }}">
-            {{ .RankChangeSymbol }}{{ if and (ne .RankChangeSymbol "—") (ne .RankChangeSymbol "NOU") }} {{ if gt .RankChange 0 }}{{ .RankChange }}{{ else }}{{ .RankChange | printf "%d" | replace "-" "" }}{{ end }}{{ end }}
+            {{ .RankChangeSymbol }}{{ if and (ne .RankChangeSymbol "—") (ne .RankChangeSymbol "NOU") (gt .RankChangeAbs 0) }} {{ .RankChangeAbs }}{{ end }}
         </span>
         {{ end }}
     </div>

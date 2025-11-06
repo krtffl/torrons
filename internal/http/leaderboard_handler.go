@@ -21,6 +21,7 @@ type LeaderboardEntry struct {
 	VoteCount        int     `json:"vote_count"`
 	RatingPercentage int     `json:"rating_percentage"` // For visual bar (0-100)
 	RankChange       int     // Positive = up, Negative = down, 0 = no change, 999 = new
+	RankChangeAbs    int     // Absolute value of rank change for display
 	RankChangeSymbol string  // "↑" or "↓" or "—" or "NEW"
 }
 
@@ -306,6 +307,13 @@ func (h *Handler) calculateRankChanges(r *http.Request, w http.ResponseWriter, e
 			change := prevRank - entries[i].Rank // Positive = moved up, negative = moved down
 			entries[i].RankChange = change
 
+			// Store absolute value for template display
+			if change < 0 {
+				entries[i].RankChangeAbs = -change
+			} else {
+				entries[i].RankChangeAbs = change
+			}
+
 			if change > 0 {
 				entries[i].RankChangeSymbol = "↑"
 			} else if change < 0 {
@@ -316,6 +324,7 @@ func (h *Handler) calculateRankChanges(r *http.Request, w http.ResponseWriter, e
 		} else {
 			// New entry (wasn't in previous rankings)
 			entries[i].RankChange = 999
+			entries[i].RankChangeAbs = 0
 			entries[i].RankChangeSymbol = "NOU"
 		}
 	}

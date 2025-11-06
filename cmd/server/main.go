@@ -61,7 +61,7 @@ func main() {
 func runMigrations(cfg *config.Config, migrationsPath string) error {
 	// Build database URL from config
 	dbURL := fmt.Sprintf(
-		"postgresql://%s:%s@%s:%s/%s?sslmode=%s",
+		"postgresql://%s:%s@%s:%d/%s?sslmode=%s",
 		cfg.Database.User,
 		cfg.Database.Password,
 		cfg.Database.Host,
