@@ -72,16 +72,18 @@ func (h *Handler) history(w http.ResponseWriter, r *http.Request) {
 
 	baseQuery := `
 		SELECT
+			t1."Id" as torron1_id,
 			t1."Name" as torron1_name,
 			t1."Image" as torron1_image,
+			t2."Id" as torron2_id,
 			t2."Name" as torron2_name,
 			t2."Image" as torron2_image,
-			r."WinnerId",
+			r."Winner",
 			r."Timestamp",
 			c."Name" as category_name,
 			c."Id" as category_id
 		FROM "Results" r
-		INNER JOIN "Pairings" p ON r."PairingId" = p."Id"
+		INNER JOIN "Pairings" p ON r."Pairing" = p."Id"
 		INNER JOIN "Torrons" t1 ON p."Torro1" = t1."Id"
 		INNER JOIN "Torrons" t2 ON p."Torro2" = t2."Id"
 		INNER JOIN "Classes" c ON p."Class" = c."Id"
@@ -109,10 +111,13 @@ func (h *Handler) history(w http.ResponseWriter, r *http.Request) {
 		var vote VoteHistory
 		var timestamp sql.NullTime
 		var categoryId string
+		var torron1Id, torron2Id string
 
 		err := rows.Scan(
+			&torron1Id,
 			&vote.Torron1Name,
 			&vote.Torron1Image,
+			&torron2Id,
 			&vote.Torron2Name,
 			&vote.Torron2Image,
 			&vote.WinnerId,
@@ -130,9 +135,9 @@ func (h *Handler) history(w http.ResponseWriter, r *http.Request) {
 			vote.TimeAgo = getTimeAgo(timestamp.Time)
 		}
 
-		// Set winner flags
-		vote.IsWinner1 = vote.WinnerId != "" && vote.Torron1Name != "" // WinnerId matches first torron
-		vote.IsWinner2 = !vote.IsWinner1
+		// Set winner flags by comparing winner ID with torron IDs
+		vote.IsWinner1 = vote.WinnerId == torron1Id
+		vote.IsWinner2 = vote.WinnerId == torron2Id
 
 		// Get category icon
 		vote.CategoryIcon = getCategoryIcon(categoryId)
