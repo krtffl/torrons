@@ -14,7 +14,10 @@
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Vota - Torrorèndum 2025</title>
   </head>
-  <body>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
       {{ template "header" . }}
       {{ template "topbar" . }}
       {{ template "progress" . }}
