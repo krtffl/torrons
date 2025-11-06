@@ -14,10 +14,15 @@
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Historial de votacions - Torrorèndum 2025</title>
   </head>
-  <body>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
       {{ template "header" . }}
       {{ template "topbar" . }}
-      {{ template "history" . }}
+      <div id="main-content">
+          {{ template "history" . }}
+      </div>
   </body>
 </html>
 {{ else }}
@@ -105,7 +110,7 @@
         <div class="empty-icon">🗳️</div>
         <div class="empty-message">Encara no has votat</div>
         <div class="empty-hint">Comença a votar per veure el teu historial</div>
-        <button class="btn mt-lg" hx-get="/classes" hx-trigger="click" hx-target="#history-container" hx-swap="outerHTML" hx-push-url="/classes">
+        <button class="btn mt-lg" hx-get="/classes" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/classes">
             Comença a votar
         </button>
     </div>
@@ -113,7 +118,7 @@
 
     <!-- Back button -->
     <div class="history-footer">
-        <button class="btn" hx-get="/stats" hx-trigger="click" hx-target="#history-container" hx-swap="outerHTML" hx-push-url="/stats">
+        <button class="btn" hx-get="/stats" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/stats">
             Torna a estadístiques
         </button>
     </div>

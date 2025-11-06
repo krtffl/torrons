@@ -91,7 +91,9 @@
       {{ template "header" . }}
       {{ template "topbar" . }}
 
-      {{ template "description" . }}
+      <div id="main-content">
+          {{ template "description" . }}
+      </div>
 
       <script>
       // Onboarding modal logic
@@ -181,12 +183,12 @@
 
 {{ define "topbar" }}
 <div id="topbar" role="navigation" aria-label="Navegació principal">
-    <img hx-get="/" hx-boost="true" hx-target="body" hx-push-url="/" src="/public/assets/logo.png" alt="Torrons Vicens Logo" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+    <img hx-get="/" hx-boost="true" hx-target="#main-content" hx-push-url="/" src="/public/assets/logo.png" alt="Torrons Vicens Logo" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
     <nav class="topbar-nav">
-        <a href="/stats" class="nav-link" hx-get="/stats" hx-boost="true" hx-target="body" hx-push-url="/stats" aria-label="Veure les teves estadístiques">Estadístiques</a>
-        <a href="/history" class="nav-link" hx-get="/history" hx-boost="true" hx-target="body" hx-push-url="/history" aria-label="Veure historial de vots">Historial</a>
-        <a href="/leaderboard" class="nav-link" hx-get="/leaderboard" hx-boost="true" hx-target="body" hx-push-url="/leaderboard" aria-label="Veure classificació de torrons">Classificació</a>
-        <a href="/classes" class="nav-link" hx-get="/classes" hx-boost="true" hx-target="body" hx-push-url="/classes" aria-label="Començar a votar">Vota</a>
+        <a href="/stats" class="nav-link" hx-get="/stats" hx-boost="true" hx-target="#main-content" hx-push-url="/stats" aria-label="Veure les teves estadístiques">Estadístiques</a>
+        <a href="/history" class="nav-link" hx-get="/history" hx-boost="true" hx-target="#main-content" hx-push-url="/history" aria-label="Veure historial de vots">Historial</a>
+        <a href="/leaderboard" class="nav-link" hx-get="/leaderboard" hx-boost="true" hx-target="#main-content" hx-push-url="/leaderboard" aria-label="Veure classificació de torrons">Classificació</a>
+        <a href="/classes" class="nav-link" hx-get="/classes" hx-boost="true" hx-target="#main-content" hx-push-url="/classes" aria-label="Començar a votar">Vota</a>
     </nav>
 </div>
 {{ end }}

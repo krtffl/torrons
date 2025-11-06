@@ -14,10 +14,15 @@
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Classificació - Torrorèndum 2025</title>
   </head>
-  <body>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
       {{ template "header" . }}
       {{ template "topbar" . }}
-      {{ template "leaderboard" . }}
+      <div id="main-content">
+          {{ template "leaderboard" . }}
+      </div>
   </body>
 </html>
 {{ else }}

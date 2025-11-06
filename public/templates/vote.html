@@ -20,8 +20,10 @@
 
       {{ template "header" . }}
       {{ template "topbar" . }}
-      {{ template "progress" . }}
-      {{ template "vote" . }}
+      <div id="main-content">
+          {{ template "progress" . }}
+          {{ template "vote" . }}
+      </div>
   </body>
 </html>
 {{ else }}

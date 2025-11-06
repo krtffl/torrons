@@ -14,10 +14,15 @@
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Les meves estadístiques - Torrorèndum 2025</title>
   </head>
-  <body>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
       {{ template "header" . }}
       {{ template "topbar" . }}
-      {{ template "stats" . }}
+      <div id="main-content">
+          {{ template "stats" . }}
+      </div>
   </body>
 </html>
 {{ else }}
@@ -76,12 +81,12 @@
             <div class="category-progress-footer">
                 {{ if .Unlocked }}
                 <span class="progress-status unlocked">✓ Resultats desbloquejats</span>
-                <a href="/leaderboard?view=personal&category={{ .Id }}" class="btn-small" hx-get="/leaderboard?view=personal&category={{ .Id }}" hx-boost="true" hx-target="body" hx-push-url="/leaderboard?view=personal&category={{ .Id }}">
+                <a href="/leaderboard?view=personal&category={{ .Id }}" class="btn-small" hx-get="/leaderboard?view=personal&category={{ .Id }}" hx-boost="true" hx-target="#main-content" hx-push-url="/leaderboard?view=personal&category={{ .Id }}">
                     Veure resultats
                 </a>
                 {{ else }}
                 <span class="progress-status locked">🔒 Necessites {{ .VotesRemaining }} vots més</span>
-                <a href="/classes/{{ .Id }}/vote" class="btn-small" hx-get="/classes/{{ .Id }}/vote" hx-boost="true" hx-target="body" hx-push-url="/classes/{{ .Id }}/vote">
+                <a href="/classes/{{ .Id }}/vote" class="btn-small" hx-get="/classes/{{ .Id }}/vote" hx-boost="true" hx-target="#main-content" hx-push-url="/classes/{{ .Id }}/vote">
                     Continua votant
                 </a>
                 {{ end }}
@@ -108,10 +113,10 @@
 
     <!-- Actions -->
     <div class="stats-footer">
-        <button class="btn" hx-get="/classes" hx-trigger="click" hx-target="#stats-container" hx-swap="outerHTML" hx-push-url="/classes">
+        <button class="btn" hx-get="/classes" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/classes">
             Torna a votar
         </button>
-        <a href="/leaderboard" class="btn" hx-get="/leaderboard" hx-boost="true" hx-target="body" hx-push-url="/leaderboard">
+        <a href="/leaderboard" class="btn" hx-get="/leaderboard" hx-boost="true" hx-target="#main-content" hx-push-url="/leaderboard">
             Veure classificació
         </a>
     </div>
