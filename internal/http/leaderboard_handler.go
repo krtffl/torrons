@@ -1,0 +1,345 @@
+package http
+
+import (
+	"encoding/json"
+	"fmt"
+	"math"
+	"net/http"
+	"net/url"
+
+	"github.com/krtffl/torro/internal/domain"
+	"github.com/krtffl/torro/internal/logger"
+)
+
+// LeaderboardEntry represents a single entry in the leaderboard display
+type LeaderboardEntry struct {
+	Rank             int     `json:"rank"`
+	TorronId         string  `json:"torron_id"`
+	TorronName       string  `json:"torron_name"`
+	TorronImage      string  `json:"torron_image"`
+	Rating           float64 `json:"rating"`
+	VoteCount        int     `json:"vote_count"`
+	RatingPercentage int     `json:"rating_percentage"` // For visual bar (0-100)
+	RankChange       int     // Positive = up, Negative = down, 0 = no change, 999 = new
+	RankChangeAbs    int     // Absolute value of rank change for display
+	RankChangeSymbol string  // "↑" or "↓" or "—" or "NEW"
+}
+
+// LeaderboardContent holds data for template rendering
+type LeaderboardContent struct {
+	HX                  bool
+	Title               string
+	ViewType            string // "personal" or "global"
+	SelectedCategory    string
+	ShowCategoryFilter  bool
+	Categories          []*domain.Class
+	Entries             []LeaderboardEntry
+	Error               string
+	MinVotes            int
+	ShareText           string // URL-encoded text for social sharing
+	ShareUrl            string // URL to share
+}
+
+// leaderboard handles the main leaderboard page with view and category selection
+func (h *Handler) leaderboard(w http.ResponseWriter, r *http.Request) {
+	logger.Info("[Handler - Leaderboard] Incoming request")
+
+	// Get query parameters
+	viewType := r.URL.Query().Get("view")
+	if viewType == "" {
+		viewType = "personal" // Default to personal view
+	}
+
+	category := r.URL.Query().Get("category")
+	if category == "" {
+		category = "global" // Default to global category
+	}
+
+	userId := GetUserIDFromContext(r.Context())
+	if userId == "" {
+		logger.Error("[Handler - Leaderboard] No user ID in context")
+		http.Error(w, "User not found", http.StatusUnauthorized)
+		return
+	}
+
+	// Get all classes for category selector
+	classes, err := h.classRepo.List(r.Context())
+	if err != nil {
+		logger.Error("[Handler - Leaderboard] Couldn't list classes. %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	var entries []LeaderboardEntry
+	var errorMsg string
+	var minVotes int
+	var title string
+
+	// Fetch data based on view type
+	if viewType == "personal" {
+		entries, errorMsg, minVotes = h.fetchPersonalLeaderboard(r, userId, category)
+		if category == "global" {
+			title = "Els meus resultats - Global"
+		} else {
+			className := h.getClassName(classes, category)
+			title = fmt.Sprintf("Els meus resultats - %s", className)
+		}
+	} else {
+		entries, errorMsg = h.fetchGlobalLeaderboard(r, category)
+		if category == "global" {
+			title = "Resultats globals - Millor torró absolut"
+		} else {
+			className := h.getClassName(classes, category)
+			title = fmt.Sprintf("Resultats globals - %s", className)
+		}
+	}
+
+	// Track rank changes (only for personal view with entries)
+	if viewType == "personal" && len(entries) > 0 {
+		entries = h.calculateRankChanges(r, w, entries, category)
+	}
+
+	// Calculate rating percentages for visual bars
+	if len(entries) > 0 {
+		maxRating := entries[0].Rating // Assuming sorted by rating desc
+		minRating := entries[len(entries)-1].Rating
+		ratingRange := maxRating - minRating
+
+		for i := range entries {
+			if ratingRange > 0 {
+				normalized := (entries[i].Rating - minRating) / ratingRange
+				entries[i].RatingPercentage = int(math.Max(10, normalized*100)) // Min 10% for visibility
+			} else {
+				entries[i].RatingPercentage = 100 // All same rating
+			}
+		}
+	}
+
+	// Generate share content (for personal view with results)
+	shareText := ""
+	shareUrl := "https://torro.cat" // Default to homepage
+	if viewType == "personal" && len(entries) > 0 {
+		shareText = h.generateShareText(entries, category)
+		shareUrl = fmt.Sprintf("https://torro.cat/leaderboard?view=personal&category=%s", category)
+	}
+
+	content := LeaderboardContent{
+		HX:                 isHX(r),
+		Title:              title,
+		ViewType:           viewType,
+		SelectedCategory:   category,
+		ShowCategoryFilter: true,
+		Categories:         classes,
+		Entries:            entries,
+		Error:              errorMsg,
+		MinVotes:           minVotes,
+		ShareText:          url.QueryEscape(shareText),
+		ShareUrl:           url.QueryEscape(shareUrl),
+	}
+
+	buf := h.bpool.Get()
+	defer h.bpool.Put(buf)
+
+	if err := h.template.ExecuteTemplate(buf, "leaderboard.html", content); err != nil {
+		logger.Error("[Handler - Leaderboard] Couldn't execute template. %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	buf.WriteTo(w)
+}
+
+// fetchPersonalLeaderboard gets personalized rankings for a user
+func (h *Handler) fetchPersonalLeaderboard(r *http.Request, userId, category string) ([]LeaderboardEntry, string, int) {
+	minVotes := getMinVotesForClass(category)
+
+	// Check if user has enough votes
+	var voteCount int
+	var err error
+	if category == "global" {
+		// For global, check total vote count
+		user, err := h.userRepo.Get(r.Context(), userId)
+		if err != nil {
+			logger.Error("[Handler - Leaderboard] Couldn't get user. %v", err)
+			return nil, "Error al carregar els resultats", 0
+		}
+		voteCount = user.VoteCount
+	} else {
+		// For specific class, check class vote count
+		voteCount, err = h.userRepo.GetVoteCountForClass(r.Context(), userId, category)
+		if err != nil {
+			logger.Error("[Handler - Leaderboard] Couldn't get vote count. %v", err)
+			return nil, "Error al carregar els resultats", 0
+		}
+	}
+
+	if voteCount < minVotes {
+		return nil, fmt.Sprintf("No tens prou vots per veure els resultats personalitzats"), minVotes
+	}
+
+	// Fetch personalized leaderboard
+	var apiEntries []*domain.UserLeaderboardEntry
+	if category == "global" {
+		apiEntries, err = h.userEloRepo.GetUserGlobalLeaderboard(r.Context(), userId)
+	} else {
+		apiEntries, err = h.userEloRepo.GetUserLeaderboard(r.Context(), userId, category)
+	}
+
+	if err != nil {
+		logger.Error("[Handler - Leaderboard] Couldn't fetch personal leaderboard. %v", err)
+		return nil, "Error al carregar els resultats", 0
+	}
+
+	// Convert to display format
+	entries := make([]LeaderboardEntry, len(apiEntries))
+	for i, entry := range apiEntries {
+		entries[i] = LeaderboardEntry{
+			Rank:        entry.Rank,
+			TorronId:    entry.TorronId,
+			TorronName:  entry.TorronName,
+			TorronImage: entry.TorronImage,
+			Rating:      entry.Rating,
+			VoteCount:   entry.VoteCount,
+		}
+	}
+
+	return entries, "", 0
+}
+
+// fetchGlobalLeaderboard gets community-wide rankings
+func (h *Handler) fetchGlobalLeaderboard(r *http.Request, category string) ([]LeaderboardEntry, string) {
+	// Fetch global leaderboard via torron repository
+	var torrons []*domain.Torro
+	var err error
+
+	if category == "global" {
+		// Get all torrons sorted by rating
+		torrons, err = h.torroRepo.List(r.Context())
+	} else {
+		// Get torrons for specific class sorted by rating
+		torrons, err = h.torroRepo.ListByClass(r.Context(), category)
+	}
+
+	if err != nil {
+		logger.Error("[Handler - Leaderboard] Couldn't fetch torrons. %v", err)
+		return nil, "Error al carregar els resultats"
+	}
+
+	// Convert to display format
+	entries := make([]LeaderboardEntry, 0, len(torrons))
+	rank := 1
+	for _, torron := range torrons {
+		// Skip discontinued products
+		if torron.Discontinued {
+			continue
+		}
+
+		entries = append(entries, LeaderboardEntry{
+			Rank:        rank,
+			TorronId:    torron.Id,
+			TorronName:  torron.Name,
+			TorronImage: torron.Image,
+			Rating:      torron.Rating,
+			VoteCount:   0, // Global view doesn't show per-user vote counts
+		})
+		rank++
+
+		// Limit to top 100
+		if rank > 100 {
+			break
+		}
+	}
+
+	return entries, ""
+}
+
+// getClassName is a helper to get class name by ID
+func (h *Handler) getClassName(classes []*domain.Class, classId string) string {
+	for _, class := range classes {
+		if class.Id == classId {
+			return class.Name
+		}
+	}
+	return "Desconegut"
+}
+
+// generateShareText creates a shareable message with top torrons
+func (h *Handler) generateShareText(entries []LeaderboardEntry, category string) string {
+	if len(entries) == 0 {
+		return "He votat al Torrorèndum 2025! Descobreix quin és el millor torró de Torrons Vicens"
+	}
+
+	// Build message with top 3 torrons
+	message := "Els meus torrons favorits al Torrorèndum 2025:\n"
+	limit := 3
+	if len(entries) < 3 {
+		limit = len(entries)
+	}
+
+	medals := []string{"🥇", "🥈", "🥉"}
+	for i := 0; i < limit; i++ {
+		message += fmt.Sprintf("%s %s\n", medals[i], entries[i].TorronName)
+	}
+
+	message += "\nVota els teus favorits!"
+	return message
+}
+
+// calculateRankChanges compares current ranks with previous visit and updates entries
+func (h *Handler) calculateRankChanges(r *http.Request, w http.ResponseWriter, entries []LeaderboardEntry, category string) []LeaderboardEntry {
+	cookieName := fmt.Sprintf("ranks_%s", category)
+
+	// Read previous ranks from cookie
+	previousRanks := make(map[string]int)
+	if cookie, err := r.Cookie(cookieName); err == nil && cookie.Value != "" {
+		decodedValue, _ := url.QueryUnescape(cookie.Value)
+		json.Unmarshal([]byte(decodedValue), &previousRanks)
+	}
+
+	// Create new ranks map for storing
+	currentRanks := make(map[string]int)
+
+	// Calculate changes and update entries
+	for i := range entries {
+		currentRanks[entries[i].TorronId] = entries[i].Rank
+
+		if prevRank, exists := previousRanks[entries[i].TorronId]; exists {
+			change := prevRank - entries[i].Rank // Positive = moved up, negative = moved down
+			entries[i].RankChange = change
+
+			// Store absolute value for template display
+			if change < 0 {
+				entries[i].RankChangeAbs = -change
+			} else {
+				entries[i].RankChangeAbs = change
+			}
+
+			if change > 0 {
+				entries[i].RankChangeSymbol = "↑"
+			} else if change < 0 {
+				entries[i].RankChangeSymbol = "↓"
+			} else {
+				entries[i].RankChangeSymbol = "—"
+			}
+		} else {
+			// New entry (wasn't in previous rankings)
+			entries[i].RankChange = 999
+			entries[i].RankChangeAbs = 0
+			entries[i].RankChangeSymbol = "NOU"
+		}
+	}
+
+	// Store current ranks in cookie for next visit
+	ranksJSON, _ := json.Marshal(currentRanks)
+	http.SetCookie(w, &http.Cookie{
+		Name:     cookieName,
+		Value:    url.QueryEscape(string(ranksJSON)),
+		Path:     "/",
+		MaxAge:   30 * 24 * 60 * 60, // 30 days
+		HttpOnly: true,
+		Secure:   r.TLS != nil,
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	return entries
+}

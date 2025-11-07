@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/krtffl/torro/internal/domain"
+	"github.com/lib/pq"
 )
 
 type postgresTorroRepo struct {
@@ -112,7 +113,11 @@ func (r *postgresTorroRepo) Update(ctx context.Context, id string, rating float6
         UPDATE "Torrons" SET
         "Rating" = $2
         WHERE "Id" = $1
-        RETURNING *`,
+        RETURNING "Id", "Name", "Rating", "Image", "Class",
+                  "Description", "Weight", "Price", "ProductUrl",
+                  "Allergens", "MainIngredients",
+                  "IsVegan", "IsGlutenFree", "IsLactoseFree", "IsOrganic",
+                  "IntensityLevel", "IsNew2025", "Discontinued", "YearAdded"`,
 		id,
 		rating,
 	).Scan(
@@ -121,6 +126,20 @@ func (r *postgresTorroRepo) Update(ctx context.Context, id string, rating float6
 		&updatedTorro.Rating,
 		&updatedTorro.Image,
 		&updatedTorro.Class,
+		&updatedTorro.Description,
+		&updatedTorro.Weight,
+		&updatedTorro.Price,
+		&updatedTorro.ProductUrl,
+		pq.Array(&updatedTorro.Allergens),
+		pq.Array(&updatedTorro.MainIngredients),
+		&updatedTorro.IsVegan,
+		&updatedTorro.IsGlutenFree,
+		&updatedTorro.IsLactoseFree,
+		&updatedTorro.IsOrganic,
+		&updatedTorro.IntensityLevel,
+		&updatedTorro.IsNew2025,
+		&updatedTorro.Discontinued,
+		&updatedTorro.YearAdded,
 	)
 	if err != nil {
 		return nil, handleErrors(err)
@@ -161,7 +180,11 @@ func (r *postgresTorroRepo) UpdateTx(tx *sql.Tx, ctx context.Context, id string,
         UPDATE "Torrons" SET
         "Rating" = $2
         WHERE "Id" = $1
-        RETURNING *`,
+        RETURNING "Id", "Name", "Rating", "Image", "Class",
+                  "Description", "Weight", "Price", "ProductUrl",
+                  "Allergens", "MainIngredients",
+                  "IsVegan", "IsGlutenFree", "IsLactoseFree", "IsOrganic",
+                  "IntensityLevel", "IsNew2025", "Discontinued", "YearAdded"`,
 		id,
 		rating,
 	).Scan(
@@ -170,6 +193,20 @@ func (r *postgresTorroRepo) UpdateTx(tx *sql.Tx, ctx context.Context, id string,
 		&updatedTorro.Rating,
 		&updatedTorro.Image,
 		&updatedTorro.Class,
+		&updatedTorro.Description,
+		&updatedTorro.Weight,
+		&updatedTorro.Price,
+		&updatedTorro.ProductUrl,
+		pq.Array(&updatedTorro.Allergens),
+		pq.Array(&updatedTorro.MainIngredients),
+		&updatedTorro.IsVegan,
+		&updatedTorro.IsGlutenFree,
+		&updatedTorro.IsLactoseFree,
+		&updatedTorro.IsOrganic,
+		&updatedTorro.IntensityLevel,
+		&updatedTorro.IsNew2025,
+		&updatedTorro.Discontinued,
+		&updatedTorro.YearAdded,
 	)
 	if err != nil {
 		return nil, handleErrors(err)

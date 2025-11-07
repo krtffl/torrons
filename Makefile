@@ -15,6 +15,16 @@ GO_LDFLAGS ?= -X github.com/krtffl/torrons/internal/version.Version=$(VERSION) \
 BUILD_DIR=build
 DIST_DIR=out
 
+# Load environment variables from .env if it exists
+ifneq (,$(wildcard ./.env))
+    include .env
+    export
+endif
+
+# Database connection string
+DB_URL := postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=$(DB_SSL_MODE)
+
+.PHONY: run build dist dist-arm64 clean migrate migrate-up migrate-down migrate-create migrate-version help
 
 run:
 	go run cmd/server/main.go
@@ -33,4 +43,39 @@ dist-arm64: clean
 clean:
 	@rm -rf ./${BUILD_DIR} ./${DIST_DIR}
 
+# Migration commands
+migrate: migrate-up
 
+migrate-up:
+	@echo "Running migrations..."
+	@migrate -path migrations -database "$(DB_URL)" up
+
+migrate-down:
+	@echo "Rolling back last migration..."
+	@migrate -path migrations -database "$(DB_URL)" down 1
+
+migrate-create:
+	@read -p "Enter migration name: " name; \
+	migrate create -ext sql -dir migrations -seq $$name
+
+migrate-version:
+	@migrate -path migrations -database "$(DB_URL)" version
+
+migrate-force:
+	@read -p "Enter version to force: " version; \
+	migrate -path migrations -database "$(DB_URL)" force $$version
+
+# Help command
+help:
+	@echo "Available commands:"
+	@echo "  make run              - Run the application"
+	@echo "  make build            - Build the application"
+	@echo "  make dist             - Build production binary"
+	@echo "  make migrate          - Run all pending migrations (alias for migrate-up)"
+	@echo "  make migrate-up       - Run all pending migrations"
+	@echo "  make migrate-down     - Rollback last migration"
+	@echo "  make migrate-create   - Create a new migration file"
+	@echo "  make migrate-version  - Show current migration version"
+	@echo "  make migrate-force    - Force migration to specific version (use with caution)"
+	@echo "  make clean            - Clean build artifacts"
+	@echo "  make help             - Show this help message"

@@ -1,0 +1,126 @@
+{{ if not .HX }}
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="El teu historial de votacions - Torrorèndum 2025">
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <title>Historial de votacions - Torrorèndum 2025</title>
+  </head>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
+      {{ template "header" . }}
+      {{ template "topbar" . }}
+      <div id="main-content">
+          {{ template "history" . }}
+      </div>
+  </body>
+</html>
+{{ else }}
+      {{ template "history" . }}
+{{ end }}
+
+{{ define "history" }}
+<div id="history-container">
+    <div class="history-header">
+        <h1 class="history-title">Historial de votacions</h1>
+        <p class="history-subtitle">Les teves últimes comparacions</p>
+    </div>
+
+    {{ if .Votes }}
+    <!-- Filter by category -->
+    <div class="history-filters">
+        <button class="filter-btn {{ if eq .FilterCategory "all" }}active{{ end }}"
+                hx-get="/history?category=all"
+                hx-trigger="click"
+                hx-target="#history-container"
+                hx-swap="outerHTML"
+                hx-push-url="/history?category=all">
+            Totes
+        </button>
+        {{ range .Categories }}
+        <button class="filter-btn {{ if eq $.FilterCategory .Id }}active{{ end }}"
+                hx-get="/history?category={{ .Id }}"
+                hx-trigger="click"
+                hx-target="#history-container"
+                hx-swap="outerHTML"
+                hx-push-url="/history?category={{ .Id }}">
+            {{ .Icon }} {{ .Name }}
+        </button>
+        {{ end }}
+    </div>
+
+    <!-- Vote history list -->
+    <div class="history-list">
+        {{ range .Votes }}
+        <div class="history-item">
+            <div class="history-timestamp">
+                {{ .TimeAgo }}
+            </div>
+            <div class="history-comparison">
+                <div class="history-torron {{ if .IsWinner1 }}winner{{ else }}loser{{ end }}">
+                    <img src="/public/images/{{ .Torron1Image }}" alt="{{ .Torron1Name }}" class="history-torron-img">
+                    <div class="history-torron-info">
+                        <div class="history-torron-name">{{ .Torron1Name }}</div>
+                        {{ if .IsWinner1 }}<div class="winner-badge">✓ Escollit</div>{{ end }}
+                    </div>
+                </div>
+                <div class="history-vs">VS</div>
+                <div class="history-torron {{ if .IsWinner2 }}winner{{ else }}loser{{ end }}">
+                    <img src="/public/images/{{ .Torron2Image }}" alt="{{ .Torron2Name }}" class="history-torron-img">
+                    <div class="history-torron-info">
+                        <div class="history-torron-name">{{ .Torron2Name }}</div>
+                        {{ if .IsWinner2 }}<div class="winner-badge">✓ Escollit</div>{{ end }}
+                    </div>
+                </div>
+            </div>
+            <div class="history-category">
+                <span class="category-badge">{{ .CategoryIcon }} {{ .CategoryName }}</span>
+            </div>
+        </div>
+        {{ end }}
+    </div>
+
+    <!-- Load more -->
+    {{ if .HasMore }}
+    <div class="history-load-more">
+        <button class="btn"
+                hx-get="/history?category={{ .FilterCategory }}&offset={{ .NextOffset }}"
+                hx-trigger="click"
+                hx-target=".history-list"
+                hx-swap="beforeend"
+                hx-select=".history-item">
+            Carregar més
+        </button>
+    </div>
+    {{ end }}
+
+    {{ else }}
+    <!-- Empty state -->
+    <div class="history-empty">
+        <div class="empty-icon">🗳️</div>
+        <div class="empty-message">Encara no has votat</div>
+        <div class="empty-hint">Comença a votar per veure el teu historial</div>
+        <button class="btn mt-lg" hx-get="/classes" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/classes">
+            Comença a votar
+        </button>
+    </div>
+    {{ end }}
+
+    <!-- Back button -->
+    <div class="history-footer">
+        <button class="btn" hx-get="/stats" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/stats">
+            Torna a estadístiques
+        </button>
+    </div>
+</div>
+{{ end }}

@@ -4,35 +4,26 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Vota el teu torró Vicens favorit 2025">
     <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
-    <title>TURRORÈNDUM 2023</title>
-    <style>
-        body {
-            font-family: 'Montserrat-Regular', sans-serif;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100vh;
-        }
-        #vote {
-            flex-direction: column;
-            margin: 15px auto;
-        }
-        @media screen and (min-width:  1024px) {
-            #vote{
-                flex-direction: row;
-                height: 55vh;
-            }
-        }
-    </style>
+    <title>Vota - Torrorèndum 2025</title>
   </head>
-  <body>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
       {{ template "header" . }}
       {{ template "topbar" . }}
-      {{ template "progress" . }}
-      {{ template "vote" . }}
+      <div id="main-content">
+          {{ template "progress" . }}
+          {{ template "vote" . }}
+      </div>
   </body>
 </html>
 {{ else }}
@@ -41,28 +32,40 @@
 {{ end }}
 
 {{ define "vote" }}
-<div id="vote" style="display: flex; align-items: center; justify-content: center; gap: 25px;">
-    {{ range .Torrons }}
-            {{ template "torro" . }}
-    {{ end }}
-{{ end }}
+<!-- Hidden instructions for screen readers -->
+<div id="voting-instructions" class="sr-only">
+    Escull un dels dos torrons fent clic o prement Enter. També pots usar Tab per navegar entre opcions.
 </div>
+<div class="torron-comparison" role="group" aria-label="Comparació de torrons">
+    {{ range .Torrons }}
+        {{ template "torro" . }}
+    {{ end }}
+</div>
+{{ end }}
 
 {{ define "torro" }}
-<div style="width: 300px; cursor: pointer; padding: 15px; box-shadow: 0 4px 8px rgba(78, 0, 17, 0.4); border-radius: 10px; transition: box-shadow 0.25s ease-in;" onclick="updateProgress(event);this.style.boxShadow='0 20px 40px rgba(24, 97, 55, 0.9)'" hx-post="/pairings/{{ .Pairing }}/vote?id={{ .Id }}" hx-trigger="click delay:0.2s" hx-target="#vote" hx-swap="outerHTML">
-    <div style="text-align: center ; margin: 5px;">
-       {{ .Name  }}
-   </div> 
-   <div>
-        <img style="margin: 20px; width: 250px;" src="/public/images/{{ .Image }}" alt="">
-   </div>
+<div class="torron-card"
+     onclick="updateProgress(event);"
+     onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"
+     hx-post="/pairings/{{ .Pairing }}/vote?id={{ .Id }}"
+     hx-trigger="click delay:0.2s"
+     hx-target=".torron-comparison"
+     hx-swap="outerHTML"
+     tabindex="0"
+     role="button"
+     aria-label="Vota per {{ .Name }}"
+     aria-describedby="voting-instructions">
+    <div class="torron-name">
+       {{ .Name }}
+    </div>
+    <img class="torron-image" src="/public/images/{{ .Image }}" alt="{{ .Name }} - Torrons Vicens">
 </div>
 {{ end }}
 
 {{ define "progress" }}
-<div id="progress" style="display: flex; align-items: center; justify-content: center;">
-    <div style="height: 15px; margin: 20px; overflow: hidden; background-color: #f5f5f5; border-radius: 4px; box-shadow: inset 0 1px 2px rgba(0,0,0,.1); width: 75%;">
-        <div id="progress-bar" style="float: left; width: 0%; height: 100%; font-size: 12px; line-height: 20px; text-align: center; background-color: #186137; -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15); box-shadow: inset 0 -1px 0 rgba(0,0,0,.15); -webkit-transition: width .6s ease; -o-transition: width .6s ease; transition: width .6s ease;"></div>
+<div id="progress">
+    <div class="progress-container">
+        <div id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
 </div>
 
@@ -72,8 +75,9 @@
         var currentWidth = parseFloat(progressBar.style.width) || 0;
 
         if (currentWidth < 100) {
-            var newWidth = Math.min(currentWidth + 5, 100); 
+            var newWidth = Math.min(currentWidth + 5, 100);
             progressBar.style.width = newWidth + "%";
+            progressBar.setAttribute('aria-valuenow', newWidth);
         }
     }
 </script>

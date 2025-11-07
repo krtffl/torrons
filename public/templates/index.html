@@ -3,64 +3,249 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="public/icons/favicon.ico" type="image/x-icon">
+
+    <!-- Primary Meta Tags -->
+    <title>Torrorèndum 2025 - Vota el millor torró | Torrons Vicens</title>
+    <meta name="title" content="Torrorèndum 2025 - Vota el millor torró | Torrons Vicens">
+    <meta name="description" content="Participa al Torrorèndum 2025! Vota i escull els teus torrons favorits de Torrons Vicens. Compara, vota i descobreix els millors torrons amb el teu ranking personalitzat.">
+    <meta name="keywords" content="torrons, torró, Torrons Vicens, votació, Nadal, torrons artesans, torrorèndum, millor torró, torrons 2025">
+    <meta name="author" content="Torrons Vicens">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://torro.cat">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://torro.cat/">
+    <meta property="og:title" content="Torrorèndum 2025 - Vota el millor torró | Torrons Vicens">
+    <meta property="og:description" content="Participa al Torrorèndum 2025! Vota i escull els teus torrons favorits de Torrons Vicens amb el teu ranking personalitzat.">
+    <meta property="og:image" content="https://torro.cat/public/assets/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="ca_ES">
+    <meta property="og:site_name" content="Torrorèndum 2025">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://torro.cat/">
+    <meta property="twitter:title" content="Torrorèndum 2025 - Vota el millor torró">
+    <meta property="twitter:description" content="Participa al Torrorèndum 2025! Vota els teus torrons favorits de Torrons Vicens.">
+    <meta property="twitter:image" content="https://torro.cat/public/assets/og-image.jpg">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#8B1538">
+    <meta name="msapplication-TileColor" content="#8B1538">
+
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
-    <title>TORRORÈNDUM 2023</title>
-    <style>
-        body {
-            font-family: 'Montserrat-Regular', sans-serif;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100vh;
-        }
-    </style>
   </head>
-  <body>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
+      <!-- Toast notification container -->
+      <div id="toast-container"></div>
+
+      <!-- Onboarding modal -->
+      <div id="onboarding-modal" class="modal">
+          <div class="modal-overlay" onclick="closeOnboarding()"></div>
+          <div class="modal-content">
+              <button class="modal-close" onclick="closeOnboarding()">&times;</button>
+              <h2 class="modal-title">Benvingut al Torrorèndum 2025!</h2>
+              <p class="modal-subtitle">Ajuda'ns a trobar els millors torrons de Torrons Vicens</p>
+
+              <div class="onboarding-steps">
+                  <div class="onboarding-step">
+                      <div class="step-icon">1️⃣</div>
+                      <h3>Escull una categoria</h3>
+                      <p>Tria entre Clàssics, Novetats, Xocolata, Albert Adrià o vota tots els torrons</p>
+                  </div>
+
+                  <div class="onboarding-step">
+                      <div class="step-icon">2️⃣</div>
+                      <h3>Compara dos torrons</h3>
+                      <p>Veuràs dues opcions. Escull la que més t'agradi o salta si no els coneixes</p>
+                  </div>
+
+                  <div class="onboarding-step">
+                      <div class="step-icon">3️⃣</div>
+                      <h3>Vota moltes vegades</h3>
+                      <p>Quants més vots facis, més precisa serà la teva classificació personalitzada</p>
+                  </div>
+
+                  <div class="onboarding-step">
+                      <div class="step-icon">4️⃣</div>
+                      <h3>Desbloqueja resultats</h3>
+                      <p>Fes 5 vots per categoria per veure els teus resultats. Els resultats globals es revelaran el 6 de gener!</p>
+                  </div>
+              </div>
+
+              <button class="btn btn-large" onclick="closeOnboarding()">Comença a votar!</button>
+          </div>
+      </div>
+
       {{ template "header" . }}
       {{ template "topbar" . }}
-      
-      {{ template "description" . }}
 
+      <div id="main-content">
+          {{ template "description" . }}
+      </div>
+
+      <script>
+      // Onboarding modal logic
+      function closeOnboarding() {
+          const modal = document.getElementById('onboarding-modal');
+          modal.classList.remove('modal-show');
+
+          // Set cookie to remember user has seen onboarding
+          document.cookie = 'onboarding_seen=true; path=/; max-age=31536000; SameSite=Lax';
+      }
+
+      // Show modal on first visit
+      function checkOnboarding() {
+          const hasSeenOnboarding = document.cookie.split('; ').find(row => row.startsWith('onboarding_seen='));
+
+          if (!hasSeenOnboarding) {
+              setTimeout(() => {
+                  const modal = document.getElementById('onboarding-modal');
+                  modal.classList.add('modal-show');
+              }, 500); // Small delay for better UX
+          }
+      }
+
+      // Toast notification system
+      function showToast(message, type = 'success', icon = '🎉') {
+          const container = document.getElementById('toast-container');
+          const toast = document.createElement('div');
+          toast.className = `toast toast-${type}`;
+          toast.innerHTML = `
+              <span class="toast-icon">${icon}</span>
+              <span class="toast-message">${message}</span>
+          `;
+
+          container.appendChild(toast);
+
+          // Trigger animation
+          setTimeout(() => toast.classList.add('toast-show'), 10);
+
+          // Auto-remove after 4 seconds
+          setTimeout(() => {
+              toast.classList.remove('toast-show');
+              setTimeout(() => toast.remove(), 300);
+          }, 4000);
+      }
+
+      // Achievement milestones to track
+      const achievementMilestones = {
+          1: { message: "Primer vot! Continua així!", icon: "🎯" },
+          5: { message: "5 vots! Has desbloqueejat els resultats d'aquesta categoria!", icon: "🔓" },
+          10: { message: "10 vots! Torronaire entusiasta!", icon: "⭐" },
+          25: { message: "25 vots! Ets un expert en torrons!", icon: "🏆" },
+          50: { message: "50 vots! Mestre torronaire!", icon: "👑" },
+          100: { message: "100 vots! Llegenda del torró!", icon: "🌟" }
+      };
+
+      // Check for achievements after voting
+      document.body.addEventListener('htmx:afterSwap', function(evt) {
+          // Check if this was a vote submission
+          if (evt.detail.pathInfo.requestPath.includes('/api/vote/submit')) {
+              // Get current vote count from localStorage or estimate
+              let voteCount = parseInt(localStorage.getItem('vote_count') || '0') + 1;
+              localStorage.setItem('vote_count', voteCount);
+
+              // Check for milestone achievement
+              if (achievementMilestones[voteCount]) {
+                  const achievement = achievementMilestones[voteCount];
+                  setTimeout(() => {
+                      showToast(achievement.message, 'achievement', achievement.icon);
+                  }, 500);
+              }
+          }
+      });
+
+      // Run on page load
+      window.addEventListener('DOMContentLoaded', checkOnboarding);
+      </script>
 
   </body>
 </html>
 
 {{ define "header" }}
-<div id="header" style="background-color: #4E0011; display: flex; align-items: center; justify-content: center;">
-    <p hx-get="/" hx-boost="true" hx-target="body" hx-push-url="/" style="color: #FFFFFF; font-size: 14px; line-height: 20px; cursor: pointer;">torrorèndum 2023 - vota i escull el millor torró torró</p>
+<div id="header">
+    <p hx-get="/" hx-boost="true" hx-target="body" hx-push-url="/">torrorèndum 2025 - vota i escull el millor torró</p>
 </div>
 {{ end }}
 
 
 {{ define "topbar" }}
-<div id="topbar" style="display: flex; align-items: center; justify-content: center; box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);">
-    <img hx-get="/" hx-boost="true" hx-target="body" hx-push-url="/" style="margin: 20px; width: 80px; cursor: pointer;" src="/public/assets/logo.png" alt="">
+<div id="topbar" role="navigation" aria-label="Navegació principal">
+    <img hx-get="/" hx-boost="true" hx-target="#main-content" hx-push-url="/" src="/public/assets/logo.png" alt="Torrons Vicens Logo" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+    <nav class="topbar-nav">
+        <a href="/stats" class="nav-link" hx-get="/stats" hx-boost="true" hx-target="#main-content" hx-push-url="/stats" aria-label="Veure les teves estadístiques">Estadístiques</a>
+        <a href="/history" class="nav-link" hx-get="/history" hx-boost="true" hx-target="#main-content" hx-push-url="/history" aria-label="Veure historial de vots">Historial</a>
+        <a href="/leaderboard" class="nav-link" hx-get="/leaderboard" hx-boost="true" hx-target="#main-content" hx-push-url="/leaderboard" aria-label="Veure classificació de torrons">Classificació</a>
+        <a href="/classes" class="nav-link" hx-get="/classes" hx-boost="true" hx-target="#main-content" hx-push-url="/classes" aria-label="Començar a votar">Vota</a>
+    </nav>
 </div>
 {{ end }}
 
 
 {{ define "description" }}
-<div id="description" style="display: flex; align-items: center; justify-content: center; margin: 10px auto; height: 60vh; padding: 10px; flex-direction: column; max-width: 650px;">
-    <div style="text-align: center; font-weight: lighter; margin: 10px; font-size: 1.5rem;">
-        TORRORÈNDUM 2023
+<div id="description">
+    <div class="title">
+        TORRORÈNDUM 2025
     </div>
-    <div style="text-align: center; font-weight: bold; margin: 10px;">
-        Quin és el millor torró de l'any 2023?
+
+    <!-- Countdown Widget -->
+    <div id="countdown-widget"
+         hx-get="/api/campaign/countdown/widget"
+         hx-trigger="load, every 60s"
+         hx-swap="innerHTML">
+        <div class="loading"></div>
     </div>
-    <div style="text-align: justify; margin: 15px; font-weight: lighter;">
-      Escull de manera definitiva quin és el millor torró torró de l'any 2023.
-      N'hi ha tants (més de 100!) que s'han hagut de dividir en categories. 
-      En escollir una categoria se't mostraran de manera aleatòria dos torrons Vicens, i has d'indicar quin dels dos és millor per tu.
-       Pots votar tants cops com vulguis, però és recomanable que ho votis un mínim de 25 vegades per garantir uns bons resultats.
+
+    <div class="subtitle">
+        Quin és el millor torró de l'any 2025?
     </div>
-    <div style="font-weight: bold; font-size: 0.8rem;">
+
+    <!-- How it works -->
+    <div class="how-it-works">
+        <div class="how-it-works-step">
+            <span class="step-number">1</span>
+            <span class="step-text">Escull una categoria</span>
+        </div>
+        <div class="how-it-works-step">
+            <span class="step-number">2</span>
+            <span class="step-text">Compara dos torrons</span>
+        </div>
+        <div class="how-it-works-step">
+            <span class="step-number">3</span>
+            <span class="step-text">Vota pel teu favorit</span>
+        </div>
+        <div class="how-it-works-step">
+            <span class="step-number">4</span>
+            <span class="step-text">Descobreix els resultats</span>
+        </div>
+    </div>
+
+    <div class="description-text">
+      Escull de manera definitiva quin és el millor torró de Torrons Vicens de l'any 2025.
+      N'hi ha tants (més de 100!) que s'han hagut de dividir en categories.
+      En escollir una categoria se't mostraran de manera aleatòria dos torrons, i has d'indicar quin dels dos és millor per tu.
+      Pots votar tants cops com vulguis, però és recomanable que ho votis un mínim de 25 vegades per garantir uns bons resultats.
+    </div>
+
+    <div class="important-note">
         IMPORTANT: els torrons es poden repetir durant la votació.
     </div>
-    <div hx-get="/classes" hx-trigger="click" hx-target="#description" hx-swap="outerHTML" hx-push-url="/classes" style="margin: 25px; background-color: #4E0011; color: #fff; padding: 15px 25px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px; cursor: pointer;">
-    Comença
-    </div>
+
+    <button class="btn btn-large" hx-get="/classes" hx-trigger="click" hx-target="#description" hx-swap="outerHTML" hx-push-url="/classes">
+        Comença a votar
+    </button>
 </div>
 {{ end }}
 

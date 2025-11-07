@@ -63,6 +63,11 @@ func (srv *Server) Run() error {
 	// Security headers middleware
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// HSTS: Force HTTPS for 1 year, including subdomains
+			// Note: Only enable after deploying with HTTPS!
+			// Uncomment in production with HTTPS enabled
+			// w.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload")
+
 			// Prevent MIME sniffing
 			w.Header().Set("X-Content-Type-Options", "nosniff")
 
@@ -75,6 +80,12 @@ func (srv *Server) Run() error {
 			// Control referrer information
 			w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
 
+			// Permissions Policy: Restrict browser features
+			w.Header().Set("Permissions-Policy", "geolocation=(), microphone=(), camera=()")
+
+			// X-Permitted-Cross-Domain-Policies
+			w.Header().Set("X-Permitted-Cross-Domain-Policies", "none")
+
 			// Content Security Policy (configured for HTMX app)
 			w.Header().Set("Content-Security-Policy",
 				"default-src 'self'; "+
@@ -86,6 +97,9 @@ func (srv *Server) Run() error {
 			next.ServeHTTP(w, r)
 		})
 	})
+
+	// User tracking middleware - identifies users via cookies
+	r.Use(srv.handler.UserMiddleware)
 
 	assets, err := fs.Sub(torrons.Public, "public")
 	if err != nil {
@@ -109,8 +123,51 @@ func (srv *Server) Run() error {
 		r.Get("/classes/{id}/vote", srv.handler.vote)
 
 		r.Post("/pairings/{id}/vote", srv.handler.result)
+
+		// Leaderboard visualization
+		r.Get("/leaderboard", srv.handler.leaderboard)
+
+		// User statistics page
+		r.Get("/stats", srv.handler.stats)
+
+		// Voting history page
+		r.Get("/history", srv.handler.history)
 	})
 	// **********        **********
+
+	// ********** U S E R  A P I **********
+	r.Route("/api/user", func(r chi.Router) {
+		// Get current user's statistics
+		r.Get("/stats", srv.handler.handleUserStats)
+
+		// Get personalized leaderboard for a class
+		r.Get("/leaderboard/class/{classId}", srv.handler.handleUserLeaderboard)
+
+		// Get personalized global leaderboard
+		r.Get("/leaderboard/global", srv.handler.handleUserGlobalLeaderboard)
+	})
+	// **********           **********
+
+	// ********** C A M P A I G N  A P I **********
+	r.Route("/api/campaign", func(r chi.Router) {
+		// Get countdown to campaign end (JSON)
+		r.Get("/countdown", srv.handler.handleCountdown)
+
+		// Get countdown widget (HTML)
+		r.Get("/countdown/widget", srv.handler.handleCountdownWidget)
+
+		// Get active campaign information
+		r.Get("/info", srv.handler.handleCampaignInfo)
+	})
+
+	r.Route("/api/leaderboard", func(r chi.Router) {
+		// Get global leaderboard across all categories
+		r.Get("/global", srv.handler.handleGlobalLeaderboard)
+
+		// Get class-specific global leaderboard
+		r.Get("/class/{classId}", srv.handler.handleClassLeaderboard)
+	})
+	// **********                **********
 
 	httpServer := &http.Server{
 		Addr:           fmt.Sprintf(":%d", srv.port),

@@ -18,6 +18,11 @@ func getColumnAndTableNames(err error) (string, string) {
 }
 
 func handleErrors(err error) error {
+	// Handle nil error
+	if err == nil {
+		return nil
+	}
+
 	if strings.Contains(err.Error(), "ERROR: relation") &&
 		strings.Contains(err.Error(), "does not exist (SQLSTATE 42P01)") {
 		return errTableNotExistent(getTableName(err))
