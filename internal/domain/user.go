@@ -13,6 +13,13 @@ type User struct {
 	LastSeen   string          `db:"LastSeen"   json:"last_seen"`
 	VoteCount  int             `db:"VoteCount"  json:"vote_count"`
 	ClassVotes json.RawMessage `db:"ClassVotes" json:"class_votes"` // JSONB: {"1": 15, "2": 30, ...}
+
+	// Voting-streak tracking (added in migration 000013). CurrentStreak counts
+	// consecutive calendar days with at least one vote in any class;
+	// LongestStreak is the highest CurrentStreak ever reached.
+	CurrentStreak int     `db:"CurrentStreak" json:"current_streak"`
+	LongestStreak int     `db:"LongestStreak" json:"longest_streak"`
+	LastVoteDate  *string `db:"LastVoteDate"  json:"last_vote_date,omitempty"`
 }
 
 // ClassVotesMap is a helper type for working with the ClassVotes JSONB field
@@ -41,4 +48,10 @@ type UserRepo interface {
 	// Transaction methods
 	GetTx(tx *sql.Tx, ctx context.Context, id string) (*User, error)
 	IncrementVoteCountTx(tx *sql.Tx, ctx context.Context, userId string, classId string) error
+
+	// UpdateStreakTx updates the user's voting streak as part of a vote
+	// transaction. If the user last voted yesterday, CurrentStreak is
+	// incremented; if they already voted today, it is left unchanged;
+	// otherwise it resets to 1. LongestStreak tracks the max ever reached.
+	UpdateStreakTx(tx *sql.Tx, ctx context.Context, userId string) error
 }

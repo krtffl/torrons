@@ -53,6 +53,13 @@
             <div class="stats-value">{{ .UserRank }}</div>
             <div class="stats-label">Nivell de votant</div>
         </div>
+        {{ if gt .CurrentStreak 0 }}
+        <div class="stats-card stats-streak">
+            <div class="stats-icon">🔥</div>
+            <div class="stats-value">{{ .CurrentStreak }}</div>
+            <div class="stats-label">{{ if eq .CurrentStreak 1 }}Dia seguit votant{{ else }}Dies seguits votant{{ end }}</div>
+        </div>
+        {{ end }}
     </div>
 
     <!-- Category progress -->

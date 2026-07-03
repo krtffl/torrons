@@ -30,12 +30,14 @@ type Achievement struct {
 
 // StatsContent holds data for stats page template
 type StatsContent struct {
-	HX                  bool
-	TotalVotes          int
-	UnlockedCategories  int
-	UserRank            string
-	CategoryProgress    []CategoryProgress
-	Achievements        []Achievement
+	HX                 bool
+	TotalVotes         int
+	UnlockedCategories int
+	UserRank           string
+	CategoryProgress   []CategoryProgress
+	Achievements       []Achievement
+	CurrentStreak      int
+	LongestStreak      int
 }
 
 // stats handles the user statistics page
@@ -67,11 +69,11 @@ func (h *Handler) stats(w http.ResponseWriter, r *http.Request) {
 
 	// Category icons mapping
 	categoryIcons := map[string]string{
-		"1": "🏛️", // Clàssics
-		"2": "✨", // Novetats
-		"3": "🍫", // Xocolata
+		"1": "🏛️",  // Clàssics
+		"2": "✨",   // Novetats
+		"3": "🍫",   // Xocolata
 		"4": "👨‍🍳", // Albert Adrià
-		"5": "🌍", // Global
+		"5": "🌍",   // Global
 	}
 
 	// Build category progress
@@ -170,6 +172,8 @@ func (h *Handler) stats(w http.ResponseWriter, r *http.Request) {
 		UserRank:           userRank,
 		CategoryProgress:   categoryProgress,
 		Achievements:       achievements,
+		CurrentStreak:      user.CurrentStreak,
+		LongestStreak:      user.LongestStreak,
 	}
 
 	buf := h.bpool.Get()

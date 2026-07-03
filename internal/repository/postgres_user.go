@@ -24,7 +24,8 @@ func NewUserRepo(db *sql.DB) domain.UserRepo {
 
 func (r *postgresUserRepo) Get(ctx context.Context, id string) (*domain.User, error) {
 	row := r.db.QueryRowContext(ctx,
-		`SELECT "Id", "FirstSeen", "LastSeen", "VoteCount", "ClassVotes"
+		`SELECT "Id", "FirstSeen", "LastSeen", "VoteCount", "ClassVotes",
+		        "CurrentStreak", "LongestStreak", "LastVoteDate"
 		 FROM "Users"
 		 WHERE "Id" = $1`,
 		id,
@@ -37,6 +38,9 @@ func (r *postgresUserRepo) Get(ctx context.Context, id string) (*domain.User, er
 		&user.LastSeen,
 		&user.VoteCount,
 		&user.ClassVotes,
+		&user.CurrentStreak,
+		&user.LongestStreak,
+		&user.LastVoteDate,
 	)
 	if err != nil {
 		return nil, handleErrors(err)
@@ -164,7 +168,8 @@ func (r *postgresUserRepo) UpdateLastSeen(ctx context.Context, userId string) er
 
 func (r *postgresUserRepo) GetTx(tx *sql.Tx, ctx context.Context, id string) (*domain.User, error) {
 	row := tx.QueryRowContext(ctx,
-		`SELECT "Id", "FirstSeen", "LastSeen", "VoteCount", "ClassVotes"
+		`SELECT "Id", "FirstSeen", "LastSeen", "VoteCount", "ClassVotes",
+		        "CurrentStreak", "LongestStreak", "LastVoteDate"
 		 FROM "Users"
 		 WHERE "Id" = $1`,
 		id,
@@ -177,6 +182,9 @@ func (r *postgresUserRepo) GetTx(tx *sql.Tx, ctx context.Context, id string) (*d
 		&user.LastSeen,
 		&user.VoteCount,
 		&user.ClassVotes,
+		&user.CurrentStreak,
+		&user.LongestStreak,
+		&user.LastVoteDate,
 	)
 	if err != nil {
 		return nil, handleErrors(err)
@@ -202,6 +210,40 @@ func (r *postgresUserRepo) IncrementVoteCountTx(tx *sql.Tx, ctx context.Context,
 		userId,
 		time.Now().UTC().Format(time.RFC3339),
 		classId,
+	)
+
+	return handleErrors(err)
+}
+
+// UpdateStreakTx updates the user's voting streak in a single atomic
+// statement, evaluated server-side so it's race-safe under Postgres row
+// locking without needing a separate SELECT ... FOR UPDATE round trip:
+//   - LastVoteDate == today      -> CurrentStreak unchanged (already voted today)
+//   - LastVoteDate == yesterday  -> CurrentStreak + 1
+//   - otherwise (gap or first vote) -> CurrentStreak reset to 1
+//
+// LongestStreak is kept as the maximum CurrentStreak ever reached.
+// Day boundaries follow the database session's time zone (UTC by default),
+// consistent with the UTC timestamps used elsewhere in this app.
+func (r *postgresUserRepo) UpdateStreakTx(tx *sql.Tx, ctx context.Context, userId string) error {
+	_, err := tx.ExecContext(ctx,
+		`UPDATE "Users"
+		 SET "CurrentStreak" = CASE
+		         WHEN "LastVoteDate" = CURRENT_DATE THEN "CurrentStreak"
+		         WHEN "LastVoteDate" = CURRENT_DATE - INTERVAL '1 day' THEN "CurrentStreak" + 1
+		         ELSE 1
+		     END,
+		     "LongestStreak" = GREATEST(
+		         "LongestStreak",
+		         CASE
+		             WHEN "LastVoteDate" = CURRENT_DATE THEN "CurrentStreak"
+		             WHEN "LastVoteDate" = CURRENT_DATE - INTERVAL '1 day' THEN "CurrentStreak" + 1
+		             ELSE 1
+		         END
+		     ),
+		     "LastVoteDate" = CURRENT_DATE
+		 WHERE "Id" = $1`,
+		userId,
 	)
 
 	return handleErrors(err)

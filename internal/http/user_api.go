@@ -18,6 +18,8 @@ type UserStatsResponse struct {
 	FirstSeen     string         `json:"first_seen"`
 	LastSeen      string         `json:"last_seen"`
 	SnapshotCount int            `json:"snapshot_count"`
+	CurrentStreak int            `json:"current_streak"`
+	LongestStreak int            `json:"longest_streak"`
 }
 
 // handleUserStats returns statistics for the current user
@@ -65,6 +67,8 @@ func (h *Handler) handleUserStats(w http.ResponseWriter, r *http.Request) {
 		FirstSeen:     user.FirstSeen,
 		LastSeen:      user.LastSeen,
 		SnapshotCount: len(snapshots),
+		CurrentStreak: user.CurrentStreak,
+		LongestStreak: user.LongestStreak,
 	}
 
 	render.Status(r, http.StatusOK)
@@ -105,12 +109,12 @@ func (h *Handler) handleUserLeaderboard(w http.ResponseWriter, r *http.Request) 
 	}
 
 	response := map[string]interface{}{
-		"user_id":         userId,
-		"class_id":        classId,
-		"vote_count":      voteCount,
-		"entries":         entries,
-		"total_entries":   len(entries),
-		"min_votes_met":   voteCount >= getMinVotesForClass(classId),
+		"user_id":            userId,
+		"class_id":           classId,
+		"vote_count":         voteCount,
+		"entries":            entries,
+		"total_entries":      len(entries),
+		"min_votes_met":      voteCount >= getMinVotesForClass(classId),
 		"min_votes_required": getMinVotesForClass(classId),
 	}
 
@@ -149,11 +153,11 @@ func (h *Handler) handleUserGlobalLeaderboard(w http.ResponseWriter, r *http.Req
 	}
 
 	response := map[string]interface{}{
-		"user_id":       userId,
-		"total_votes":   totalVotes,
-		"entries":       entries,
-		"total_entries": len(entries),
-		"min_votes_met": totalVotes >= 50, // Global minimum
+		"user_id":            userId,
+		"total_votes":        totalVotes,
+		"entries":            entries,
+		"total_entries":      len(entries),
+		"min_votes_met":      totalVotes >= 50, // Global minimum
 		"min_votes_required": 50,
 	}
 

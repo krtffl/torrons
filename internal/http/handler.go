@@ -257,6 +257,14 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// Update the user's voting streak (any vote in any class counts).
+		// This is a general engagement metric, independent of per-class counts.
+		if err := h.userRepo.UpdateStreakTx(tx, r.Context(), userId); err != nil {
+			logger.Error("[Handler - Result] Couldn't update user streak. %v", err)
+			render.Render(w, r, domain.ErrInternal(err))
+			return
+		}
+
 		// Calculate and update personalized ELO ratings for this user
 		// Get or create user ELO snapshots for both torrons
 		userElo1, err := h.userEloRepo.GetOrCreateTx(tx, r.Context(), userId, t1.Id)
