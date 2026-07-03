@@ -105,12 +105,12 @@ func (h *Handler) handleUserLeaderboard(w http.ResponseWriter, r *http.Request) 
 	}
 
 	response := map[string]interface{}{
-		"user_id":         userId,
-		"class_id":        classId,
-		"vote_count":      voteCount,
-		"entries":         entries,
-		"total_entries":   len(entries),
-		"min_votes_met":   voteCount >= getMinVotesForClass(classId),
+		"user_id":            userId,
+		"class_id":           classId,
+		"vote_count":         voteCount,
+		"entries":            entries,
+		"total_entries":      len(entries),
+		"min_votes_met":      voteCount >= getMinVotesForClass(classId),
 		"min_votes_required": getMinVotesForClass(classId),
 	}
 
@@ -149,11 +149,11 @@ func (h *Handler) handleUserGlobalLeaderboard(w http.ResponseWriter, r *http.Req
 	}
 
 	response := map[string]interface{}{
-		"user_id":       userId,
-		"total_votes":   totalVotes,
-		"entries":       entries,
-		"total_entries": len(entries),
-		"min_votes_met": totalVotes >= 50, // Global minimum
+		"user_id":            userId,
+		"total_votes":        totalVotes,
+		"entries":            entries,
+		"total_entries":      len(entries),
+		"min_votes_met":      totalVotes >= 50, // Global minimum
 		"min_votes_required": 50,
 	}
 

@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 
+	"github.com/krtffl/torro/internal/domain"
 	"github.com/krtffl/torro/internal/logger"
 	"github.com/krtffl/torro/internal/sharecard"
 )
@@ -37,7 +38,7 @@ func (h *Handler) shareCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entries, err := h.userEloRepo.GetUserGlobalLeaderboard(r.Context(), userId)
+	entries, err := h.userEloRepo.GetUserGlobalLeaderboard(r.Context(), userId, domain.TorroFilter{})
 	if err != nil {
 		logger.Error("[Handler - ShareCard] Couldn't get user leaderboard. %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

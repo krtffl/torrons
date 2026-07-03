@@ -74,9 +74,9 @@ func (h *Handler) UserMiddleware(next http.Handler) http.Handler {
 			Value:    userId,
 			Path:     "/",
 			MaxAge:   cookieMaxAge,
-			HttpOnly: true,                    // Prevent JavaScript access (XSS protection)
-			Secure:   r.TLS != nil,            // Only send over HTTPS in production
-			SameSite: http.SameSiteLaxMode,   // CSRF protection
+			HttpOnly: true,                 // Prevent JavaScript access (XSS protection)
+			Secure:   r.TLS != nil,         // Only send over HTTPS in production
+			SameSite: http.SameSiteLaxMode, // CSRF protection
 		})
 
 		// Add user ID to request context for handlers to use

@@ -27,17 +27,17 @@ type LeaderboardEntry struct {
 
 // LeaderboardContent holds data for template rendering
 type LeaderboardContent struct {
-	HX                  bool
-	Title               string
-	ViewType            string // "personal" or "global"
-	SelectedCategory    string
-	ShowCategoryFilter  bool
-	Categories          []*domain.Class
-	Entries             []LeaderboardEntry
-	Error               string
-	MinVotes            int
-	ShareText           string // URL-encoded text for social sharing
-	ShareUrl            string // URL to share
+	HX                 bool
+	Title              string
+	ViewType           string // "personal" or "global"
+	SelectedCategory   string
+	ShowCategoryFilter bool
+	Categories         []*domain.Class
+	Entries            []LeaderboardEntry
+	Error              string
+	MinVotes           int
+	ShareText          string // URL-encoded text for social sharing
+	ShareUrl           string // URL to share
 
 	// Dietary/allergen filter chips state
 	FilterVegan       bool

@@ -51,8 +51,8 @@ func (srv *Server) Run() error {
 
 	// Rate limiting middleware (100 requests per minute per IP)
 	r.Use(httprate.Limit(
-		100,                       // requests
-		1*time.Minute,             // per duration
+		100,                                     // requests
+		1*time.Minute,                           // per duration
 		httprate.WithKeyFuncs(httprate.KeyByIP), // per IP address
 		httprate.WithLimitHandler(func(w http.ResponseWriter, r *http.Request) {
 			logger.Warn("[HTTP Server] Rate limit exceeded for IP: %s", r.RemoteAddr)

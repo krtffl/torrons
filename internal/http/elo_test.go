@@ -102,14 +102,14 @@ func TestCalculateNewRating(t *testing.T) {
 
 func TestUpdateRatings(t *testing.T) {
 	tests := []struct {
-		name           string
-		rating1        float64
-		rating2        float64
-		player1Won     bool
-		kFactor        float64
-		expectedGain   float64 // Expected rating change for winner
-		expectedLoss   float64 // Expected rating change for loser (negative)
-		tolerance      float64
+		name         string
+		rating1      float64
+		rating2      float64
+		player1Won   bool
+		kFactor      float64
+		expectedGain float64 // Expected rating change for winner
+		expectedLoss float64 // Expected rating change for loser (negative)
+		tolerance    float64
 	}{
 		{
 			name:         "Equal players, player 1 wins",
@@ -117,8 +117,8 @@ func TestUpdateRatings(t *testing.T) {
 			rating2:      1500,
 			player1Won:   true,
 			kFactor:      32,
-			expectedGain: 16,   // Winner gains 16
-			expectedLoss: -16,  // Loser loses 16
+			expectedGain: 16,  // Winner gains 16
+			expectedLoss: -16, // Loser loses 16
 			tolerance:    0.01,
 		},
 		{
@@ -127,8 +127,8 @@ func TestUpdateRatings(t *testing.T) {
 			rating2:      1500,
 			player1Won:   false,
 			kFactor:      32,
-			expectedGain: 16,   // Player 2 gains 16
-			expectedLoss: -16,  // Player 1 loses 16
+			expectedGain: 16,  // Player 2 gains 16
+			expectedLoss: -16, // Player 1 loses 16
 			tolerance:    0.01,
 		},
 		{
@@ -137,7 +137,7 @@ func TestUpdateRatings(t *testing.T) {
 			rating2:      1500,
 			player1Won:   true,
 			kFactor:      42,
-			expectedGain: 31.5, // Underdog gains ~31.5
+			expectedGain: 31.5,  // Underdog gains ~31.5
 			expectedLoss: -31.5, // Favorite loses ~31.5
 			tolerance:    0.5,
 		},
@@ -147,7 +147,7 @@ func TestUpdateRatings(t *testing.T) {
 			rating2:      1500,
 			player1Won:   true,
 			kFactor:      42,
-			expectedGain: 10.5, // Favorite gains ~10.5
+			expectedGain: 10.5,  // Favorite gains ~10.5
 			expectedLoss: -10.5, // Underdog loses ~10.5
 			tolerance:    0.5,
 		},

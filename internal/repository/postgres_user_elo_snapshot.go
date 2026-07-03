@@ -287,11 +287,11 @@ func (r *postgresUserEloSnapshotRepo) GetOrCreateTx(tx *sql.Tx, ctx context.Cont
 
 	// Create new snapshot with global rating as baseline
 	newSnapshot := &domain.UserEloSnapshot{
-		Id:        uuid.NewString(),
-		UserId:    userId,
-		TorronId:  torronId,
-		Rating:    globalRating,
-		VoteCount: 0,
+		Id:          uuid.NewString(),
+		UserId:      userId,
+		TorronId:    torronId,
+		Rating:      globalRating,
+		VoteCount:   0,
 		LastUpdated: time.Now().UTC().Format(time.RFC3339),
 	}
 
