@@ -1,8 +1,11 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 	"strings"
+
+	"github.com/lib/pq"
 
 	"github.com/krtffl/torro/internal/domain"
 )
@@ -23,24 +26,26 @@ func handleErrors(err error) error {
 		return nil
 	}
 
-	if strings.Contains(err.Error(), "ERROR: relation") &&
-		strings.Contains(err.Error(), "does not exist (SQLSTATE 42P01)") {
-		return errTableNotExistent(getTableName(err))
-	}
-
-	if strings.Contains(err.Error(), "ERROR: column") &&
-		strings.Contains(err.Error(), "does not exist (SQLSTATE 42703)") {
-		return errColumnNotExistent(getColumnAndTableNames(err))
-	}
-
-	if strings.Contains(err.Error(), "ERROR: duplicate key") &&
-		strings.Contains(err.Error(), "(SQLSTATE 23505)") {
-		return errDuplicateKey()
-	}
-
-	if strings.Contains(err.Error(), "ERROR: insert or update") &&
-		strings.Contains(err.Error(), "(SQLSTATE 23503)") {
-		return errForeignKeyConstraint()
+	// Classify PostgreSQL errors by their SQLSTATE code (via lib/pq's
+	// structured *pq.Error) rather than by pattern-matching the rendered
+	// message. lib/pq's Error() only ever returns "pq: <Message>" - it
+	// never includes an "ERROR: ..." prefix or a "(SQLSTATE ...)" suffix -
+	// so the previous message-based checks here never actually matched a
+	// real driver error and silently fell through to errUnknown. See
+	// https://pkg.go.dev/github.com/lib/pq#Error and the PostgreSQL error
+	// codes appendix for the codes below.
+	var pqErr *pq.Error
+	if errors.As(err, &pqErr) {
+		switch pqErr.Code {
+		case "42P01": // undefined_table
+			return errTableNotExistent(getTableName(err))
+		case "42703": // undefined_column
+			return errColumnNotExistent(getColumnAndTableNames(err))
+		case "23505": // unique_violation
+			return errDuplicateKey()
+		case "23503": // foreign_key_violation
+			return errForeignKeyConstraint()
+		}
 	}
 
 	if strings.Contains(err.Error(), "record not found") {
