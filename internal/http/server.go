@@ -135,6 +135,12 @@ func (srv *Server) Run() error {
 
 		// Advent daily duel: one featured pairing per calendar day
 		r.Get("/advent", srv.handler.advent)
+
+		// Friend circles: shareable, invite-based leaderboards
+		r.Get("/friends", srv.handler.friendsIndex)
+		r.Post("/friends/create", srv.handler.friendsCreate)
+		r.Get("/friends/join/{inviteCode}", srv.handler.friendsJoin)
+		r.Get("/friends/{circleId}", srv.handler.friendsLeaderboard)
 	})
 	// **********        **********
 

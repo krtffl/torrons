@@ -1,0 +1,184 @@
+{{ if not .HX }}
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cercles d'amics i classificacions compartides - Torrorèndum 2025">
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <title>Cercles d'amics - Torrorèndum 2025</title>
+  </head>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
+      {{ template "header" . }}
+      {{ template "topbar" . }}
+      <div id="main-content">
+          {{ template "friends" . }}
+      </div>
+  </body>
+</html>
+{{ else }}
+      {{ template "friends" . }}
+{{ end }}
+
+{{ define "friends" }}
+<div id="friends-container">
+    {{ if eq .View "index" }}
+        {{ template "friends-index" . }}
+    {{ else if eq .View "created" }}
+        {{ template "friends-created" . }}
+    {{ else if eq .View "not-member" }}
+        {{ template "friends-not-member" . }}
+    {{ else if eq .View "invalid-invite" }}
+        {{ template "friends-invalid-invite" . }}
+    {{ else if eq .View "leaderboard" }}
+        {{ template "friends-leaderboard" . }}
+    {{ end }}
+</div>
+{{ end }}
+
+{{ define "friends-index" }}
+<div class="stats-header">
+    <h1 class="stats-title">Els meus cercles d'amics</h1>
+    <p class="stats-subtitle">Crea un cercle i convida amics per comparar les vostres classificacions</p>
+</div>
+
+{{ if .Circles }}
+<div id="classes">
+    {{ range .Circles }}
+    <div class="class-card">
+        <div class="class-description">Cercle creat el {{ .CreatedAt }}</div>
+        <button class="btn btn-with-icon" hx-get="/friends/{{ .Id }}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/friends/{{ .Id }}">
+            <span class="btn-icon">🏆</span>
+            <span class="btn-text">Veure classificació</span>
+        </button>
+    </div>
+    {{ end }}
+</div>
+{{ else }}
+<div class="history-empty">
+    <div class="empty-icon">👥</div>
+    <div class="empty-message">Encara no formes part de cap cercle</div>
+    <div class="empty-hint">Crea'n un i convida els teus amics!</div>
+</div>
+{{ end }}
+
+<div class="stats-footer">
+    <button class="btn btn-large" hx-post="/friends/create" hx-trigger="click" hx-target="#friends-container" hx-swap="outerHTML">
+        Crea un cercle nou
+    </button>
+</div>
+{{ end }}
+
+{{ define "friends-created" }}
+<div class="history-empty">
+    <div class="empty-icon">🎉</div>
+    <div class="empty-message">Cercle creat!</div>
+    <div class="empty-hint">Comparteix aquest enllaç amb els teus amics perquè s'hi uneixin:</div>
+
+    <div class="share-buttons">
+        <button class="share-btn share-btn-copy" onclick="copyFriendsLink('{{ .InviteURL }}', this)">
+            <span class="share-icon">🔗</span>
+            <span class="copy-text">{{ .InviteURL }}</span>
+        </button>
+    </div>
+
+    <button class="btn mt-lg" hx-get="/friends/{{ .CircleId }}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/friends/{{ .CircleId }}">
+        Veure classificació del cercle
+    </button>
+</div>
+{{ end }}
+
+{{ define "friends-not-member" }}
+<div class="leaderboard-error">
+    <div class="error-icon">🔒</div>
+    <div class="error-message">No formes part d'aquest cercle</div>
+    <div class="error-hint">Necessites un enllaç d'invitació d'un membre per unir-t'hi.</div>
+    <button class="btn mt-lg" hx-get="/friends" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/friends">
+        Torna als meus cercles
+    </button>
+</div>
+{{ end }}
+
+{{ define "friends-invalid-invite" }}
+<div class="leaderboard-error">
+    <div class="error-icon">⚠️</div>
+    <div class="error-message">Aquest enllaç d'invitació no és vàlid</div>
+    <div class="error-hint">Comprova l'enllaç o demana'n un de nou a qui te l'ha enviat.</div>
+    <button class="btn mt-lg" hx-get="/friends" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/friends">
+        Torna als meus cercles
+    </button>
+</div>
+{{ end }}
+
+{{ define "friends-leaderboard" }}
+<div class="leaderboard-header">
+    <h1 class="leaderboard-title">Classificació del cercle</h1>
+    <div class="category-selector">
+        <button class="category-btn {{ if eq .SelectedCategory "global" }}active{{ end }}"
+                hx-get="/friends/{{ .CircleId }}?category=global"
+                hx-trigger="click"
+                hx-target="#friends-container"
+                hx-swap="outerHTML"
+                hx-push-url="/friends/{{ .CircleId }}?category=global">
+            Global
+        </button>
+        {{ range .Categories }}
+        <button class="category-btn {{ if eq $.SelectedCategory .Id }}active{{ end }}"
+                hx-get="/friends/{{ $.CircleId }}?category={{ .Id }}"
+                hx-trigger="click"
+                hx-target="#friends-container"
+                hx-swap="outerHTML"
+                hx-push-url="/friends/{{ $.CircleId }}?category={{ .Id }}">
+            {{ .Name }}
+        </button>
+        {{ end }}
+    </div>
+</div>
+
+{{ if .Error }}
+<div class="leaderboard-error">
+    <div class="error-icon">⚠️</div>
+    <div class="error-message">{{ .Error }}</div>
+</div>
+{{ else }}
+<div class="leaderboard-list">
+    {{ range .Entries }}
+    {{ template "leaderboard-entry" . }}
+    {{ end }}
+</div>
+{{ end }}
+
+<div class="leaderboard-footer">
+    <button class="btn" hx-get="/friends" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/friends">
+        Els meus cercles
+    </button>
+</div>
+{{ end }}
+
+<script>
+function copyFriendsLink(text, button) {
+    navigator.clipboard.writeText(text).then(function() {
+        const textSpan = button.querySelector('.copy-text');
+        const originalText = textSpan.textContent;
+        textSpan.textContent = '✓ Copiat!';
+        button.classList.add('copied');
+
+        setTimeout(function() {
+            textSpan.textContent = originalText;
+            button.classList.remove('copied');
+        }, 2000);
+    }).catch(function(err) {
+        console.error('Error copying to clipboard:', err);
+        alert('No s\'ha pogut copiar l\'enllaç');
+    });
+}
+</script>
