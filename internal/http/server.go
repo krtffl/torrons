@@ -154,6 +154,15 @@ func (srv *Server) Run() error {
 		// this codebase yet; see the TODOs on the handlers themselves.
 		r.Post("/bracket/{classId}/create", srv.handler.bracketCreate)
 		r.Post("/bracket/{bracketId}/advance", srv.handler.bracketAdvance)
+
+		// Advent daily duel: one featured pairing per calendar day
+		r.Get("/advent", srv.handler.advent)
+
+		// Friend circles: shareable, invite-based leaderboards
+		r.Get("/friends", srv.handler.friendsIndex)
+		r.Post("/friends/create", srv.handler.friendsCreate)
+		r.Get("/friends/join/{inviteCode}", srv.handler.friendsJoin)
+		r.Get("/friends/{circleId}", srv.handler.friendsLeaderboard)
 	})
 	// **********        **********
 

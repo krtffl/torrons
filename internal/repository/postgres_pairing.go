@@ -169,6 +169,53 @@ func (r *postgresPairingRepo) GetRandom(ctx context.Context, classId string) (*d
 	return pairing, nil
 }
 
+// GetDeterministic returns the same pairing for a given (classId, seed) pair
+// every time, mirroring GetRandom's offset-based query but using a caller
+// supplied seed instead of crypto/rand. An explicit ORDER BY is required
+// here (unlike GetRandom) so the OFFSET resolves to the same row on every
+// call, request, and replica -- Postgres does not otherwise guarantee row
+// order for LIMIT/OFFSET without one.
+func (r *postgresPairingRepo) GetDeterministic(ctx context.Context, classId string, seed int64) (*domain.Pairing, error) {
+	count, err := r.CountClass(ctx, classId)
+	if err != nil {
+		return nil, err
+	}
+
+	// Handle edge case: no pairings available
+	if count == 0 {
+		return nil, handleErrors(sql.ErrNoRows)
+	}
+
+	// Normalize the seed into a valid, non-negative offset within range
+	offset := seed % int64(count)
+	if offset < 0 {
+		offset += int64(count)
+	}
+
+	row := r.db.QueryRowContext(ctx,
+		`
+        SELECT "Id", "Torro1", "Torro2", "Class"
+        FROM "Pairings"
+        WHERE "Class" = $1
+        ORDER BY "Id"
+        LIMIT 1 OFFSET $2`,
+		classId,
+		offset,
+	)
+	pairing := &domain.Pairing{}
+	err = row.Scan(
+		&pairing.Id,
+		&pairing.Torro1,
+		&pairing.Torro2,
+		&pairing.Class,
+	)
+	if err != nil {
+		return nil, handleErrors(err)
+	}
+
+	return pairing, nil
+}
+
 func (r *postgresPairingRepo) Count(ctx context.Context) (int, error) {
 	var count int
 	err := r.db.QueryRowContext(ctx,

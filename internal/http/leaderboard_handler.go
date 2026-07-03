@@ -120,20 +120,7 @@ func (h *Handler) leaderboard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Calculate rating percentages for visual bars
-	if len(entries) > 0 {
-		maxRating := entries[0].Rating // Assuming sorted by rating desc
-		minRating := entries[len(entries)-1].Rating
-		ratingRange := maxRating - minRating
-
-		for i := range entries {
-			if ratingRange > 0 {
-				normalized := (entries[i].Rating - minRating) / ratingRange
-				entries[i].RatingPercentage = int(math.Max(10, normalized*100)) // Min 10% for visibility
-			} else {
-				entries[i].RatingPercentage = 100 // All same rating
-			}
-		}
-	}
+	entries = calculateRatingPercentages(entries)
 
 	// Generate share content (for personal view with results)
 	shareText := ""
@@ -273,6 +260,32 @@ func (h *Handler) fetchGlobalLeaderboard(r *http.Request, category string, filte
 	}
 
 	return entries, ""
+}
+
+// calculateRatingPercentages computes each entry's visual rating-bar
+// percentage (0-100), normalized against the min/max rating in the set.
+// Assumes entries are sorted by rating descending. Shared by the community/
+// personal leaderboard and the friend-circle leaderboard so both render the
+// same "entry-rating" bar consistently.
+func calculateRatingPercentages(entries []LeaderboardEntry) []LeaderboardEntry {
+	if len(entries) == 0 {
+		return entries
+	}
+
+	maxRating := entries[0].Rating // Assuming sorted by rating desc
+	minRating := entries[len(entries)-1].Rating
+	ratingRange := maxRating - minRating
+
+	for i := range entries {
+		if ratingRange > 0 {
+			normalized := (entries[i].Rating - minRating) / ratingRange
+			entries[i].RatingPercentage = int(math.Max(10, normalized*100)) // Min 10% for visibility
+		} else {
+			entries[i].RatingPercentage = 100 // All same rating
+		}
+	}
+
+	return entries
 }
 
 // getClassName is a helper to get class name by ID

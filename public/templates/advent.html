@@ -1,0 +1,86 @@
+{{ if not .HX }}
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="El duel de l'Advent - Torrorèndum 2025">
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <title>Duel de l'Advent - Torrorèndum 2025</title>
+  </head>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
+      {{ template "header" . }}
+      {{ template "topbar" . }}
+      <div id="main-content">
+          {{ template "advent" . }}
+      </div>
+  </body>
+</html>
+{{ else }}
+      {{ template "advent" . }}
+{{ end }}
+
+{{ define "advent" }}
+<div id="advent-container">
+    {{ if not .CampaignActive }}
+    <!-- No active campaign right now -->
+    <div class="countdown-inactive">
+        <div class="countdown-icon">🎄</div>
+        <div class="countdown-text">Ara mateix no hi ha cap campanya activa</div>
+        <p class="description-text">El duel de l'Advent només està disponible mentre hi ha una campanya en marxa. Torna-ho a provar més endavant!</p>
+    </div>
+    {{ else if .AlreadyVoted }}
+    <!-- Already completed today's duel -->
+    <div class="history-empty">
+        <div class="empty-icon">🎄</div>
+        <div class="empty-message">Ja has fet el duel d'avui!</div>
+        <div class="empty-hint">Torna demà per un nou duel de l'Advent</div>
+        <button class="btn mt-lg" hx-get="/classes" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/classes">
+            Continua votant
+        </button>
+    </div>
+    {{ else }}
+    <!-- Today's featured duel -->
+    <div class="stats-header">
+        <h1 class="stats-title">Duel de l'Advent</h1>
+        <p class="stats-subtitle">El duel d'avui: {{ .ClassName }}. Un sol vot per dia!</p>
+    </div>
+
+    <div id="voting-instructions" class="sr-only">
+        Escull un dels dos torrons fent clic o prement Enter. També pots usar Tab per navegar entre opcions.
+    </div>
+    <div class="torron-comparison" role="group" aria-label="Duel de l'Advent d'avui">
+        {{ range .Torrons }}
+            {{ template "advent-torro" . }}
+        {{ end }}
+    </div>
+    {{ end }}
+</div>
+{{ end }}
+
+{{ define "advent-torro" }}
+<div class="torron-card"
+     hx-post="/pairings/{{ .Pairing }}/vote?id={{ .Id }}&advent=true"
+     hx-trigger="click delay:0.2s"
+     hx-target="#advent-container"
+     hx-swap="outerHTML"
+     tabindex="0"
+     role="button"
+     aria-label="Vota per {{ .Name }}"
+     aria-describedby="voting-instructions"
+     onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+    <div class="torron-name">
+       {{ .Name }}
+    </div>
+    <img class="torron-image" src="/public/images/{{ .Image }}" alt="{{ .Name }} - Torrons Vicens">
+</div>
+{{ end }}

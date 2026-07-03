@@ -18,6 +18,8 @@ type UserStatsResponse struct {
 	FirstSeen     string         `json:"first_seen"`
 	LastSeen      string         `json:"last_seen"`
 	SnapshotCount int            `json:"snapshot_count"`
+	CurrentStreak int            `json:"current_streak"`
+	LongestStreak int            `json:"longest_streak"`
 }
 
 // handleUserStats returns statistics for the current user
@@ -65,6 +67,8 @@ func (h *Handler) handleUserStats(w http.ResponseWriter, r *http.Request) {
 		FirstSeen:     user.FirstSeen,
 		LastSeen:      user.LastSeen,
 		SnapshotCount: len(snapshots),
+		CurrentStreak: user.CurrentStreak,
+		LongestStreak: user.LongestStreak,
 	}
 
 	render.Status(r, http.StatusOK)

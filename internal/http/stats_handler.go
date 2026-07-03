@@ -36,6 +36,8 @@ type StatsContent struct {
 	UserRank           string
 	CategoryProgress   []CategoryProgress
 	Achievements       []Achievement
+	CurrentStreak      int
+	LongestStreak      int
 }
 
 // stats handles the user statistics page
@@ -170,6 +172,8 @@ func (h *Handler) stats(w http.ResponseWriter, r *http.Request) {
 		UserRank:           userRank,
 		CategoryProgress:   categoryProgress,
 		Achievements:       achievements,
+		CurrentStreak:      user.CurrentStreak,
+		LongestStreak:      user.LongestStreak,
 	}
 
 	buf := h.bpool.Get()
