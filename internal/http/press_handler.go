@@ -1,11 +1,13 @@
 package http
 
 import (
+	"context"
 	"math"
 	"net/http"
 
 	"github.com/krtffl/torro/internal/domain"
 	"github.com/krtffl/torro/internal/logger"
+	"github.com/krtffl/torro/internal/sharecard"
 )
 
 // pressRiserWindowDays is the lookback window for the "biggest riser" stat.
@@ -118,18 +120,18 @@ func (h *Handler) press(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// The Gran Final is Phase 2's knockout bracket for the Global class,
-	// separate from the Phase 1 ELO stats above. Following the existing
-	// convention in bracket_handler.go's bracketOverview, any error here
-	// (most commonly "no bracket created yet for this class") is treated
-	// as the empty state rather than a hard failure.
-	bracket, err := h.bracketRepo.GetLatestByClass(ctx, embedDefaultClassId)
-	if err == nil && bracket != nil && bracket.Status == domain.BracketStatusCompleted && bracket.ChampionId != nil {
-		champion, err := h.torroRepo.Get(ctx, *bracket.ChampionId)
-		if err != nil {
-			logger.Error("[Handler - Press] Couldn't fetch champion torró. %v", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
+	// separate from the Phase 1 ELO stats above. pressGlobalChampion
+	// follows the existing convention in bracket_handler.go's
+	// bracketOverview: any error resolving the latest bracket (most
+	// commonly "no bracket created yet for this class") is treated as the
+	// empty state rather than a hard failure.
+	champion, err := h.pressGlobalChampion(ctx)
+	if err != nil {
+		logger.Error("[Handler - Press] Couldn't fetch champion torró. %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	if champion != nil {
 		content.HasChampion = true
 		content.ChampionName = champion.Name
 		content.ChampionImage = champion.Image
@@ -170,4 +172,74 @@ func votePercentage(value float64, total int) int {
 		return 0
 	}
 	return int(math.Round(value / float64(total) * 100))
+}
+
+// pressGlobalChampion resolves the Global bracket's champion torró, if
+// the Gran Final has been decided. Returns (nil, nil) - not an error -
+// when there's no bracket yet, it's still in progress, or GetLatestByClass
+// itself errors (following bracketOverview's precedent that "no bracket"
+// is a legitimate empty state, not a failure). Shared by press (the page)
+// and pressKitCard (the PNG one-pager) so the two surfaces can never
+// disagree about who the champion is.
+func (h *Handler) pressGlobalChampion(ctx context.Context) (*domain.Torro, error) {
+	bracket, err := h.bracketRepo.GetLatestByClass(ctx, embedDefaultClassId)
+	if err != nil || bracket == nil || bracket.Status != domain.BracketStatusCompleted || bracket.ChampionId == nil {
+		return nil, nil
+	}
+
+	champion, err := h.torroRepo.Get(ctx, *bracket.ChampionId)
+	if err != nil {
+		return nil, err
+	}
+
+	return champion, nil
+}
+
+// pressKitCard renders and serves the aggregate press-kit PNG one-pager:
+// the Gran Final's champion torró and its total winning vote count, or an
+// empty state if the bracket hasn't produced a champion yet (see
+// sharecard.RenderPressKit). Unlike wrappedCard, this card is a global
+// aggregate - the exact same PNG for every viewer, no user ID involved -
+// so it uses a short public cache instead of the per-user "private,
+// no-store" precedent, mirroring GET /embed/leaderboard.
+func (h *Handler) pressKitCard(w http.ResponseWriter, r *http.Request) {
+	logger.Info("[Handler - PressKitCard] Incoming request")
+
+	ctx := r.Context()
+
+	champion, err := h.pressGlobalChampion(ctx)
+	if err != nil {
+		logger.Error("[Handler - PressKitCard] Couldn't fetch champion torró. %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	var data sharecard.PressKitData
+	if champion != nil {
+		votes, err := h.pressStatsRepo.VotesForTorro(ctx, champion.Id)
+		if err != nil {
+			logger.Error("[Handler - PressKitCard] Couldn't fetch champion vote count. %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		data = sharecard.PressKitData{
+			HasChampion:   true,
+			ChampionName:  champion.Name,
+			ChampionVotes: votes,
+		}
+	}
+
+	png, err := sharecard.RenderPressKit(data)
+	if err != nil {
+		logger.Error("[Handler - PressKitCard] Couldn't render card. %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "image/png")
+	w.Header().Set("Cache-Control", "public, max-age=300")
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(png); err != nil {
+		logger.Error("[Handler - PressKitCard] Couldn't write response. %v", err)
+	}
 }

@@ -1,0 +1,119 @@
+{{ if not .HX }}
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="El teu resum personal del Torrorèndum 2025.">
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <title>El teu Torrorèndum Wrapped - Torrorèndum 2025</title>
+  </head>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
+      {{ template "header" . }}
+      {{ template "topbar" . }}
+      <div id="main-content">
+          {{ template "wrapped" . }}
+      </div>
+  </body>
+</html>
+{{ else }}
+      {{ template "wrapped" . }}
+{{ end }}
+
+{{ define "wrapped" }}
+<div id="wrapped-container">
+    <div class="stats-header">
+        <h1 class="stats-title">El teu Torrorèndum Wrapped</h1>
+        <p class="stats-subtitle">El teu resum personal de la campanya.</p>
+    </div>
+
+    {{ if not .HasEnoughVotes }}
+    <div class="press-card">
+        <p class="press-empty">Encara no has desbloquejat el teu Wrapped. Et falten {{ .VotesRemaining }} vots.</p>
+    </div>
+
+    <div class="stats-footer">
+        <a href="/classes" class="btn" hx-get="/classes" hx-boost="true" hx-target="#main-content" hx-push-url="/classes">
+            Continua votant
+        </a>
+    </div>
+    {{ else }}
+    <div class="stats-summary">
+        <div class="stats-card stats-total">
+            <div class="stats-icon">🗳️</div>
+            <div class="stats-value">{{ .TotalVotes }}</div>
+            <div class="stats-label">Vots totals</div>
+        </div>
+    </div>
+
+    <div class="press-grid">
+        <div class="press-card">
+            <h2 class="press-card-title">El duel més disputat</h2>
+            {{ if .HasContestedDuel }}
+            <div class="press-duel">
+                <div class="press-duel-side">
+                    <div class="press-stat-name">{{ .ContestedTorroAName }}</div>
+                </div>
+                <div class="press-duel-score">{{ .ContestedPercentA }}% – {{ .ContestedPercentB }}%</div>
+                <div class="press-duel-side">
+                    <div class="press-stat-name">{{ .ContestedTorroBName }}</div>
+                </div>
+            </div>
+            {{ else }}
+            <p class="press-empty">Encara no hi ha prou dades per calcular el teu duel més disputat.</p>
+            {{ end }}
+        </div>
+
+        <div class="press-card">
+            <h2 class="press-card-title">La teva tria més atrevida</h2>
+            {{ if .HasUnpopularPick }}
+            <div class="press-stat-body">
+                <div class="press-stat-name">{{ .UnpopularPickName }}</div>
+                <div class="press-stat-value">Només el {{ .UnpopularPercent }}% del públic hi va coincidir amb tu</div>
+            </div>
+            {{ else }}
+            <p class="press-empty">Encara no hi ha prou dades per determinar la teva tria més atrevida.</p>
+            {{ end }}
+        </div>
+
+        <div class="press-card">
+            <h2 class="press-card-title">El teu camí a la Gran Final</h2>
+            {{ if not .HasBracketVotes }}
+            <p class="press-empty">Encara no has votat a la fase de knockout.</p>
+            {{ else }}
+            <div class="press-stat-body">
+                <div class="press-stat-value">{{ .BracketRoundsVoted }} rondes votades, {{ .BracketPicksCorrect }} encerts de {{ .BracketMatchesDecided }}</div>
+            </div>
+            {{ if .HasChampion }}
+                {{ if .MatchedChampion }}
+                <p class="press-stat-value">Vas encertar el campió: {{ .ChampionName }}</p>
+                {{ else }}
+                <p class="press-stat-value">El campió va ser {{ .ChampionName }}</p>
+                {{ end }}
+            {{ else }}
+            <p class="press-empty">La Gran Final encara no s'ha decidit.</p>
+            {{ end }}
+            {{ end }}
+        </div>
+    </div>
+
+    <div class="stats-footer">
+        <!-- Plain link on purpose: this serves a PNG, not an HTML fragment,
+             so it must not be HTMX-boosted/swapped like the buttons above
+             (see stats.html's /share/card.png link for the same convention). -->
+        <a href="/wrapped/card.png" class="btn" download="torrorendum-wrapped.png">
+            Descarrega el teu Wrapped
+        </a>
+    </div>
+    {{ end }}
+</div>
+{{ end }}

@@ -97,6 +97,12 @@
                     <div class="press-stat-value">Campió del Torrorèndum</div>
                 </div>
             </div>
+            <!-- Plain link on purpose: this serves a PNG, not an HTML
+                 fragment, so it must not be HTMX-boosted/swapped (same
+                 convention as stats.html's /share/card.png link). -->
+            <a href="/press-kit/card.png" class="btn btn-small" download="torrorendum-press-kit.png">
+                Descarrega el press kit
+            </a>
             {{ else }}
             <p class="press-empty">La Gran Final encara no s'ha disputat.</p>
             {{ end }}

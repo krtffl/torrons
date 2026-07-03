@@ -41,4 +41,11 @@ type PressStatsRepo interface {
 	// "duel" reading as maximally close). Returns (nil, nil) if no pairing
 	// meets the threshold yet.
 	ClosestDuel(ctx context.Context, minTotalVotes int) (*ClosestDuel, error)
+
+	// VotesForTorro returns the total number of times this specific torró
+	// has been chosen as the winner across all Results ever recorded.
+	// Used by the press-kit card to report "segons X vots" for a known
+	// champion torró (as opposed to MostVotedTorro, which finds whichever
+	// torró has the most wins, not necessarily this one).
+	VotesForTorro(ctx context.Context, torroId string) (int, error)
 }

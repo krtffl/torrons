@@ -189,6 +189,17 @@ func (srv *Server) Run() error {
 		// public aggregate stats, plus the embed snippet generator for the
 		// widget above.
 		r.Get("/premsa", srv.handler.press)
+
+		// Personal "Torrorèndum Wrapped" campaign recap: page + PNG story
+		// card, gated behind the same minimum-vote threshold as the Global
+		// leaderboard. Registered without the ".png" suffix for the same
+		// reason as /share/card above.
+		r.Get("/wrapped", srv.handler.wrapped)
+		r.Get("/wrapped/card", srv.handler.wrappedCard)
+
+		// Press-kit aggregate one-pager PNG (the Gran Final's champion),
+		// same ".png"-suffix-stripping caveat as above.
+		r.Get("/press-kit/card", srv.handler.pressKitCard)
 	})
 	// **********        **********
 
