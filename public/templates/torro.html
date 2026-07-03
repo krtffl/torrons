@@ -1,0 +1,105 @@
+{{ if not .HX }}
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ .Torro.Name }} - Torrons Vicens">
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <title>{{ .Torro.Name }} - Torrorèndum 2025</title>
+  </head>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
+      {{ template "header" . }}
+      {{ template "topbar" . }}
+      <div id="main-content">
+          {{ template "torro-detail" . }}
+      </div>
+  </body>
+</html>
+{{ else }}
+    {{ template "torro-detail" . }}
+{{ end }}
+
+{{ define "torro-detail" }}
+<div id="torro-detail-container" class="pairing-container">
+    <a class="btn-small torro-back-link"
+       href="/leaderboard"
+       hx-get="/leaderboard"
+       hx-boost="true"
+       hx-target="#main-content"
+       hx-push-url="/leaderboard"
+       aria-label="Torna a la classificació">&larr; Torna a la classificació</a>
+
+    <div class="torron-card torro-detail-card">
+        <div class="torron-name">{{ .Torro.Name }}</div>
+        <img class="torron-image" src="/public/images/{{ .Torro.Image }}" alt="{{ .Torro.Name }} - Torrons Vicens">
+
+        {{ if .Torro.HasDescription }}
+        <p class="torro-description">{{ .Torro.Description }}</p>
+        {{ end }}
+
+        <div class="torro-meta">
+            {{ if .Torro.HasWeight }}
+            <span class="stat-item"><span class="stat-label">Pes:</span> <span class="stat-value">{{ .Torro.Weight }}</span></span>
+            {{ end }}
+            {{ if .Torro.HasPrice }}
+            <span class="stat-item"><span class="stat-label">Preu:</span> <span class="stat-value">{{ printf "%.2f" .Torro.Price }} &euro;</span></span>
+            {{ end }}
+            <span class="stat-item"><span class="stat-label">ELO:</span> <span class="stat-value">{{ printf "%.0f" .Torro.Rating }}</span></span>
+            {{ if .Torro.HasRank }}
+            <span class="stat-item"><span class="stat-label">Rànquing categoria:</span> <span class="stat-value">#{{ .Torro.Rank }}</span></span>
+            {{ end }}
+        </div>
+
+        {{ if .Torro.HasIntensity }}
+        <div class="intensity-meter" role="img" aria-label="Intensitat {{ .Torro.IntensityLevel }} de 5">
+            <span class="stat-label">Intensitat:</span>
+            <span class="intensity-dots" aria-hidden="true">{{ range .Torro.IntensityDots }}{{ if . }}&#9679;{{ else }}&#9675;{{ end }}{{ end }}</span>
+        </div>
+        {{ end }}
+
+        {{ if .Torro.HasDietInfo }}
+        <div class="diet-badges" aria-label="Informació dietètica">
+            {{ if .Torro.IsVegan }}<span class="category-badge">🌱 Vegà</span>{{ end }}
+            {{ if .Torro.IsGlutenFree }}<span class="category-badge">🌾 Sense gluten</span>{{ end }}
+            {{ if .Torro.IsLactoseFree }}<span class="category-badge">🥛 Sense lactosa</span>{{ end }}
+            {{ if .Torro.IsOrganic }}<span class="category-badge">🍃 Ecològic</span>{{ end }}
+        </div>
+        {{ end }}
+
+        {{ if .Torro.MainIngredients }}
+        <div class="torro-ingredients">
+            <div class="stat-label">Ingredients principals:</div>
+            <div class="ingredients-list">
+                {{ range .Torro.MainIngredients }}<span class="category-badge">{{ . }}</span>{{ end }}
+            </div>
+        </div>
+        {{ end }}
+
+        {{ if .Torro.Allergens }}
+        <div class="torro-allergens">
+            <div class="stat-label">Al·lèrgens:</div>
+            <div class="ingredients-list">
+                {{ range .Torro.Allergens }}<span class="category-badge">{{ . }}</span>{{ end }}
+            </div>
+        </div>
+        {{ end }}
+
+        {{ if .Torro.HasProductUrl }}
+        <a class="btn btn-with-icon torro-product-link" href="{{ .Torro.ProductUrl }}" target="_blank" rel="noopener noreferrer">
+            <span class="btn-icon">🛒</span>
+            <span class="btn-text">Compra'l a Vicens.com</span>
+        </a>
+        {{ end }}
+    </div>
+</div>
+{{ end }}

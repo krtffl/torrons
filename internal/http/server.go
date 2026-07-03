@@ -124,6 +124,9 @@ func (srv *Server) Run() error {
 
 		r.Post("/pairings/{id}/vote", srv.handler.result)
 
+		// Product detail page
+		r.Get("/torro/{id}", srv.handler.torroDetail)
+
 		// Leaderboard visualization
 		r.Get("/leaderboard", srv.handler.leaderboard)
 

@@ -183,6 +183,14 @@
                 <span class="stat-value">{{ .VoteCount }}</span>
             </span>
         </div>
+        <a class="torron-info-link"
+           href="/torro/{{ .TorronId }}"
+           hx-get="/torro/{{ .TorronId }}"
+           hx-target="#main-content"
+           hx-push-url="/torro/{{ .TorronId }}"
+           aria-label="Més informació sobre {{ .TorronName }}">
+            ℹ️ més info
+        </a>
     </div>
 
     <div class="entry-rating">

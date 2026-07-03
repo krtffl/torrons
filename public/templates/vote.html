@@ -59,6 +59,16 @@
        {{ .Name }}
     </div>
     <img class="torron-image" src="/public/images/{{ .Image }}" alt="{{ .Name }} - Torrons Vicens">
+    <a class="torron-info-link"
+       href="/torro/{{ .Id }}"
+       hx-get="/torro/{{ .Id }}"
+       hx-target="#main-content"
+       hx-push-url="/torro/{{ .Id }}"
+       aria-label="Més informació sobre {{ .Name }}"
+       onclick="event.stopPropagation();"
+       onkeydown="event.stopPropagation();">
+        ℹ️ més info
+    </a>
 </div>
 {{ end }}
 

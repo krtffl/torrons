@@ -2010,3 +2010,88 @@ body {
         display: none;
     }
 }
+
+/* ========================================
+   Torró Info Link (vote card & leaderboard entry)
+   ======================================== */
+
+.torron-info-link {
+    display: inline-block;
+    margin-top: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.torron-info-link:hover,
+.torron-info-link:focus-visible {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
+.entry-details .torron-info-link {
+    margin-top: var(--spacing-xs);
+}
+
+/* ========================================
+   Torró Detail Page
+   ======================================== */
+
+.torro-back-link {
+    display: inline-block;
+    margin-bottom: var(--spacing-md);
+}
+
+.torro-detail-card {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.torro-description {
+    color: var(--color-text);
+    text-align: left;
+    margin: var(--spacing-md) 0;
+    line-height: 1.6;
+}
+
+.torro-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin: var(--spacing-md) 0;
+}
+
+.intensity-meter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    margin: var(--spacing-md) 0;
+}
+
+.intensity-dots {
+    font-size: var(--font-size-lg);
+    letter-spacing: 2px;
+    color: var(--color-primary);
+}
+
+.diet-badges,
+.ingredients-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin: var(--spacing-sm) 0 var(--spacing-md);
+}
+
+.torro-ingredients,
+.torro-allergens {
+    margin: var(--spacing-md) 0;
+}
+
+.torro-product-link {
+    margin-top: var(--spacing-lg);
+}
