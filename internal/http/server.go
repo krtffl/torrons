@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/fs"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -71,9 +72,6 @@ func (srv *Server) Run() error {
 			// Prevent MIME sniffing
 			w.Header().Set("X-Content-Type-Options", "nosniff")
 
-			// Prevent clickjacking
-			w.Header().Set("X-Frame-Options", "DENY")
-
 			// Enable XSS filter
 			w.Header().Set("X-XSS-Protection", "1; mode=block")
 
@@ -86,13 +84,31 @@ func (srv *Server) Run() error {
 			// X-Permitted-Cross-Domain-Policies
 			w.Header().Set("X-Permitted-Cross-Domain-Policies", "none")
 
-			// Content Security Policy (configured for HTMX app)
-			w.Header().Set("Content-Security-Policy",
-				"default-src 'self'; "+
-					"script-src 'self' 'unsafe-inline' https://unpkg.com; "+
-					"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "+
-					"font-src 'self' https://fonts.gstatic.com; "+
-					"img-src 'self' data:")
+			// The embeddable leaderboard widget (/embed/*) is meant to be
+			// loaded cross-origin inside a third party's <iframe> - that's
+			// the entire point of shipping it (backlink/SEO value).
+			// X-Frame-Options: DENY blocks all framing regardless of CSP,
+			// so that path gets its own, deliberately permissive framing
+			// policy instead. Every other route keeps the exact previous
+			// behavior unchanged.
+			if strings.HasPrefix(r.URL.Path, "/embed/") {
+				w.Header().Set("Content-Security-Policy",
+					"default-src 'self'; "+
+						"style-src 'self' 'unsafe-inline'; "+
+						"img-src 'self' data:; "+
+						"frame-ancestors *")
+			} else {
+				// Prevent clickjacking
+				w.Header().Set("X-Frame-Options", "DENY")
+
+				// Content Security Policy (configured for HTMX app)
+				w.Header().Set("Content-Security-Policy",
+					"default-src 'self'; "+
+						"script-src 'self' 'unsafe-inline' https://unpkg.com; "+
+						"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "+
+						"font-src 'self' https://fonts.gstatic.com; "+
+						"img-src 'self' data:")
+			}
 
 			next.ServeHTTP(w, r)
 		})
@@ -163,6 +179,16 @@ func (srv *Server) Run() error {
 		r.Post("/friends/create", srv.handler.friendsCreate)
 		r.Get("/friends/join/{inviteCode}", srv.handler.friendsJoin)
 		r.Get("/friends/{circleId}", srv.handler.friendsLeaderboard)
+
+		// Embeddable leaderboard widget, designed to be loaded cross-origin
+		// inside a third party's <iframe> (see the security-headers and
+		// UserMiddleware /embed/ special-casing above/in middleware.go).
+		r.Get("/embed/leaderboard", srv.handler.embedLeaderboard)
+
+		// Press/stats data page: a permanent, screenshot-friendly page of
+		// public aggregate stats, plus the embed snippet generator for the
+		// widget above.
+		r.Get("/premsa", srv.handler.press)
 	})
 	// **********        **********
 

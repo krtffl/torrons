@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 
@@ -21,6 +22,18 @@ const (
 // Creates new users if cookie doesn't exist, validates existing users
 func (h *Handler) UserMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// The embeddable leaderboard widget is read-only and rendered
+		// cross-origin inside third-party <iframe>s, where third-party
+		// cookies are commonly blocked by the browser. Without this early
+		// return, every cookie-less impression would mint a brand new
+		// anonymous Users row on every page load - the widget doesn't need
+		// a user identity at all (it only reads torroRepo), so skip
+		// cookie/user-creation entirely for this path.
+		if strings.HasPrefix(r.URL.Path, "/embed/") {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		const cookieName = "torrons_user_id"
 		const cookieMaxAge = 90 * 24 * 60 * 60 // 90 days in seconds
 

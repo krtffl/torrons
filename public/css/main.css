@@ -2215,3 +2215,180 @@ body {
 .torro-product-link {
     margin-top: var(--spacing-lg);
 }
+
+/* ========================================
+   Press / Stats Page (/premsa)
+   Functional-first, screenshot-friendly:
+   high contrast, big numbers, minimal
+   decoration. Restyle later.
+   ======================================== */
+
+#press-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+.press-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.press-title {
+    font-size: var(--font-size-2xl);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.press-subtitle {
+    color: var(--color-text-light);
+}
+
+.press-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.press-card {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-lg);
+}
+
+.press-card-title {
+    font-size: var(--font-size-lg);
+    color: var(--color-primary);
+    margin: 0 0 var(--spacing-md);
+}
+
+.press-stat {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.press-stat-image {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--border-radius);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.press-stat-name {
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+}
+
+.press-stat-value {
+    color: var(--color-text-light);
+    font-size: var(--font-size-sm);
+    margin-top: var(--spacing-xs);
+}
+
+.press-empty {
+    color: var(--color-text-light);
+    font-style: italic;
+}
+
+.press-duel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    text-align: center;
+}
+
+.press-duel-side {
+    flex: 1;
+}
+
+.press-duel-side .press-stat-image {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto var(--spacing-xs);
+}
+
+.press-duel-side .press-stat-name {
+    font-size: var(--font-size-sm);
+}
+
+.press-duel-score {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.press-duel-total {
+    text-align: center;
+    margin-top: var(--spacing-sm);
+}
+
+.press-embed-section {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-lg);
+}
+
+.press-embed-description {
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-md);
+}
+
+.press-embed-label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: var(--spacing-xs);
+}
+
+.press-embed-select {
+    width: 100%;
+    max-width: 320px;
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--color-shadow-heavy);
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+}
+
+.press-embed-textarea {
+    display: block;
+    width: 100%;
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--color-shadow-heavy);
+    font-family: monospace;
+    font-size: var(--font-size-sm);
+    resize: vertical;
+    background: var(--color-background);
+    color: var(--color-text);
+}
+
+.press-embed-copy {
+    margin-bottom: var(--spacing-lg);
+}
+
+.press-embed-preview {
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-md);
+    background: var(--color-background);
+    border-radius: var(--border-radius);
+}
+
+.press-embed-preview iframe {
+    max-width: 100%;
+}
+
+@media (max-width: 600px) {
+    .press-duel {
+        flex-direction: column;
+    }
+}
