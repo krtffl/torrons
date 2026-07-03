@@ -50,20 +50,20 @@
         {{ if .ShowCategoryFilter }}
         <div class="category-selector">
             <button class="category-btn {{ if eq .SelectedCategory "global" }}active{{ end }}"
-                    hx-get="/leaderboard?view={{ .ViewType }}&category=global"
+                    hx-get="/leaderboard?view={{ .ViewType }}&category=global&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}"
                     hx-trigger="click"
                     hx-target="#leaderboard-container"
                     hx-swap="outerHTML"
-                    hx-push-url="/leaderboard?view={{ .ViewType }}&category=global">
+                    hx-push-url="/leaderboard?view={{ .ViewType }}&category=global&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}">
                 Global
             </button>
             {{ range .Categories }}
             <button class="category-btn {{ if eq $.SelectedCategory .Id }}active{{ end }}"
-                    hx-get="/leaderboard?view={{ $.ViewType }}&category={{ .Id }}"
+                    hx-get="/leaderboard?view={{ $.ViewType }}&category={{ .Id }}&vegan={{ $.FilterVegan }}&gluten_free={{ $.FilterGlutenFree }}&lactose_free={{ $.FilterLactoseFree }}&organic={{ $.FilterOrganic }}"
                     hx-trigger="click"
                     hx-target="#leaderboard-container"
                     hx-swap="outerHTML"
-                    hx-push-url="/leaderboard?view={{ $.ViewType }}&category={{ .Id }}">
+                    hx-push-url="/leaderboard?view={{ $.ViewType }}&category={{ .Id }}&vegan={{ $.FilterVegan }}&gluten_free={{ $.FilterGlutenFree }}&lactose_free={{ $.FilterLactoseFree }}&organic={{ $.FilterOrganic }}">
                 {{ .Name }}
             </button>
             {{ end }}
@@ -73,20 +73,60 @@
         <!-- View toggle -->
         <div class="view-toggle">
             <button class="toggle-btn {{ if eq .ViewType "personal" }}active{{ end }}"
-                    hx-get="/leaderboard?view=personal&category={{ .SelectedCategory }}"
+                    hx-get="/leaderboard?view=personal&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}"
                     hx-trigger="click"
                     hx-target="#leaderboard-container"
                     hx-swap="outerHTML"
-                    hx-push-url="/leaderboard?view=personal&category={{ .SelectedCategory }}">
+                    hx-push-url="/leaderboard?view=personal&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}">
                 Els meus resultats
             </button>
             <button class="toggle-btn {{ if eq .ViewType "global" }}active{{ end }}"
-                    hx-get="/leaderboard?view=global&category={{ .SelectedCategory }}"
+                    hx-get="/leaderboard?view=global&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}"
                     hx-trigger="click"
                     hx-target="#leaderboard-container"
                     hx-swap="outerHTML"
-                    hx-push-url="/leaderboard?view=global&category={{ .SelectedCategory }}">
+                    hx-push-url="/leaderboard?view=global&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}">
                 Resultats globals
+            </button>
+        </div>
+
+        <!-- Dietary/allergen filter chips -->
+        <div class="filter-chips" role="group" aria-label="Filtres dietètics">
+            <button class="category-btn {{ if .FilterVegan }}active{{ end }}"
+                    hx-get="/leaderboard?view={{ .ViewType }}&category={{ .SelectedCategory }}&vegan={{ if .FilterVegan }}false{{ else }}true{{ end }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}"
+                    hx-trigger="click"
+                    hx-target="#leaderboard-container"
+                    hx-swap="outerHTML"
+                    hx-push-url="/leaderboard?view={{ .ViewType }}&category={{ .SelectedCategory }}&vegan={{ if .FilterVegan }}false{{ else }}true{{ end }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}"
+                    aria-pressed="{{ .FilterVegan }}">
+                🌱 Vegà
+            </button>
+            <button class="category-btn {{ if .FilterGlutenFree }}active{{ end }}"
+                    hx-get="/leaderboard?view={{ .ViewType }}&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ if .FilterGlutenFree }}false{{ else }}true{{ end }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}"
+                    hx-trigger="click"
+                    hx-target="#leaderboard-container"
+                    hx-swap="outerHTML"
+                    hx-push-url="/leaderboard?view={{ .ViewType }}&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ if .FilterGlutenFree }}false{{ else }}true{{ end }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}"
+                    aria-pressed="{{ .FilterGlutenFree }}">
+                🌾 Sense gluten
+            </button>
+            <button class="category-btn {{ if .FilterLactoseFree }}active{{ end }}"
+                    hx-get="/leaderboard?view={{ .ViewType }}&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ if .FilterLactoseFree }}false{{ else }}true{{ end }}&organic={{ .FilterOrganic }}"
+                    hx-trigger="click"
+                    hx-target="#leaderboard-container"
+                    hx-swap="outerHTML"
+                    hx-push-url="/leaderboard?view={{ .ViewType }}&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ if .FilterLactoseFree }}false{{ else }}true{{ end }}&organic={{ .FilterOrganic }}"
+                    aria-pressed="{{ .FilterLactoseFree }}">
+                🥛 Sense lactosa
+            </button>
+            <button class="category-btn {{ if .FilterOrganic }}active{{ end }}"
+                    hx-get="/leaderboard?view={{ .ViewType }}&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ if .FilterOrganic }}false{{ else }}true{{ end }}"
+                    hx-trigger="click"
+                    hx-target="#leaderboard-container"
+                    hx-swap="outerHTML"
+                    hx-push-url="/leaderboard?view={{ .ViewType }}&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ if .FilterOrganic }}false{{ else }}true{{ end }}"
+                    aria-pressed="{{ .FilterOrganic }}">
+                🍃 Ecològic
             </button>
         </div>
     </div>

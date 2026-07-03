@@ -87,8 +87,8 @@ func (h *Handler) handleUserLeaderboard(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// Get personalized leaderboard
-	entries, err := h.userEloRepo.GetUserLeaderboard(r.Context(), userId, classId)
+	// Get personalized leaderboard (optionally narrowed by dietary filters)
+	entries, err := h.userEloRepo.GetUserLeaderboard(r.Context(), userId, classId, parseTorroFilter(r))
 	if err != nil {
 		logger.Error("[User API - Leaderboard] Couldn't get leaderboard. %v", err)
 		render.Status(r, http.StatusInternalServerError)
@@ -127,8 +127,8 @@ func (h *Handler) handleUserGlobalLeaderboard(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	// Get personalized global leaderboard
-	entries, err := h.userEloRepo.GetUserGlobalLeaderboard(r.Context(), userId)
+	// Get personalized global leaderboard (optionally narrowed by dietary filters)
+	entries, err := h.userEloRepo.GetUserGlobalLeaderboard(r.Context(), userId, parseTorroFilter(r))
 	if err != nil {
 		logger.Error("[User API - Global Leaderboard] Couldn't get leaderboard. %v", err)
 		render.Status(r, http.StatusInternalServerError)

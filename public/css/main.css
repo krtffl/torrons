@@ -827,6 +827,15 @@ body {
     color: var(--color-white);
 }
 
+/* Dietary/allergen filter chips (reuses .category-btn look) */
+.filter-chips {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0 var(--spacing-lg);
+}
+
 /* View toggle */
 .view-toggle {
     display: flex;
