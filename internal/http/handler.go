@@ -42,6 +42,7 @@ type Handler struct {
 	userRepo     domain.UserRepo
 	userEloRepo  domain.UserEloSnapshotRepo
 	campaignRepo domain.CampaignRepo
+	bracketRepo  domain.BracketRepo
 }
 
 func NewHandler(
@@ -54,6 +55,7 @@ func NewHandler(
 	userRepo domain.UserRepo,
 	userEloRepo domain.UserEloSnapshotRepo,
 	campaignRepo domain.CampaignRepo,
+	bracketRepo domain.BracketRepo,
 ) *Handler {
 	tmpls, err := template.New("").ParseFS(torrons.Public, "public/templates/*.html")
 	if err != nil {
@@ -71,6 +73,7 @@ func NewHandler(
 		userRepo:     userRepo,
 		userEloRepo:  userEloRepo,
 		campaignRepo: campaignRepo,
+		bracketRepo:  bracketRepo,
 	}
 }
 

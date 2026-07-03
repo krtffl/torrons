@@ -1,0 +1,229 @@
+{{ if not .HX }}
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bracket eliminatori dels torrons Vicens 2025">
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <title>Bracket - Torrorèndum 2025</title>
+  </head>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
+      {{ template "header" . }}
+      {{ template "topbar" . }}
+      <div id="main-content">
+          {{ template "bracket-overview" . }}
+      </div>
+  </body>
+</html>
+{{ else }}
+      {{ template "bracket-overview" . }}
+{{ end }}
+
+{{ define "bracket-overview" }}
+<div id="bracket-container">
+    <div class="stats-header">
+        <h1 class="stats-title">Bracket - {{ .ClassName }}</h1>
+        {{ if not .BracketExists }}
+        <p class="stats-subtitle">Encara no hi ha bracket per aquesta categoria.</p>
+        {{ else if eq .Bracket.Status "completed" }}
+        <p class="stats-subtitle">Bracket finalitzat!</p>
+        {{ else }}
+        <p class="stats-subtitle">Ronda {{ .Bracket.CurrentRound }} de {{ .TotalRounds }}</p>
+        {{ end }}
+    </div>
+
+    {{ if not .BracketExists }}
+    <!-- Empty state -->
+    <div class="history-empty">
+        <div class="empty-icon">🏆</div>
+        <div class="empty-message">Encara no hi ha bracket per aquesta categoria</div>
+        <div class="empty-hint">Torna més tard, quan comenci la fase eliminatòria.</div>
+        <button class="btn mt-lg" hx-get="/classes" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/classes">
+            Torna a votar
+        </button>
+    </div>
+    {{ else }}
+
+    {{ if .Champion }}
+    <!-- Champion banner -->
+    <div class="bracket-champion">
+        <img class="bracket-champion-image" src="/public/images/{{ .Champion.Image }}" alt="{{ .Champion.Name }}">
+        <div class="bracket-champion-icon">🏆</div>
+        <div class="bracket-champion-name">{{ .Champion.Name }}</div>
+        <div class="bracket-champion-label">Campió del bracket</div>
+    </div>
+    {{ else }}
+    <div class="bracket-cta">
+        <button class="btn btn-large" hx-get="/bracket/{{ .ClassId }}/vote" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/bracket/{{ .ClassId }}/vote">
+            Vota a la ronda actual
+        </button>
+    </div>
+    {{ end }}
+
+    <!-- Round by round results -->
+    {{ range .Rounds }}
+    <div class="bracket-round">
+        <h2 class="section-title">
+            {{ if .IsFinal }}Gran Final{{ else }}Ronda {{ .Round }}{{ end }}
+            {{ if .IsCurrent }}<span class="bracket-current-badge">ronda actual</span>{{ end }}
+        </h2>
+        <div class="bracket-match-list">
+            {{ range .Matches }}
+            {{ template "bracket-match-summary" . }}
+            {{ end }}
+        </div>
+    </div>
+    {{ end }}
+
+    {{ end }}
+
+    <!-- Back to open voting -->
+    <div class="history-footer">
+        <button class="btn" hx-get="/classes" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/classes">
+            Torna a votar (fase oberta)
+        </button>
+    </div>
+</div>
+{{ end }}
+
+
+{{ define "bracket-match-summary" }}
+<div class="bracket-match {{ if .Decided }}decided{{ end }}">
+    <div class="bracket-competitor {{ if .Torro1Won }}winner{{ else if .Decided }}loser{{ end }}">
+        <img src="/public/images/{{ .Torro1.Image }}" alt="{{ .Torro1.Name }}" class="history-torron-img">
+        <div class="history-torron-info">
+            <span class="bracket-seed">#{{ .Torro1.Seed }}</span>
+            <span class="history-torron-name">{{ .Torro1.Name }}</span>
+            {{ if .Torro1Won }}<div class="winner-badge">✓ Guanyador</div>{{ end }}
+        </div>
+    </div>
+
+    <div class="history-vs">{{ if .IsBye }}BYE{{ else }}VS{{ end }}</div>
+
+    {{ if .Torro2 }}
+    <div class="bracket-competitor {{ if .Torro2Won }}winner{{ else if .Decided }}loser{{ end }}">
+        <img src="/public/images/{{ .Torro2.Image }}" alt="{{ .Torro2.Name }}" class="history-torron-img">
+        <div class="history-torron-info">
+            <span class="bracket-seed">#{{ .Torro2.Seed }}</span>
+            <span class="history-torron-name">{{ .Torro2.Name }}</span>
+            {{ if .Torro2Won }}<div class="winner-badge">✓ Guanyador</div>{{ end }}
+        </div>
+    </div>
+    {{ else }}
+    <div class="bracket-competitor bracket-bye">
+        <span class="bracket-bye-label">Passa directe a la següent ronda</span>
+    </div>
+    {{ end }}
+</div>
+{{ end }}
+
+
+{{ define "bracket-vote-page" }}
+{{ if not .HX }}
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Vota en el bracket eliminatori dels torrons Vicens 2025">
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <title>Vota al bracket - Torrorèndum 2025</title>
+  </head>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
+      {{ template "header" . }}
+      {{ template "topbar" . }}
+      <div id="main-content">
+          {{ template "bracket-vote" . }}
+      </div>
+  </body>
+</html>
+{{ else }}
+    {{ template "bracket-vote" . }}
+{{ end }}
+{{ end }}
+
+
+{{ define "bracket-vote" }}
+{{ if not .BracketExists }}
+<div class="history-empty">
+    <div class="empty-icon">🏆</div>
+    <div class="empty-message">Encara no hi ha bracket per aquesta categoria</div>
+    <div class="empty-hint">Torna més tard, quan comenci la fase eliminatòria.</div>
+</div>
+{{ else if .Completed }}
+<div class="history-empty">
+    <div class="empty-icon">🏆</div>
+    <div class="empty-message">El bracket ja té campió: {{ .ChampionName }}!</div>
+    <div class="empty-hint">Ja no es pot votar en aquest bracket.</div>
+    <button class="btn mt-lg" hx-get="/bracket/{{ .ClassId }}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/bracket/{{ .ClassId }}">
+        Veure el bracket
+    </button>
+</div>
+{{ else if .NoMoreMatches }}
+<div class="history-empty">
+    <div class="empty-icon">✅</div>
+    <div class="empty-message">Ja has votat tots els matxs oberts d'aquesta ronda</div>
+    <div class="empty-hint">Torna més tard per veure si la ronda ha avançat.</div>
+    <button class="btn mt-lg" hx-get="/bracket/{{ .ClassId }}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/bracket/{{ .ClassId }}">
+        Veure el bracket
+    </button>
+</div>
+{{ else }}
+<div id="bracket-voting-instructions" class="sr-only">
+    Escull un dels dos torrons fent clic o prement Enter per votar en aquest matx del bracket. Només pots votar un cop per matx.
+</div>
+<div class="torron-comparison" role="group" aria-label="Matx del bracket">
+    <div class="torron-card"
+         hx-post="/bracket/match/{{ .Match.Id }}/vote?winner={{ .Match.Torro1.Id }}"
+         hx-trigger="click delay:0.2s"
+         hx-target=".torron-comparison"
+         hx-swap="outerHTML"
+         tabindex="0"
+         role="button"
+         aria-label="Vota per {{ .Match.Torro1.Name }}"
+         aria-describedby="bracket-voting-instructions"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <div class="torron-name">
+            <span class="bracket-seed">#{{ .Match.Torro1.Seed }}</span> {{ .Match.Torro1.Name }}
+        </div>
+        <img class="torron-image" src="/public/images/{{ .Match.Torro1.Image }}" alt="{{ .Match.Torro1.Name }} - Torrons Vicens">
+    </div>
+    {{ if .Match.Torro2 }}
+    <div class="torron-card"
+         hx-post="/bracket/match/{{ .Match.Id }}/vote?winner={{ .Match.Torro2.Id }}"
+         hx-trigger="click delay:0.2s"
+         hx-target=".torron-comparison"
+         hx-swap="outerHTML"
+         tabindex="0"
+         role="button"
+         aria-label="Vota per {{ .Match.Torro2.Name }}"
+         aria-describedby="bracket-voting-instructions"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <div class="torron-name">
+            <span class="bracket-seed">#{{ .Match.Torro2.Seed }}</span> {{ .Match.Torro2.Name }}
+        </div>
+        <img class="torron-image" src="/public/images/{{ .Match.Torro2.Image }}" alt="{{ .Match.Torro2.Name }} - Torrons Vicens">
+    </div>
+    {{ end }}
+</div>
+{{ end }}
+{{ end }}
