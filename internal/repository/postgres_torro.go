@@ -3,6 +3,8 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/krtffl/torro/internal/domain"
 	"github.com/lib/pq"
@@ -83,7 +85,11 @@ func (r *postgresTorroRepo) ListByClass(ctx context.Context, classId string) ([]
 func (r *postgresTorroRepo) Get(ctx context.Context, id string) (*domain.Torro, error) {
 	row := r.db.QueryRowContext(ctx,
 		`
-        SELECT "Id", "Name", "Rating", "Image", "Class"
+        SELECT "Id", "Name", "Rating", "Image", "Class",
+               "Description", "Weight", "Price", "ProductUrl",
+               "Allergens", "MainIngredients",
+               "IsVegan", "IsGlutenFree", "IsLactoseFree", "IsOrganic",
+               "IntensityLevel", "IsNew2025", "Discontinued", "YearAdded"
         FROM "Torrons"
         WHERE "Id" = $1`,
 		id,
@@ -96,11 +102,90 @@ func (r *postgresTorroRepo) Get(ctx context.Context, id string) (*domain.Torro, 
 		&torro.Rating,
 		&torro.Image,
 		&torro.Class,
+		&torro.Description,
+		&torro.Weight,
+		&torro.Price,
+		&torro.ProductUrl,
+		pq.Array(&torro.Allergens),
+		pq.Array(&torro.MainIngredients),
+		&torro.IsVegan,
+		&torro.IsGlutenFree,
+		&torro.IsLactoseFree,
+		&torro.IsOrganic,
+		&torro.IntensityLevel,
+		&torro.IsNew2025,
+		&torro.Discontinued,
+		&torro.YearAdded,
 	)
 	if err != nil {
 		return nil, handleErrors(err)
 	}
 	return torro, nil
+}
+
+// ListFiltered lists torrons optionally scoped to a class and filtered by
+// dietary attributes. An empty classId returns torrons across all classes.
+// Results are ordered by rating (descending) so callers can rely on
+// positional ranking.
+func (r *postgresTorroRepo) ListFiltered(ctx context.Context, classId string, filter domain.TorroFilter) ([]*domain.Torro, error) {
+	query := `
+        SELECT "Id", "Name", "Rating", "Image", "Class"
+        FROM "Torrons"
+        WHERE 1 = 1`
+	var args []interface{}
+
+	if classId != "" {
+		args = append(args, classId)
+		query += fmt.Sprintf(` AND "Class" = $%d`, len(args))
+	}
+
+	query += dietaryFilterSQL(filter, "")
+	query += `
+        ORDER BY "Rating" DESC`
+
+	rows, err := r.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, handleErrors(err)
+	}
+
+	defer rows.Close()
+	var torrons []*domain.Torro
+
+	for rows.Next() {
+		torro := &domain.Torro{}
+		if err := rows.Scan(
+			&torro.Id,
+			&torro.Name,
+			&torro.Rating,
+			&torro.Image,
+			&torro.Class,
+		); err != nil {
+			return nil, handleErrors(err)
+		}
+		torrons = append(torrons, torro)
+	}
+
+	return torrons, nil
+}
+
+// dietaryFilterSQL builds SQL "AND" conditions for the given dietary filter
+// flags. alias, if non-empty, is used to qualify the column names (e.g.
+// "t." when the "Torrons" table is joined under an alias).
+func dietaryFilterSQL(filter domain.TorroFilter, alias string) string {
+	var b strings.Builder
+	if filter.IsVegan {
+		fmt.Fprintf(&b, ` AND %s"IsVegan" = true`, alias)
+	}
+	if filter.IsGlutenFree {
+		fmt.Fprintf(&b, ` AND %s"IsGlutenFree" = true`, alias)
+	}
+	if filter.IsLactoseFree {
+		fmt.Fprintf(&b, ` AND %s"IsLactoseFree" = true`, alias)
+	}
+	if filter.IsOrganic {
+		fmt.Fprintf(&b, ` AND %s"IsOrganic" = true`, alias)
+	}
+	return b.String()
 }
 
 func (r *postgresTorroRepo) Update(ctx context.Context, id string, rating float64) (

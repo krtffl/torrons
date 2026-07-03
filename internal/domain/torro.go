@@ -30,10 +30,28 @@ type Torro struct {
 	YearAdded       int      `db:"YearAdded"       json:"year_added"`
 }
 
+// TorroFilter holds optional dietary attribute filters used when listing
+// torrons. The zero value (all fields false) means "no filtering applied".
+type TorroFilter struct {
+	IsVegan       bool
+	IsGlutenFree  bool
+	IsLactoseFree bool
+	IsOrganic     bool
+}
+
+// IsEmpty reports whether no filter flags are set.
+func (f TorroFilter) IsEmpty() bool {
+	return !f.IsVegan && !f.IsGlutenFree && !f.IsLactoseFree && !f.IsOrganic
+}
+
 type TorroRepo interface {
 	Get(ctx context.Context, id string) (*Torro, error)
 	List(ctx context.Context) ([]*Torro, error)
 	ListByClass(ctx context.Context, classId string) ([]*Torro, error)
+	// ListFiltered lists torrons optionally scoped to a class and filtered by
+	// dietary attributes. An empty classId returns torrons across all
+	// classes. Results are ordered by rating (descending).
+	ListFiltered(ctx context.Context, classId string, filter TorroFilter) ([]*Torro, error)
 	Update(ctx context.Context, id string, rating float64) (*Torro, error)
 	// Transaction methods
 	GetTx(tx *sql.Tx, ctx context.Context, id string) (*Torro, error)

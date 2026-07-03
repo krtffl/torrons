@@ -123,9 +123,8 @@ func (r *postgresUserEloSnapshotRepo) GetOrCreate(ctx context.Context, userId st
 	return r.Create(ctx, newSnapshot)
 }
 
-func (r *postgresUserEloSnapshotRepo) GetUserLeaderboard(ctx context.Context, userId string, classId string) ([]*domain.UserLeaderboardEntry, error) {
-	rows, err := r.db.QueryContext(ctx,
-		`SELECT
+func (r *postgresUserEloSnapshotRepo) GetUserLeaderboard(ctx context.Context, userId string, classId string, filter domain.TorroFilter) ([]*domain.UserLeaderboardEntry, error) {
+	query := `SELECT
 			ues."TorronId",
 			t."Name",
 			t."Image",
@@ -136,11 +135,11 @@ func (r *postgresUserEloSnapshotRepo) GetUserLeaderboard(ctx context.Context, us
 		 INNER JOIN "Torrons" t ON ues."TorronId" = t."Id"
 		 WHERE ues."UserId" = $1
 		   AND t."Class" = $2
-		   AND t."Discontinued" = false
-		 ORDER BY ues."Rating" DESC`,
-		userId,
-		classId,
-	)
+		   AND t."Discontinued" = false` +
+		dietaryFilterSQL(filter, "t.") +
+		` ORDER BY ues."Rating" DESC`
+
+	rows, err := r.db.QueryContext(ctx, query, userId, classId)
 	if err != nil {
 		return nil, handleErrors(err)
 	}
@@ -166,9 +165,8 @@ func (r *postgresUserEloSnapshotRepo) GetUserLeaderboard(ctx context.Context, us
 	return entries, nil
 }
 
-func (r *postgresUserEloSnapshotRepo) GetUserGlobalLeaderboard(ctx context.Context, userId string) ([]*domain.UserLeaderboardEntry, error) {
-	rows, err := r.db.QueryContext(ctx,
-		`SELECT
+func (r *postgresUserEloSnapshotRepo) GetUserGlobalLeaderboard(ctx context.Context, userId string, filter domain.TorroFilter) ([]*domain.UserLeaderboardEntry, error) {
+	query := `SELECT
 			ues."TorronId",
 			t."Name",
 			t."Image",
@@ -178,11 +176,12 @@ func (r *postgresUserEloSnapshotRepo) GetUserGlobalLeaderboard(ctx context.Conte
 		 FROM "UserEloSnapshots" ues
 		 INNER JOIN "Torrons" t ON ues."TorronId" = t."Id"
 		 WHERE ues."UserId" = $1
-		   AND t."Discontinued" = false
-		 ORDER BY ues."Rating" DESC
-		 LIMIT 100`,
-		userId,
-	)
+		   AND t."Discontinued" = false` +
+		dietaryFilterSQL(filter, "t.") +
+		` ORDER BY ues."Rating" DESC
+		 LIMIT 100`
+
+	rows, err := r.db.QueryContext(ctx, query, userId)
 	if err != nil {
 		return nil, handleErrors(err)
 	}

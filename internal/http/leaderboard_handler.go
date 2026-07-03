@@ -38,6 +38,24 @@ type LeaderboardContent struct {
 	MinVotes            int
 	ShareText           string // URL-encoded text for social sharing
 	ShareUrl            string // URL to share
+
+	// Dietary/allergen filter chips state
+	FilterVegan       bool
+	FilterGlutenFree  bool
+	FilterLactoseFree bool
+	FilterOrganic     bool
+}
+
+// parseTorroFilter reads dietary filter flags from the request's query
+// parameters, e.g. ?vegan=true&gluten_free=true&lactose_free=true&organic=true
+func parseTorroFilter(r *http.Request) domain.TorroFilter {
+	q := r.URL.Query()
+	return domain.TorroFilter{
+		IsVegan:       q.Get("vegan") == "true",
+		IsGlutenFree:  q.Get("gluten_free") == "true",
+		IsLactoseFree: q.Get("lactose_free") == "true",
+		IsOrganic:     q.Get("organic") == "true",
+	}
 }
 
 // leaderboard handles the main leaderboard page with view and category selection
@@ -70,6 +88,8 @@ func (h *Handler) leaderboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	filter := parseTorroFilter(r)
+
 	var entries []LeaderboardEntry
 	var errorMsg string
 	var minVotes int
@@ -77,7 +97,7 @@ func (h *Handler) leaderboard(w http.ResponseWriter, r *http.Request) {
 
 	// Fetch data based on view type
 	if viewType == "personal" {
-		entries, errorMsg, minVotes = h.fetchPersonalLeaderboard(r, userId, category)
+		entries, errorMsg, minVotes = h.fetchPersonalLeaderboard(r, userId, category, filter)
 		if category == "global" {
 			title = "Els meus resultats - Global"
 		} else {
@@ -85,7 +105,7 @@ func (h *Handler) leaderboard(w http.ResponseWriter, r *http.Request) {
 			title = fmt.Sprintf("Els meus resultats - %s", className)
 		}
 	} else {
-		entries, errorMsg = h.fetchGlobalLeaderboard(r, category)
+		entries, errorMsg = h.fetchGlobalLeaderboard(r, category, filter)
 		if category == "global" {
 			title = "Resultats globals - Millor torró absolut"
 		} else {
@@ -135,6 +155,10 @@ func (h *Handler) leaderboard(w http.ResponseWriter, r *http.Request) {
 		MinVotes:           minVotes,
 		ShareText:          url.QueryEscape(shareText),
 		ShareUrl:           url.QueryEscape(shareUrl),
+		FilterVegan:        filter.IsVegan,
+		FilterGlutenFree:   filter.IsGlutenFree,
+		FilterLactoseFree:  filter.IsLactoseFree,
+		FilterOrganic:      filter.IsOrganic,
 	}
 
 	buf := h.bpool.Get()
@@ -149,8 +173,9 @@ func (h *Handler) leaderboard(w http.ResponseWriter, r *http.Request) {
 	buf.WriteTo(w)
 }
 
-// fetchPersonalLeaderboard gets personalized rankings for a user
-func (h *Handler) fetchPersonalLeaderboard(r *http.Request, userId, category string) ([]LeaderboardEntry, string, int) {
+// fetchPersonalLeaderboard gets personalized rankings for a user, optionally
+// narrowed down by dietary filter flags
+func (h *Handler) fetchPersonalLeaderboard(r *http.Request, userId, category string, filter domain.TorroFilter) ([]LeaderboardEntry, string, int) {
 	minVotes := getMinVotesForClass(category)
 
 	// Check if user has enough votes
@@ -180,9 +205,9 @@ func (h *Handler) fetchPersonalLeaderboard(r *http.Request, userId, category str
 	// Fetch personalized leaderboard
 	var apiEntries []*domain.UserLeaderboardEntry
 	if category == "global" {
-		apiEntries, err = h.userEloRepo.GetUserGlobalLeaderboard(r.Context(), userId)
+		apiEntries, err = h.userEloRepo.GetUserGlobalLeaderboard(r.Context(), userId, filter)
 	} else {
-		apiEntries, err = h.userEloRepo.GetUserLeaderboard(r.Context(), userId, category)
+		apiEntries, err = h.userEloRepo.GetUserLeaderboard(r.Context(), userId, category, filter)
 	}
 
 	if err != nil {
@@ -206,20 +231,17 @@ func (h *Handler) fetchPersonalLeaderboard(r *http.Request, userId, category str
 	return entries, "", 0
 }
 
-// fetchGlobalLeaderboard gets community-wide rankings
-func (h *Handler) fetchGlobalLeaderboard(r *http.Request, category string) ([]LeaderboardEntry, string) {
-	// Fetch global leaderboard via torron repository
-	var torrons []*domain.Torro
-	var err error
-
+// fetchGlobalLeaderboard gets community-wide rankings, optionally narrowed
+// down by dietary filter flags
+func (h *Handler) fetchGlobalLeaderboard(r *http.Request, category string, filter domain.TorroFilter) ([]LeaderboardEntry, string) {
+	// Fetch global leaderboard via torron repository. An empty classId
+	// means "all classes" (used for the "global" pseudo-category).
+	classId := category
 	if category == "global" {
-		// Get all torrons sorted by rating
-		torrons, err = h.torroRepo.List(r.Context())
-	} else {
-		// Get torrons for specific class sorted by rating
-		torrons, err = h.torroRepo.ListByClass(r.Context(), category)
+		classId = ""
 	}
 
+	torrons, err := h.torroRepo.ListFiltered(r.Context(), classId, filter)
 	if err != nil {
 		logger.Error("[Handler - Leaderboard] Couldn't fetch torrons. %v", err)
 		return nil, "Error al carregar els resultats"

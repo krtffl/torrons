@@ -41,11 +41,13 @@ type UserEloSnapshotRepo interface {
 	// GetOrCreate retrieves existing snapshot or creates new one with default rating
 	GetOrCreate(ctx context.Context, userId string, torronId string) (*UserEloSnapshot, error)
 
-	// GetUserLeaderboard retrieves a user's personalized leaderboard for a class
-	GetUserLeaderboard(ctx context.Context, userId string, classId string) ([]*UserLeaderboardEntry, error)
+	// GetUserLeaderboard retrieves a user's personalized leaderboard for a
+	// class, optionally narrowed down by dietary filter flags.
+	GetUserLeaderboard(ctx context.Context, userId string, classId string, filter TorroFilter) ([]*UserLeaderboardEntry, error)
 
-	// GetUserGlobalLeaderboard retrieves a user's personalized global leaderboard
-	GetUserGlobalLeaderboard(ctx context.Context, userId string) ([]*UserLeaderboardEntry, error)
+	// GetUserGlobalLeaderboard retrieves a user's personalized global
+	// leaderboard, optionally narrowed down by dietary filter flags.
+	GetUserGlobalLeaderboard(ctx context.Context, userId string, filter TorroFilter) ([]*UserLeaderboardEntry, error)
 
 	// ListByUser retrieves all ELO snapshots for a user
 	ListByUser(ctx context.Context, userId string) ([]*UserEloSnapshot, error)
