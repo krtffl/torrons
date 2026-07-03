@@ -51,6 +51,7 @@ func New(c *config.Config) *Torrons {
 	userRepo := repository.NewUserRepo(db)
 	userEloRepo := repository.NewUserEloSnapshotRepo(db)
 	campaignRepo := repository.NewCampaignRepo(db)
+	adventVoteRepo := repository.NewAdventVoteRepo(db)
 
 	if err := CheckPairingsCreated(paringRepo, torroRepo, classRepo); err != nil {
 		logger.Fatal("[API - New] - "+
@@ -67,6 +68,7 @@ func New(c *config.Config) *Torrons {
 		userRepo,
 		userEloRepo,
 		campaignRepo,
+		adventVoteRepo,
 	)
 	srv := http.New(c.Port, handler)
 
@@ -295,10 +297,10 @@ func NewDatabaseConnection(c config.Database) (*sql.DB, error) {
 	}
 
 	// Configure connection pool to prevent resource exhaustion
-	dbConnection.SetMaxOpenConns(25)                        // Maximum total connections (in-use + idle)
-	dbConnection.SetMaxIdleConns(5)                         // Maximum idle connections in pool
-	dbConnection.SetConnMaxLifetime(5 * time.Minute)        // Maximum connection age
-	dbConnection.SetConnMaxIdleTime(1 * time.Minute)        // Maximum idle time before close
+	dbConnection.SetMaxOpenConns(25)                 // Maximum total connections (in-use + idle)
+	dbConnection.SetMaxIdleConns(5)                  // Maximum idle connections in pool
+	dbConnection.SetConnMaxLifetime(5 * time.Minute) // Maximum connection age
+	dbConnection.SetConnMaxIdleTime(1 * time.Minute) // Maximum idle time before close
 
 	driver, err := postgres.WithInstance(dbConnection, &postgres.Config{})
 	if err != nil {

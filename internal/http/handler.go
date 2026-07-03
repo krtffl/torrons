@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -32,16 +33,17 @@ type Content struct {
 }
 
 type Handler struct {
-	db           *sql.DB
-	template     *template.Template
-	bpool        *bpool.BufferPool
-	pairingRepo  domain.PairingRepo
-	torroRepo    domain.TorroRepo
-	classRepo    domain.ClassRepo
-	resultRepo   domain.ResultRepo
-	userRepo     domain.UserRepo
-	userEloRepo  domain.UserEloSnapshotRepo
-	campaignRepo domain.CampaignRepo
+	db             *sql.DB
+	template       *template.Template
+	bpool          *bpool.BufferPool
+	pairingRepo    domain.PairingRepo
+	torroRepo      domain.TorroRepo
+	classRepo      domain.ClassRepo
+	resultRepo     domain.ResultRepo
+	userRepo       domain.UserRepo
+	userEloRepo    domain.UserEloSnapshotRepo
+	campaignRepo   domain.CampaignRepo
+	adventVoteRepo domain.AdventVoteRepo
 }
 
 func NewHandler(
@@ -54,6 +56,7 @@ func NewHandler(
 	userRepo domain.UserRepo,
 	userEloRepo domain.UserEloSnapshotRepo,
 	campaignRepo domain.CampaignRepo,
+	adventVoteRepo domain.AdventVoteRepo,
 ) *Handler {
 	tmpls, err := template.New("").ParseFS(torrons.Public, "public/templates/*.html")
 	if err != nil {
@@ -61,16 +64,17 @@ func NewHandler(
 	}
 
 	return &Handler{
-		db:           db,
-		template:     tmpls,
-		bpool:        bpool,
-		pairingRepo:  pairingRep,
-		torroRepo:    torroRepo,
-		classRepo:    classRepo,
-		resultRepo:   resultRepo,
-		userRepo:     userRepo,
-		userEloRepo:  userEloRepo,
-		campaignRepo: campaignRepo,
+		db:             db,
+		template:       tmpls,
+		bpool:          bpool,
+		pairingRepo:    pairingRep,
+		torroRepo:      torroRepo,
+		classRepo:      classRepo,
+		resultRepo:     resultRepo,
+		userRepo:       userRepo,
+		userEloRepo:    userEloRepo,
+		campaignRepo:   campaignRepo,
+		adventVoteRepo: adventVoteRepo,
 	}
 }
 
@@ -176,6 +180,14 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 
 	pairingId := chi.URLParam(r, "id")
 	winnerId := r.URL.Query().Get("id")
+
+	// isAdvent marks this submission as today's featured "advent daily duel"
+	// vote (see the /advent page). It's still a normal vote through this same
+	// codepath -- the flag only additionally records an AdventVotes row so
+	// the user can't repeat today's featured duel, and changes what's
+	// rendered afterwards (a "come back tomorrow" state instead of a fresh
+	// random pairing).
+	isAdvent := r.URL.Query().Get("advent") == "true"
 
 	// Get user ID from context (set by UserMiddleware)
 	userId := GetUserIDFromContext(r.Context())
@@ -317,10 +329,55 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// If this is today's featured advent duel, record it within the same
+	// transaction so the whole vote (ELO update included) rolls back if the
+	// user has somehow already completed today's duel (unique constraint on
+	// UserId+VoteDate).
+	if isAdvent {
+		if userId == "" {
+			logger.Error("[Handler - Result] Advent vote submitted without a user ID")
+			render.Render(w, r, domain.ErrBadRequest(
+				fmt.Errorf("%s: A user is required to record an advent vote", domain.ValidationError)))
+			return
+		}
+
+		voteDate := time.Now().UTC().Format("2006-01-02")
+		if _, err := h.adventVoteRepo.CreateTx(tx, r.Context(), &domain.AdventVote{
+			UserId:    userId,
+			VoteDate:  voteDate,
+			PairingId: pairingId,
+		}); err != nil {
+			logger.Error("[Handler - Result] Couldn't record advent vote. %v", err)
+			render.Render(w, r, domain.ErrInternal(err))
+			return
+		}
+	}
+
 	// Commit transaction (makes all changes visible atomically)
 	if err := tx.Commit(); err != nil {
 		logger.Error("[Handler - Result] Couldn't commit transaction. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
+		return
+	}
+
+	// Advent duels are once-per-day: instead of serving a fresh random
+	// pairing like the normal voting flow, show the "come back tomorrow"
+	// state.
+	if isAdvent {
+		buf := h.bpool.Get()
+		defer h.bpool.Put(buf)
+
+		if err := h.template.ExecuteTemplate(buf, "advent.html", AdventContent{
+			HX:             isHX(r),
+			CampaignActive: true,
+			AlreadyVoted:   true,
+		}); err != nil {
+			logger.Error("[Handler - Result] Couldn't execute advent template. %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		buf.WriteTo(w)
 		return
 	}
 
