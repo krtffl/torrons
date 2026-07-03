@@ -188,6 +188,44 @@ func dietaryFilterSQL(filter domain.TorroFilter, alias string) string {
 	return b.String()
 }
 
+// TopNByClass returns the top N active torrons in a class ordered by
+// Rating descending, for seeding a Phase 2 bracket.
+func (r *postgresTorroRepo) TopNByClass(ctx context.Context, classId string, n int) ([]*domain.Torro, error) {
+	rows, err := r.db.QueryContext(ctx,
+		`
+        SELECT "Id", "Name", "Rating", "Image", "Class"
+        FROM "Torrons"
+        WHERE "Class" = $1
+          AND "Discontinued" = false
+        ORDER BY "Rating" DESC
+        LIMIT $2`,
+		classId,
+		n,
+	)
+	if err != nil {
+		return nil, handleErrors(err)
+	}
+
+	defer rows.Close()
+	var torrons []*domain.Torro
+
+	for rows.Next() {
+		torro := &domain.Torro{}
+		if err := rows.Scan(
+			&torro.Id,
+			&torro.Name,
+			&torro.Rating,
+			&torro.Image,
+			&torro.Class,
+		); err != nil {
+			return nil, handleErrors(err)
+		}
+		torrons = append(torrons, torro)
+	}
+
+	return torrons, nil
+}
+
 func (r *postgresTorroRepo) Update(ctx context.Context, id string, rating float64) (
 	*domain.Torro, error,
 ) {

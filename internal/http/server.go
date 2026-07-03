@@ -143,6 +143,17 @@ func (srv *Server) Run() error {
 		// 404 on that exact request. The public URL clients hit is still
 		// GET /share/card.png.
 		r.Get("/share/card", srv.handler.shareCard)
+
+		// Phase 2 - The knockout bracket (separate mechanic from the
+		// open-voting/ELO pairings above; see internal/domain/bracket.go).
+		r.Get("/bracket/{classId}", srv.handler.bracketOverview)
+		r.Get("/bracket/{classId}/vote", srv.handler.bracketVote)
+		r.Post("/bracket/match/{matchId}/vote", srv.handler.bracketMatchVote)
+
+		// Admin-only-for-now bracket management. No auth system exists in
+		// this codebase yet; see the TODOs on the handlers themselves.
+		r.Post("/bracket/{classId}/create", srv.handler.bracketCreate)
+		r.Post("/bracket/{bracketId}/advance", srv.handler.bracketAdvance)
 	})
 	// **********        **********
 

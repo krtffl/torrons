@@ -53,6 +53,13 @@ type TorroRepo interface {
 	// classes. Results are ordered by rating (descending).
 	ListFiltered(ctx context.Context, classId string, filter TorroFilter) ([]*Torro, error)
 	Update(ctx context.Context, id string, rating float64) (*Torro, error)
+
+	// TopNByClass returns the top N active (non-discontinued) torrons in a
+	// class ordered by Rating descending. Used to seed a Phase 2 bracket
+	// from Phase 1 ELO ratings. If fewer than n active torrons exist in
+	// the class, all of them are returned.
+	TopNByClass(ctx context.Context, classId string, n int) ([]*Torro, error)
+
 	// Transaction methods
 	GetTx(tx *sql.Tx, ctx context.Context, id string) (*Torro, error)
 	UpdateTx(tx *sql.Tx, ctx context.Context, id string, rating float64) (*Torro, error)
