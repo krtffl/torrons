@@ -142,6 +142,22 @@ func (r *postgresPressStatsRepo) ClosestDuel(ctx context.Context, minTotalVotes 
 	}, nil
 }
 
+// VotesForTorro counts how many times this exact torró has been recorded
+// as the winner of a Result, across all of history.
+func (r *postgresPressStatsRepo) VotesForTorro(ctx context.Context, torroId string) (int, error) {
+	row := r.db.QueryRowContext(ctx,
+		`SELECT COUNT(*) FROM "Results" WHERE "Winner" = $1`,
+		torroId,
+	)
+
+	var votes int
+	if err := row.Scan(&votes); err != nil {
+		return 0, handleErrors(err)
+	}
+
+	return votes, nil
+}
+
 // torroNamesAndImages fetches the Name/Image of a small set of torró IDs in
 // a single round trip, keyed by ID. Used by ClosestDuel to resolve display
 // info for both sides of a pairing.
