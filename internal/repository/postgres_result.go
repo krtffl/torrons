@@ -26,9 +26,9 @@ func (r *postgresResultRepo) Create(ctx context.Context, result *domain.Result) 
 		`
         INSERT INTO "Results"
         ("Id", "Pairing", "Torro1RatingBefore", "Torro2RatingBefore",
-        "Winner", "Torro1RatingAfter", "Torro2RatingAfter")
+        "Winner", "Torro1RatingAfter", "Torro2RatingAfter", "UserId", "CampaignId")
         VALUES
-        ($1, $2, $3, $4, $5, $6, $7)
+        ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         RETURNING "Id"`,
 		uuid.NewString(),
 		result.Pairing,
@@ -37,6 +37,8 @@ func (r *postgresResultRepo) Create(ctx context.Context, result *domain.Result) 
 		result.Winner,
 		result.Rat1Aft,
 		result.Rat2Aft,
+		result.UserId,
+		result.CampaignId,
 	).Scan(&result.Id)
 	if err != nil {
 		return nil, handleErrors(err)
@@ -54,9 +56,9 @@ func (r *postgresResultRepo) CreateTx(tx *sql.Tx, ctx context.Context, result *d
 		`
         INSERT INTO "Results"
         ("Id", "Pairing", "Torro1RatingBefore", "Torro2RatingBefore",
-        "Winner", "Torro1RatingAfter", "Torro2RatingAfter")
+        "Winner", "Torro1RatingAfter", "Torro2RatingAfter", "UserId", "CampaignId")
         VALUES
-        ($1, $2, $3, $4, $5, $6, $7)
+        ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         RETURNING "Id"`,
 		uuid.NewString(),
 		result.Pairing,
@@ -65,6 +67,8 @@ func (r *postgresResultRepo) CreateTx(tx *sql.Tx, ctx context.Context, result *d
 		result.Winner,
 		result.Rat1Aft,
 		result.Rat2Aft,
+		result.UserId,
+		result.CampaignId,
 	).Scan(&result.Id)
 	if err != nil {
 		return nil, handleErrors(err)
