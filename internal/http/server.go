@@ -132,6 +132,14 @@ func (srv *Server) Run() error {
 
 		// Voting history page
 		r.Get("/history", srv.handler.history)
+
+		// Shareable result card (PNG). Registered without the ".png"
+		// suffix: the global middleware.URLFormat (registered above)
+		// strips any trailing ".ext" from the routing path before chi
+		// matches it, so a route registered as "/share/card.png" would
+		// 404 on that exact request. The public URL clients hit is still
+		// GET /share/card.png.
+		r.Get("/share/card", srv.handler.shareCard)
 	})
 	// **********        **********
 

@@ -119,6 +119,11 @@
         <a href="/leaderboard" class="btn" hx-get="/leaderboard" hx-boost="true" hx-target="#main-content" hx-push-url="/leaderboard">
             Veure classificació
         </a>
+        <!-- Plain link on purpose: this serves a PNG, not an HTML fragment,
+             so it must not be HTMX-boosted/swapped like the buttons above. -->
+        <a href="/share/card.png" class="btn" download="torrorendum-targeta.png">
+            Descarrega la teva targeta
+        </a>
     </div>
 </div>
 {{ end }}
