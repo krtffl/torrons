@@ -574,10 +574,7 @@ func (h *Handler) cascadeAdvance(tx *sql.Tx, ctx context.Context, bracket *domai
 }
 
 // bracketCreate handles POST /bracket/{classId}/create?size={n}.
-//
-// TODO: gate this endpoint (basic auth / admin token) before this runs
-// live. There is no admin/auth system in this codebase yet; building one
-// is out of scope here.
+// Gated by Handler.RequireAdminToken - see its route registration in server.go.
 func (h *Handler) bracketCreate(w http.ResponseWriter, r *http.Request) {
 	logger.Info("[Handler - BracketCreate] Incoming request")
 
@@ -736,9 +733,7 @@ func (h *Handler) createRoundOneMatches(tx *sql.Tx, ctx context.Context, bracket
 // the current round is decided by its current tally, ties (including 0-0
 // for an untouched match) broken by lower seed.
 //
-// TODO: gate this endpoint (basic auth / admin token) before this runs
-// live. There is no admin/auth system in this codebase yet; building one
-// is out of scope here.
+// Gated by Handler.RequireAdminToken - see its route registration in server.go.
 func (h *Handler) bracketAdvance(w http.ResponseWriter, r *http.Request) {
 	logger.Info("[Handler - BracketAdvance] Incoming request")
 

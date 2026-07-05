@@ -15,9 +15,14 @@ database:
   ssl: disable #require, verify-full, verify-ca, disable  
 
 ##############################################################
-# Logger 
+# Logger
 ##############################################################
 logger:
-  format: json 
-  level: info 
-  path: logs/torro.log 
+  format: json
+  level: info
+  path: logs/torro.log
+
+##############################################################
+# Admin
+##############################################################
+admin_token: "" # Required for POST /bracket/{classId}/create and /bracket/{bracketId}/advance. Set via ADMIN_TOKEN env var; endpoints reject all requests while empty.

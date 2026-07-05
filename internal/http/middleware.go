@@ -2,9 +2,12 @@ package http
 
 import (
 	"context"
+	"crypto/subtle"
+	"fmt"
 	"net/http"
 	"strings"
 
+	"github.com/go-chi/render"
 	"github.com/google/uuid"
 
 	"github.com/krtffl/torro/internal/domain"
@@ -106,4 +109,39 @@ func GetUserIDFromContext(ctx context.Context) string {
 		return ""
 	}
 	return userId
+}
+
+// RequireAdminToken gates admin-only routes behind a shared-secret bearer
+// token configured via ADMIN_TOKEN (see internal/config). There is no
+// broader user/role system in this codebase - see UserMiddleware above -
+// this is a deliberately minimal single-shared-secret gate for a couple
+// of operator-only endpoints, not a general auth system.
+//
+// Fails closed: if no token is configured, every request is rejected
+// rather than silently allowed through. The response never distinguishes
+// "not configured" from "wrong token" to the caller - only server logs
+// differentiate the two, so a caller can't use the error to fingerprint
+// server configuration state.
+func (h *Handler) RequireAdminToken(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		const prefix = "Bearer "
+		authHeader := r.Header.Get("Authorization")
+		token, hasPrefix := strings.CutPrefix(authHeader, prefix)
+
+		valid := h.adminToken != "" && hasPrefix &&
+			subtle.ConstantTimeCompare([]byte(token), []byte(h.adminToken)) == 1
+
+		if !valid {
+			if h.adminToken == "" {
+				logger.Error("[RequireAdminToken] ADMIN_TOKEN is not configured; rejecting admin request to %s", r.URL.Path)
+			} else {
+				logger.Warn("[RequireAdminToken] Rejected admin request to %s from %s", r.URL.Path, r.RemoteAddr)
+			}
+			w.Header().Set("WWW-Authenticate", "Bearer")
+			render.Render(w, r, domain.ErrUnauthorized(fmt.Errorf("%s: invalid or missing admin token", domain.UnauthorizedError)))
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }

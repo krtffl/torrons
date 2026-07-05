@@ -77,7 +77,13 @@ func New(c *config.Config) *Torrons {
 		friendCircleRepo,
 		pressStatsRepo,
 		wrappedStatsRepo,
+		c.AdminToken,
 	)
+
+	if c.AdminToken == "" {
+		logger.Warn("[API - New] ADMIN_TOKEN is not set - bracket admin endpoints (create/advance) will reject all requests")
+	}
+
 	srv := http.New(c.Port, handler)
 
 	return &Torrons{
