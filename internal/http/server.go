@@ -61,6 +61,30 @@ func (srv *Server) Run() error {
 		}),
 	))
 
+	// Per-user rate limiting for vote-casting routes, layered on top of the
+	// blanket per-IP limit above. Keyed by the anonymous user cookie (set
+	// by UserMiddleware, registered below - by the time a request reaches
+	// this route-scoped middleware every global middleware has already
+	// run) rather than IP, so it throttles one identity hammering the vote
+	// endpoint rather than one network address. 20/minute comfortably
+	// covers fast human clicking while meaningfully slowing scripted ELO
+	// manipulation - see docs/design-prompts or project notes for why a
+	// permanent per-pairing block isn't used instead: GetRandom draws
+	// repeatedly from the same small fixed pairing pool per class, so
+	// blocking a re-vote outright would eventually lock a user out of
+	// voting entirely once they'd seen every pairing once.
+	voteRateLimiter := httprate.Limit(
+		20,
+		1*time.Minute,
+		httprate.WithKeyFuncs(func(r *http.Request) (string, error) {
+			return GetUserIDFromContext(r.Context()), nil
+		}),
+		httprate.WithLimitHandler(func(w http.ResponseWriter, r *http.Request) {
+			logger.Warn("[HTTP Server] Vote rate limit exceeded for user %s", GetUserIDFromContext(r.Context()))
+			http.Error(w, "You're voting too quickly. Please slow down.", http.StatusTooManyRequests)
+		}),
+	)
+
 	// Security headers middleware
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -138,7 +162,7 @@ func (srv *Server) Run() error {
 		r.Get("/classes", srv.handler.classes)
 		r.Get("/classes/{id}/vote", srv.handler.vote)
 
-		r.Post("/pairings/{id}/vote", srv.handler.result)
+		r.With(voteRateLimiter).Post("/pairings/{id}/vote", srv.handler.result)
 
 		// Product detail page
 		r.Get("/torro/{id}", srv.handler.torroDetail)
@@ -164,7 +188,7 @@ func (srv *Server) Run() error {
 		// open-voting/ELO pairings above; see internal/domain/bracket.go).
 		r.Get("/bracket/{classId}", srv.handler.bracketOverview)
 		r.Get("/bracket/{classId}/vote", srv.handler.bracketVote)
-		r.Post("/bracket/match/{matchId}/vote", srv.handler.bracketMatchVote)
+		r.With(voteRateLimiter).Post("/bracket/match/{matchId}/vote", srv.handler.bracketMatchVote)
 
 		// Admin-only bracket management, gated by a shared-secret bearer
 		// token. See Handler.RequireAdminToken (middleware.go) and the
