@@ -1,0 +1,43 @@
+# CI gate for regular pushes and pull requests.
+#
+# Scope: fast checks only (gofmt, build, vet, unit tests) — no database.
+# Deliberately does NOT run the `-tags=integration` suite, since that
+# requires a Postgres service container. A future job/workflow can add
+# a `postgres:` services block and a separate `go test -tags=integration
+# ./...` step to cover that suite.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: gofmt
+        run: |
+          fmt_out="$(gofmt -l .)"
+          if [ -n "$fmt_out" ]; then
+            echo "The following files are not gofmt-formatted:"
+            echo "$fmt_out"
+            exit 1
+          fi
+
+      - name: build
+        run: go build ./...
+
+      - name: vet
+        run: go vet ./...
+
+      - name: test
+        run: go test ./...
