@@ -1,14 +1,16 @@
 # Design prompts
 
-19 copy-paste prompts for redesigning Torrorèndum, extracted from the [Growth & Redesign
-Dossier](https://claude.ai/code/artifact/06054553-5090-4ad7-8df6-7c5d94ffa8d7) (§04) and
-grounded against what's actually shipped in this repo as of 2026-07-05. Each prompt is
-self-contained — brand grounding (palette, type pairing, tone) is repeated inside every
-one — so any single file here can be pasted into Claude Design or handed to a designer
-on its own, with no other context required.
+20 copy-paste prompts for redesigning Torrorèndum: 19 extracted from the [Growth & Redesign
+Dossier](https://claude.ai/code/artifact/06054553-5090-4ad7-8df6-7c5d94ffa8d7) (§04), grounded
+against what's actually shipped in this repo as of 2026-07-05, plus one final audit prompt added
+after the fact (§ below). Each screen prompt is self-contained — brand grounding (palette, type
+pairing, tone) is repeated inside every one — so any single file here can be pasted into Claude
+Design or handed to a designer on its own, with no other context required.
 
-**Always commission [Prompt 01](01-design-system-foundations.md) first.** Every other
-prompt assumes its palette, type scale, and component styles are already locked.
+**Always commission [Prompt 01](01-design-system-foundations.md) first** — every other prompt
+assumes its palette, type scale, and component styles are already locked — **and commission
+[Prompt 20](20-design-system-audit.md) last**, once real mockups/exports exist for the other 19,
+to catch any drift or inconsistency before calling the redesign done.
 
 ## Set A — the existing site, redesigned
 
@@ -39,6 +41,12 @@ prompt assumes its palette, type scale, and component styles are already locked.
 | [18](18-press-ready-numbers-page.md) | Press-ready "the numbers" page | Live — `GET /premsa` |
 | [19](19-insights-dashboard-vicens.md) | Insights dashboard (Vicens-facing) | **Not built** — event-triggered, no auth system exists yet |
 
+## Set C — final audit
+
+| # | Screen | Status |
+|---|---|---|
+| [20](20-design-system-audit.md) | Design system consistency & UX audit | Not built — a QA/critique pass over 01–19's output, commission last |
+
 ## Notes for whoever commissions these
 
 - "Live" means there's a real screen at that route today — screenshot it alongside the
@@ -53,3 +61,7 @@ prompt assumes its palette, type scale, and component styles are already locked.
 - For full brand research (Vicens' real palette/photography/positioning), the SEO plan,
   and the Vicens partnership pitch, see the full dossier linked above — the prompts here
   only carry the minimum grounding needed to stand alone.
+- Prompt 20 is not part of the original dossier — it's a final consistency/QA pass added after
+  the fact, meant to catch style drift or incoherence across the finished set of screens before
+  the redesign is considered done. It needs real mockups/exports of 01–19 in hand to be useful,
+  not just the written prompts, and its output is a findings-and-fixes list, not new visuals.
