@@ -18,6 +18,8 @@ const (
 	// Handled exceptions
 	// Validation errors
 	ValidationError ErrorMsg = "ValidationError"
+	// Authorization errors
+	UnauthorizedError ErrorMsg = "UnauthorizedError"
 	// PostgreSQL errors
 	NonExistentTableError  ErrorMsg = "NonExistentPostgreSQLTableError"
 	NonExistentColumnError ErrorMsg = "NonExistentPostgreSQLColumnError"
@@ -30,6 +32,8 @@ const (
 var ErrorCodes = map[ErrorMsg]ErrorCode{
 	// Validation
 	ValidationError: 2400,
+	// Authorization
+	UnauthorizedError: 2401,
 	// PostgresQL
 	NonExistentTableError:  2501,
 	NonExistentColumnError: 2502,
@@ -94,6 +98,18 @@ func ErrInternal(err error) render.Renderer {
 
 	return &Error{
 		HTTPStatusCode: http.StatusInternalServerError,
+		ErrorCode:      errorCode,
+		ErrorText:      details,
+	}
+}
+
+// Unauthorized error
+func ErrUnauthorized(err error) render.Renderer {
+	eMsg, details := getErrorMessage(err)
+	errorCode := getErrorCode(eMsg)
+
+	return &Error{
+		HTTPStatusCode: http.StatusUnauthorized,
 		ErrorCode:      errorCode,
 		ErrorText:      details,
 	}

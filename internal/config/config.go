@@ -36,6 +36,12 @@ type Config struct {
 	// Port is the port the HTTP server will listen to
 	Port uint `mapstructure:"port" yaml:"port"`
 
+	// AdminToken gates the bracket admin endpoints (create/advance) behind
+	// a bearer token. Empty by default, which fails closed: while unset,
+	// the admin endpoints reject every request rather than allowing them
+	// through.
+	AdminToken string `mapstructure:"admin_token" yaml:"admin_token"`
+
 	// Database contains the configuration to connect to the
 	// database instance
 	Database Database `mapstructure:"database" yaml:"database"`
@@ -105,6 +111,9 @@ func overrideWithEnvVars(config *Config) {
 		if p, err := strconv.ParseUint(port, 10, 32); err == nil {
 			config.Port = uint(p)
 		}
+	}
+	if token := os.Getenv("ADMIN_TOKEN"); token != "" {
+		config.AdminToken = token
 	}
 
 	// Database configuration

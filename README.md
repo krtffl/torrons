@@ -149,6 +149,9 @@ DB_SSL_MODE=disable
 LOGGER_FORMAT=json
 LOGGER_LEVEL=info
 LOGGER_PATH=logs/torro.log
+
+# Admin (bracket create/advance endpoints; fail-closed while empty)
+ADMIN_TOKEN=
 ```
 
 See `.env.example` for full configuration template.

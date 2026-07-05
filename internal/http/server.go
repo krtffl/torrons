@@ -166,10 +166,11 @@ func (srv *Server) Run() error {
 		r.Get("/bracket/{classId}/vote", srv.handler.bracketVote)
 		r.Post("/bracket/match/{matchId}/vote", srv.handler.bracketMatchVote)
 
-		// Admin-only-for-now bracket management. No auth system exists in
-		// this codebase yet; see the TODOs on the handlers themselves.
-		r.Post("/bracket/{classId}/create", srv.handler.bracketCreate)
-		r.Post("/bracket/{bracketId}/advance", srv.handler.bracketAdvance)
+		// Admin-only bracket management, gated by a shared-secret bearer
+		// token. See Handler.RequireAdminToken (middleware.go) and the
+		// AdminToken config value (internal/config/config.go).
+		r.With(srv.handler.RequireAdminToken).Post("/bracket/{classId}/create", srv.handler.bracketCreate)
+		r.With(srv.handler.RequireAdminToken).Post("/bracket/{bracketId}/advance", srv.handler.bracketAdvance)
 
 		// Advent daily duel: one featured pairing per calendar day
 		r.Get("/advent", srv.handler.advent)
