@@ -131,6 +131,51 @@ Statistical significance thresholds per category:
 - Rate limiting (100 requests/minute per IP)
 - Cookie security (httpOnly, secure, SameSite=Lax)
 
+## 🧪 Testing
+
+Tests come in two tiers:
+
+- **Fast (no database required)**: pure unit tests plus handler tests that
+  use hand-rolled in-memory fakes for repositories that don't need a real
+  transaction. Runs in CI and locally with no setup:
+
+  ```bash
+  go test ./...
+  ```
+
+- **Integration (real Postgres required)**: handlers that call
+  `h.db.Begin()` and drive several repositories' transactional (`*Tx`)
+  methods together -- vote casting (`POST /pairings/{id}/vote`) and the
+  full bracket lifecycle (create/vote/advance) -- are gated behind the
+  `integration` build tag so they never run as part of a plain
+  `go test ./...`. To run them:
+
+  ```bash
+  # 1. Start a throwaway Postgres
+  podman run -d --rm --name torrons-test-db \
+    -e POSTGRES_USER=myUser \
+    -e POSTGRES_PASSWORD=myPassword \
+    -e POSTGRES_DB=databaseName \
+    -p 5433:5432 \
+    postgres:16
+
+  # 2. Apply migrations
+  migrate -path migrations \
+    -database "postgres://myUser:myPassword@localhost:5433/databaseName?sslmode=disable" \
+    up
+
+  # 3. Run the integration suite against it
+  DB_HOST=localhost DB_PORT=5433 DB_USER=myUser DB_PASSWORD=myPassword \
+    DB_NAME=databaseName DB_SSL_MODE=disable \
+    go test -tags=integration ./internal/http/...
+  ```
+
+  See `internal/http/integration_test.go`'s package doc comment for the
+  full details (and note that `internal/api.NewDatabaseConnection` also
+  auto-migrates on connect, so step 2 is only strictly required if a test
+  connects directly via `database/sql` without going through that path, as
+  this suite does).
+
 ## 🌍 Environment Configuration
 
 ```bash
