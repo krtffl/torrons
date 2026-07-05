@@ -260,15 +260,28 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		userIdPtr = &userId
 	}
 
+	// Tag this vote with the currently active campaign, if any. This is a
+	// soft attach, not a requirement: voting isn't restricted to the
+	// campaign window, so the common case of no active campaign (most of
+	// the year, outside Phase 1) just leaves CampaignId nil rather than
+	// failing the vote.
+	var campaignIdPtr *string
+	if campaign, err := h.campaignRepo.GetActive(r.Context()); err == nil {
+		campaignIdPtr = &campaign.Id
+	} else {
+		logger.Debug("[Handler - Result] No active campaign to tag this vote with. %v", err)
+	}
+
 	// Create result record within transaction
 	_, err = h.resultRepo.CreateTx(tx, r.Context(), &domain.Result{
-		Pairing: pairingId,
-		Rat1Bef: t1.Rating,
-		Rat2Bef: t2.Rating,
-		Winner:  winnerId,
-		Rat1Aft: new1,
-		Rat2Aft: new2,
-		UserId:  userIdPtr, // Track which user cast this vote
+		Pairing:    pairingId,
+		Rat1Bef:    t1.Rating,
+		Rat2Bef:    t2.Rating,
+		Winner:     winnerId,
+		Rat1Aft:    new1,
+		Rat2Aft:    new2,
+		UserId:     userIdPtr, // Track which user cast this vote
+		CampaignId: campaignIdPtr,
 	})
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't create result. %v", err)

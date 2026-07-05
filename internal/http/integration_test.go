@@ -216,6 +216,7 @@ func TestIntegration_VoteCasting(t *testing.T) {
 	resultRepo := repository.NewResultRepo(db)
 	userRepo := repository.NewUserRepo(db)
 	userEloRepo := repository.NewUserEloSnapshotRepo(db)
+	campaignRepo := repository.NewCampaignRepo(db)
 
 	classId := insertTestClass(t, db, "Vote Casting Test Class")
 	torro1Id := insertTestTorro(t, db, classId, "Torró Guanyador", 1500)
@@ -235,16 +236,29 @@ func TestIntegration_VoteCasting(t *testing.T) {
 		t.Fatalf("failed to create test user: %v", err)
 	}
 
+	now := time.Now().UTC()
+	campaign, err := campaignRepo.Create(ctx, &domain.Campaign{
+		Name:      "Vote Casting Test Campaign",
+		StartDate: now.Add(-1 * time.Hour).Format(time.RFC3339),
+		EndDate:   now.Add(1 * time.Hour).Format(time.RFC3339),
+		Year:      now.Year(),
+		Status:    domain.CampaignStatusActive,
+	})
+	if err != nil {
+		t.Fatalf("failed to create test campaign: %v", err)
+	}
+
 	h := &Handler{
-		db:          db,
-		template:    newIntegrationTemplate(t),
-		bpool:       bpool.NewBufferPool(8),
-		pairingRepo: pairingRepo,
-		torroRepo:   torroRepo,
-		classRepo:   classRepo,
-		resultRepo:  resultRepo,
-		userRepo:    userRepo,
-		userEloRepo: userEloRepo,
+		db:           db,
+		template:     newIntegrationTemplate(t),
+		bpool:        bpool.NewBufferPool(8),
+		pairingRepo:  pairingRepo,
+		torroRepo:    torroRepo,
+		classRepo:    classRepo,
+		resultRepo:   resultRepo,
+		userRepo:     userRepo,
+		userEloRepo:  userEloRepo,
+		campaignRepo: campaignRepo,
 	}
 
 	// torro1 wins: winnerId is passed as the *query string* "id" param,
@@ -305,22 +319,12 @@ func TestIntegration_VoteCasting(t *testing.T) {
 		t.Errorf("Results.UserId = %+v, want a valid value equal to %q", gotUserId, user.Id)
 	}
 
-	// Deviation from the original brief worth flagging explicitly: the
-	// brief expected CampaignId to be persisted here too, by analogy with
-	// UserId (both were part of the same past regression fix in
-	// postgres_result.go's INSERT column list). But handler.go's result()
-	// never actually looks up the active campaign or sets
-	// domain.Result.CampaignId on the struct it builds -- so today,
-	// CampaignId is always NULL for every Phase 1 (open-voting) vote,
-	// campaign active or not. That's not the same bug the history commit
-	// fixed (that one was a repository-layer INSERT bug for a field the
-	// handler *did* populate); this looks like a real, separate product
-	// gap (Results.CampaignId is effectively dead for this codepath) but
-	// fixing it is out of scope for a test-coverage task, so this test
-	// documents the current, actual behavior instead of asserting a
-	// premise the code doesn't support.
-	if gotCampaignId.Valid {
-		t.Errorf("Results.CampaignId = %q, want NULL (result() never populates it today -- see comment above)", gotCampaignId.String)
+	// Regression guard: result() looks up the active campaign and tags the
+	// vote with it (soft-attach - see TestIntegration_VoteCasting_NoActiveCampaign
+	// for the off-season/no-campaign case, which must still succeed with a
+	// nil CampaignId rather than failing the vote).
+	if !gotCampaignId.Valid || gotCampaignId.String != campaign.Id {
+		t.Errorf("Results.CampaignId = %+v, want a valid value equal to %q", gotCampaignId, campaign.Id)
 	}
 
 	// Also assert the Torrons.Rating columns themselves actually moved,
@@ -337,6 +341,89 @@ func TestIntegration_VoteCasting(t *testing.T) {
 	}
 	if !floatsClose(torro2Rating, wantNew2) {
 		t.Errorf("Torrons.Rating for the loser = %v, want %v", torro2Rating, wantNew2)
+	}
+}
+
+// TestIntegration_VoteCasting_NoActiveCampaign guards the fail-open half of
+// result()'s campaign tagging: voting isn't restricted to the campaign
+// window, so with no active campaign (the common case most of the year,
+// outside Phase 1) the vote must still succeed, just with a nil
+// Results.CampaignId instead of failing.
+func TestIntegration_VoteCasting_NoActiveCampaign(t *testing.T) {
+	db := setupIntegrationDB(t)
+	ctx := context.Background()
+
+	// setupIntegrationDB connects to one shared database for every test in
+	// this file (no per-test schema isolation), so another test's active
+	// campaign (e.g. TestIntegration_VoteCasting's) can still be sitting in
+	// the Campaigns table depending on run order. Defensively neutralize
+	// any pre-existing active campaign so this test's premise ("no active
+	// campaign") holds regardless of what ran before it.
+	if _, err := db.ExecContext(ctx,
+		`UPDATE "Campaigns" SET "Status" = $1 WHERE "Status" = $2`,
+		domain.CampaignStatusEnded, domain.CampaignStatusActive,
+	); err != nil {
+		t.Fatalf("failed to clear pre-existing active campaigns: %v", err)
+	}
+
+	pairingRepo := repository.NewPairingRepo(db)
+	torroRepo := repository.NewTorroRepo(db)
+	classRepo := repository.NewClassRepo(db)
+	resultRepo := repository.NewResultRepo(db)
+	userRepo := repository.NewUserRepo(db)
+	userEloRepo := repository.NewUserEloSnapshotRepo(db)
+	campaignRepo := repository.NewCampaignRepo(db)
+
+	classId := insertTestClass(t, db, "No Active Campaign Test Class")
+	torro1Id := insertTestTorro(t, db, classId, "Torró A", 1500)
+	torro2Id := insertTestTorro(t, db, classId, "Torró B", 1500)
+
+	pairing, err := pairingRepo.Create(ctx, &domain.Pairing{
+		Torro1: torro1Id,
+		Torro2: torro2Id,
+		Class:  classId,
+	})
+	if err != nil {
+		t.Fatalf("failed to create test pairing: %v", err)
+	}
+
+	user, err := userRepo.Create(ctx, &domain.User{Id: uuid.NewString()})
+	if err != nil {
+		t.Fatalf("failed to create test user: %v", err)
+	}
+
+	h := &Handler{
+		db:           db,
+		template:     newIntegrationTemplate(t),
+		bpool:        bpool.NewBufferPool(8),
+		pairingRepo:  pairingRepo,
+		torroRepo:    torroRepo,
+		classRepo:    classRepo,
+		resultRepo:   resultRepo,
+		userRepo:     userRepo,
+		userEloRepo:  userEloRepo,
+		campaignRepo: campaignRepo, // no Campaigns rows exist - GetActive will error
+	}
+
+	target := fmt.Sprintf("/pairings/%s/vote?id=%s", pairing.Id, torro1Id)
+	req := newIntegrationRequest(http.MethodPost, target, map[string]string{"id": pairing.Id}, user.Id)
+	rec := httptest.NewRecorder()
+
+	h.result(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d; body: %s", rec.Code, http.StatusOK, rec.Body.String())
+	}
+
+	var gotCampaignId sql.NullString
+	if err := db.QueryRowContext(ctx,
+		`SELECT "CampaignId" FROM "Results" WHERE "Pairing" = $1`, pairing.Id,
+	).Scan(&gotCampaignId); err != nil {
+		t.Fatalf("failed to read back the Results row: %v", err)
+	}
+
+	if gotCampaignId.Valid {
+		t.Errorf("Results.CampaignId = %q, want NULL with no active campaign", gotCampaignId.String)
 	}
 }
 
