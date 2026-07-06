@@ -450,14 +450,8 @@ h1, h2, h3, h4, h5, h6 {
    ======================================== */
 
 #description {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: var(--spacing-sm) auto;
-    height: 60vh;
-    padding: var(--spacing-sm);
-    flex-direction: column;
-    max-width: 650px;
+    max-width: 480px;
+    margin: 0 auto;
     animation: fadeIn 0.5s ease-in;
 }
 
@@ -477,32 +471,11 @@ h1, h2, h3, h4, h5, h6 {
    Typography
    ======================================== */
 
-.title {
-    text-align: center;
-    font-weight: 300;
-    margin: var(--spacing-sm);
-    font-size: var(--font-size-xl);
-}
-
-.subtitle {
-    text-align: center;
-    font-weight: 700;
-    margin: var(--spacing-sm);
-    font-size: var(--font-size-lg);
-}
-
 .description-text {
     text-align: justify;
     margin: var(--spacing-md);
     font-weight: 300;
     line-height: 1.8;
-}
-
-.important-note {
-    font-weight: 700;
-    font-size: var(--font-size-sm);
-    text-align: center;
-    margin: var(--spacing-sm);
 }
 
 .class-description {
@@ -662,49 +635,390 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ========================================
+   Landing Hero (index.html "description" block)
+   Source: docs/design-deliverables/Torrorendum Landing Page.dc.html
+   ======================================== */
+
+.hero-badge-row {
+    padding: 22px 28px 0;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    border-radius: var(--radius-pill);
+    padding: 6px 14px;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    transform: rotate(-1deg);
+}
+
+.hero-badge-dot {
+    width: 6px;
+    height: 6px;
+    flex: none;
+    border-radius: 50%;
+    background-color: var(--color-text);
+}
+
+.hero-copy {
+    padding: 16px 28px 0;
+}
+
+.hero-headline {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: clamp(30px, 9vw, 42px);
+    line-height: 1.04;
+    color: var(--color-text);
+}
+
+.hero-tagline {
+    font-family: var(--font-family);
+    font-style: italic;
+    font-size: clamp(15px, 4vw, 17px);
+    line-height: 1.45;
+    color: var(--color-text-light-dark);
+    margin-top: 14px;
+}
+
+.hero-preview {
+    padding: 26px 28px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(8px, 3vw, 14px);
+}
+
+.hero-torro--a {
+    transform: rotate(-3deg);
+}
+
+.hero-torro--b {
+    transform: rotate(3deg);
+}
+
+.hero-torro-photo {
+    position: relative;
+    width: clamp(96px, 30vw, 128px);
+    height: clamp(128px, 40vw, 172px);
+    border-radius: var(--radius-card);
+    background-color: var(--color-placeholder-1);
+    border: 1px solid var(--color-placeholder-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.hero-torro-photo-shadow {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 62%;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, var(--color-shadow-soft), transparent 70%);
+}
+
+.hero-torro-silhouette {
+    width: 45%;
+    height: 60%;
+    border-radius: 6px;
+    background-color: var(--color-placeholder-2);
+    border: 1px solid var(--color-neutral-dark);
+}
+
+.hero-torro-photo-label {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font: 600 7px ui-monospace, Menlo, monospace;
+    color: var(--color-text-light);
+}
+
+.hero-torro-name {
+    text-align: center;
+    margin-top: 8px;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--color-text);
+}
+
+.hero-vs-badge {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--color-competition);
+    color: var(--color-competition-contrast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: 12px;
+    transform: rotate(-6deg);
+    box-shadow: var(--shadow-sticker-badge);
+}
+
+.hero-actions {
+    padding: 26px 28px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.hero-cta {
+    width: 100%;
+    max-width: 320px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.hero-secondary-link {
+    font-family: var(--font-family);
+    font-style: italic;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light-dark);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.hero-secondary-link:hover,
+.hero-secondary-link:focus-visible {
+    color: var(--color-text);
+}
+
+.landing-countdown {
+    margin-top: var(--spacing-sm);
+    padding: 0 20px;
+}
+
+/* ========================================
    How It Works Section
    ======================================== */
 
+.how-it-works-section {
+    padding: 38px 28px 0;
+}
+
+.how-it-works-title {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: 22px;
+    color: var(--color-text);
+}
+
 .how-it-works {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 0;
     display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    gap: var(--spacing-md);
-    margin: var(--spacing-xl) 0;
-    padding: var(--spacing-lg);
-    background-color: var(--color-background);
-    border-radius: var(--border-radius-lg);
-    max-width: 600px;
+    flex-direction: column;
 }
 
 .how-it-works-step {
     display: flex;
+    gap: 14px;
+}
+
+.how-it-works-marker {
+    display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
-    flex: 1;
-    min-width: 100px;
+    flex: none;
 }
 
 .step-number {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    background-color: var(--color-primary);
-    color: var(--color-white);
+    width: 34px;
+    height: 34px;
+    flex: none;
     border-radius: 50%;
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.step-number--1 {
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    transform: rotate(-6deg);
+}
+
+.step-number--2 {
+    background-color: var(--color-brand-gold);
+    color: var(--color-text);
+    transform: rotate(6deg);
+}
+
+.step-number--3 {
+    background-color: var(--color-competition);
+    color: var(--color-competition-contrast);
+    transform: rotate(-4deg);
+}
+
+.how-it-works-connector {
+    width: 2px;
+    flex: 1;
+    min-height: 32px;
+    margin: 4px 0;
+    background-color: var(--color-border);
+}
+
+.how-it-works-copy {
+    padding-bottom: 22px;
+}
+
+.how-it-works-step--last .how-it-works-copy {
+    padding-bottom: 0;
+}
+
+.step-title {
+    font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-sm);
-    box-shadow: var(--shadow-sm);
+    font-size: 16px;
+    color: var(--color-text);
 }
 
 .step-text {
-    font-size: var(--font-size-sm);
-    font-weight: 500;
+    font-family: var(--font-family);
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--color-text-light-dark);
+    margin: 4px 0 0;
+}
+
+/* ========================================
+   Bracket Teaser
+   ======================================== */
+
+.bracket-teaser {
+    margin: 32px 20px 0;
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    padding: 24px;
+}
+
+.bracket-teaser-title {
+    margin: 0;
+    text-align: center;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 13px;
     color: var(--color-text);
+}
+
+.bracket-teaser-funnel {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.bracket-teaser-row {
+    display: flex;
+    gap: 6px;
+}
+
+.bracket-teaser-row--entries span {
+    width: 30px;
+    height: 12px;
+    border-radius: 4px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+}
+
+.bracket-teaser-row--semis {
+    gap: 8px;
+}
+
+.bracket-teaser-row--semis span {
+    width: 36px;
+    height: 14px;
+    border-radius: 5px;
+    background-color: var(--color-brand-gold);
+    border: 1px solid var(--color-primary-dark);
+}
+
+.bracket-teaser-connector {
+    width: 1px;
+    height: 10px;
+    background-color: var(--color-border-dashed);
+}
+
+.bracket-teaser-champion {
+    width: 52px;
+    height: 20px;
+    border-radius: 8px;
+    background-color: var(--color-competition);
+    box-shadow: var(--shadow-sticker-badge);
+}
+
+.bracket-teaser-champion-label {
+    margin-top: 2px;
+    text-align: center;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--color-competition);
+}
+
+.bracket-teaser-note {
+    margin: 16px 0 0;
+    text-align: center;
+    font-family: var(--font-family);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--color-text-light);
+}
+
+/* ========================================
+   Landing Footer
+   ======================================== */
+
+.hero-actions--final {
+    padding-top: 34px;
+}
+
+.landing-footer {
+    margin-top: 8px;
+    padding: 28px 28px 34px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+.landing-footer-sponsor {
+    border: 1.5px dashed var(--color-border-dashed);
+    border-radius: 14px;
+    padding: 10px 18px;
+    font: 600 9px ui-monospace, Menlo, monospace;
+    letter-spacing: 0.3px;
+    color: var(--color-text-light-dark);
+}
+
+.landing-footer-tagline {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--color-text-light);
 }
 
 /* ========================================
@@ -1058,11 +1372,8 @@ h1, h2, h3, h4, h5, h6 {
        Topbar with Logo + Navigation section above (horizontal-scroll pill
        nav with a 640px breakpoint) — no separate override needed here. */
 
-    #description {
-        padding: var(--spacing-md);
-        height: auto;
-        min-height: 60vh;
-    }
+    /* #description (Landing Hero) manages its own responsive sizing via
+       clamp() on its own rules above — no separate override needed here. */
 
     .torron-comparison {
         flex-direction: column;

@@ -281,56 +281,127 @@
 
 {{ define "description" }}
 <div id="description">
-    <div class="title">
-        TORRORÈNDUM 2025
+
+    <!-- Hero -->
+    <div class="hero-badge-row">
+        <div class="hero-badge">
+            <span class="hero-badge-dot" aria-hidden="true"></span>
+            Temporada oberta · Setmana 2 de 3
+        </div>
+    </div>
+
+    <div class="hero-copy">
+        <h1 class="hero-headline">Quin és el millor torró?</h1>
+        <p class="hero-tagline">Tres setmanes de votació oberta. Després, quadre eliminatori. Un sol guanyador el dia de Reis.</p>
+    </div>
+
+    <div class="hero-preview" aria-hidden="true">
+        <div class="hero-torro hero-torro--a">
+            <div class="hero-torro-photo">
+                <span class="hero-torro-photo-shadow"></span>
+                <span class="hero-torro-silhouette"></span>
+                <span class="hero-torro-photo-label">foto producte</span>
+            </div>
+            <div class="hero-torro-name">Torró A</div>
+        </div>
+
+        <div class="hero-vs-badge">VS</div>
+
+        <div class="hero-torro hero-torro--b">
+            <div class="hero-torro-photo">
+                <span class="hero-torro-photo-shadow"></span>
+                <span class="hero-torro-silhouette"></span>
+                <span class="hero-torro-photo-label">foto producte</span>
+            </div>
+            <div class="hero-torro-name">Torró B</div>
+        </div>
+    </div>
+
+    <div class="hero-actions">
+        <button class="btn btn-large hero-cta" hx-get="/classes" hx-trigger="click" hx-target="#description" hx-swap="outerHTML" hx-push-url="/classes">
+            Comença a votar
+        </button>
+        <a href="/classes" class="hero-secondary-link" hx-get="/classes" hx-boost="true" hx-target="#main-content" hx-push-url="/classes">
+            Veure el quadre
+        </a>
     </div>
 
     <!-- Countdown Widget -->
-    <div id="countdown-widget"
-         hx-get="/api/campaign/countdown/widget"
-         hx-trigger="load, every 60s"
-         hx-swap="innerHTML">
-        <div class="loading"></div>
-    </div>
-
-    <div class="subtitle">
-        Quin és el millor torró de l'any 2025?
+    <div class="landing-countdown">
+        <div id="countdown-widget"
+             hx-get="/api/campaign/countdown/widget"
+             hx-trigger="load, every 60s"
+             hx-swap="innerHTML">
+            <div class="loading"></div>
+        </div>
     </div>
 
     <!-- How it works -->
-    <div class="how-it-works">
-        <div class="how-it-works-step">
-            <span class="step-number">1</span>
-            <span class="step-text">Escull una categoria</span>
-        </div>
-        <div class="how-it-works-step">
-            <span class="step-number">2</span>
-            <span class="step-text">Compara dos torrons</span>
-        </div>
-        <div class="how-it-works-step">
-            <span class="step-number">3</span>
-            <span class="step-text">Vota pel teu favorit</span>
-        </div>
-        <div class="how-it-works-step">
-            <span class="step-number">4</span>
-            <span class="step-text">Descobreix els resultats</span>
-        </div>
+    <div class="how-it-works-section">
+        <h2 class="how-it-works-title">Com funciona</h2>
+        <ol class="how-it-works">
+            <li class="how-it-works-step">
+                <div class="how-it-works-marker" aria-hidden="true">
+                    <span class="step-number step-number--1">1</span>
+                    <span class="how-it-works-connector"></span>
+                </div>
+                <div class="how-it-works-copy">
+                    <div class="step-title">Temporada oberta</div>
+                    <p class="step-text">Tres setmanes de duels lliures. Vota tants cops com vulguis i defensa el teu torró.</p>
+                </div>
+            </li>
+            <li class="how-it-works-step">
+                <div class="how-it-works-marker" aria-hidden="true">
+                    <span class="step-number step-number--2">2</span>
+                    <span class="how-it-works-connector"></span>
+                </div>
+                <div class="how-it-works-copy">
+                    <div class="step-title">Quadre eliminatori</div>
+                    <p class="step-text">Els torrons més votats entren al quadre. Cada ronda n'elimina la meitat.</p>
+                </div>
+            </li>
+            <li class="how-it-works-step how-it-works-step--last">
+                <div class="how-it-works-marker" aria-hidden="true">
+                    <span class="step-number step-number--3">3</span>
+                </div>
+                <div class="how-it-works-copy">
+                    <div class="step-title">Gran Final</div>
+                    <p class="step-text">El dia de Reis, un sol torró s'endú la corona. En directe.</p>
+                </div>
+            </li>
+        </ol>
     </div>
 
-    <div class="description-text">
-      Escull de manera definitiva quin és el millor torró de Torrons Vicens de l'any 2025.
-      N'hi ha tants (més de 100!) que s'han hagut de dividir en categories.
-      En escollir una categoria se't mostraran de manera aleatòria dos torrons, i has d'indicar quin dels dos és millor per tu.
-      Pots votar tants cops com vulguis, però és recomanable que ho votis un mínim de 25 vegades per garantir uns bons resultats.
+    <!-- Bracket teaser -->
+    <div class="bracket-teaser">
+        <p class="bracket-teaser-title">Així es redueix el camp</p>
+        <div class="bracket-teaser-funnel" aria-hidden="true">
+            <div class="bracket-teaser-row bracket-teaser-row--entries">
+                <span></span><span></span><span></span><span></span>
+            </div>
+            <span class="bracket-teaser-connector"></span>
+            <div class="bracket-teaser-row bracket-teaser-row--semis">
+                <span></span><span></span>
+            </div>
+            <span class="bracket-teaser-connector"></span>
+            <div class="bracket-teaser-champion"></div>
+        </div>
+        <div class="bracket-teaser-champion-label">Campió</div>
+        <p class="bracket-teaser-note">De desenes de torrons a un sol campió, ronda a ronda.</p>
     </div>
 
-    <div class="important-note">
-        IMPORTANT: els torrons es poden repetir durant la votació.
+    <!-- Final CTA -->
+    <div class="hero-actions hero-actions--final">
+        <button class="btn btn-large hero-cta" hx-get="/classes" hx-trigger="click" hx-target="#description" hx-swap="outerHTML" hx-push-url="/classes">
+            Comença a votar
+        </button>
     </div>
 
-    <button class="btn btn-large" hx-get="/classes" hx-trigger="click" hx-target="#description" hx-swap="outerHTML" hx-push-url="/classes">
-        Comença a votar
-    </button>
+    <!-- Footer -->
+    <div class="landing-footer">
+        <div class="landing-footer-sponsor">amb la col·laboració de — [espai reservat]</div>
+        <div class="landing-footer-tagline">torrorèndum · el referèndum del torró</div>
+    </div>
 </div>
 {{ end }}
 
