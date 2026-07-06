@@ -2843,3 +2843,328 @@ h1, h2, h3, h4, h5, h6 {
         flex-direction: column;
     }
 }
+
+/* ========================================
+   Wrapped Recap Page (/wrapped)
+   A campaign-end "year in review" moment —
+   one continuous dark stage (echoes the
+   #countdown-widget dark-card recipe) with
+   light sticker cards floating on top for
+   each highlighted stat. See docs/design-
+   deliverables/Torrorendum Wrapped.dc.html.
+   ======================================== */
+
+#wrapped-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: var(--spacing-lg) var(--spacing-md);
+    animation: fadeIn 0.5s ease-in;
+}
+
+.wrapped-stage {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(160deg, var(--color-text) 0%, var(--color-competition-dark) 100%);
+    border-radius: var(--radius-card);
+    padding: var(--spacing-xl) var(--spacing-lg);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+
+.wrapped-stage-glow {
+    position: absolute;
+    z-index: 0;
+    top: 20%;
+    left: 50%;
+    width: 380px;
+    height: 380px;
+    max-width: 90%;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--color-brand-gold) 0%, transparent 70%);
+    opacity: 0.22;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.wrapped-eyebrow {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-brand-gold);
+}
+
+.wrapped-eyebrow-dot {
+    width: 7px;
+    height: 7px;
+    flex: none;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.wrapped-title {
+    position: relative;
+    color: var(--color-card);
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    line-height: 1.15;
+    margin-top: var(--spacing-md);
+}
+
+.wrapped-subtitle {
+    position: relative;
+    font-family: var(--font-family);
+    font-style: italic;
+    color: var(--color-card);
+    opacity: 0.7;
+    margin-top: var(--spacing-xs);
+}
+
+.wrapped-stat-hero {
+    position: relative;
+    margin-top: var(--spacing-xl);
+}
+
+.wrapped-stat-number {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: clamp(3.5rem, 16vw, 6rem);
+    line-height: 0.95;
+    color: var(--color-card);
+}
+
+.wrapped-stat-label {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--color-brand-gold);
+    margin-top: var(--spacing-sm);
+}
+
+.wrapped-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+    text-align: left;
+}
+
+.wrapped-card {
+    background: var(--color-card);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-card);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sticker);
+    transform: rotate(-1deg);
+}
+
+.wrapped-grid .wrapped-card:nth-child(2) {
+    transform: rotate(1deg);
+}
+
+.wrapped-grid .wrapped-card:nth-child(3) {
+    transform: rotate(-0.6deg);
+}
+
+.wrapped-card-eyebrow {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-primary-dark);
+    margin-bottom: var(--spacing-sm);
+}
+
+.wrapped-empty {
+    font-family: var(--font-family);
+    font-style: italic;
+    color: var(--color-text-light);
+    margin: 0;
+}
+
+.wrapped-duel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+}
+
+.wrapped-duel-side {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+}
+
+.wrapped-duel-name {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    overflow-wrap: break-word;
+}
+
+.wrapped-duel-pct {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: var(--font-size-xl);
+    color: var(--color-text);
+    margin-top: 2px;
+}
+
+.wrapped-duel-vs {
+    flex: none;
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    color: var(--color-competition-contrast);
+    background: var(--color-competition);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sticker-badge);
+}
+
+.wrapped-stat-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.wrapped-stat-name {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+    color: var(--color-text);
+}
+
+.wrapped-stat-caption {
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    margin: 0;
+}
+
+.wrapped-bar-track {
+    width: 100%;
+    height: 10px;
+    background: var(--color-surface);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+
+.wrapped-bar-fill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: var(--radius-pill);
+}
+
+.wrapped-bracket-stats {
+    display: flex;
+    gap: var(--spacing-lg);
+}
+
+.wrapped-bracket-stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.wrapped-bracket-value {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: var(--font-size-xl);
+    color: var(--color-text);
+}
+
+.wrapped-bracket-key {
+    font-family: var(--font-family-display);
+    font-weight: 600;
+    font-size: 10.5px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+    margin-top: 2px;
+}
+
+.wrapped-champion-badge {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    color: var(--color-competition-dark);
+    background: var(--color-competition-tint);
+    border: 1px solid var(--color-competition);
+    border-radius: var(--radius-pill);
+    padding: 6px 14px;
+    margin-top: var(--spacing-sm);
+}
+
+.wrapped-share {
+    position: relative;
+    margin-top: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.wrapped-share-text {
+    font-family: var(--font-family);
+    font-style: italic;
+    color: var(--color-card);
+    opacity: 0.7;
+    margin: 0 0 var(--spacing-md);
+}
+
+.wrapped-download-btn {
+    display: inline-block;
+    background: var(--color-competition);
+    color: var(--color-competition-contrast);
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: var(--font-size-base);
+    text-decoration: none;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-button);
+    box-shadow: 0 4px 0 var(--color-competition-dark);
+    transform: rotate(-1deg);
+    transition: all var(--transition-normal);
+}
+
+.wrapped-download-btn:hover {
+    transform: rotate(-1deg) translateY(-2px);
+    box-shadow: 0 4px 0 var(--color-competition-dark);
+}
+
+.wrapped-download-btn:active {
+    transform: rotate(-1deg) translateY(2px);
+    box-shadow: 0 2px 0 var(--color-competition-dark);
+}
+
+.wrapped-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--spacing-xl);
+}
+
+@media (max-width: 640px) {
+    .wrapped-stage {
+        padding: var(--spacing-lg) var(--spacing-md);
+        border-radius: var(--border-radius-lg);
+    }
+
+    .wrapped-bracket-stats {
+        gap: var(--spacing-md);
+    }
+}
