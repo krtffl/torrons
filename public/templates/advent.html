@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/public/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
     <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Duel de l'Advent - Torrorèndum 2025</title>
@@ -30,7 +30,16 @@
 {{ end }}
 
 {{ define "advent" }}
-<div id="advent-container">
+<div id="advent-container" class="advent-page">
+
+    <div class="advent-hero">
+        <div class="advent-badge">
+            <span class="advent-badge-dot" aria-hidden="true"></span>Calendari d'Advent
+        </div>
+        <h1 class="advent-title">24 dies, 24 duels</h1>
+        <p class="advent-subtitle">Cada dia de campanya s'obre una nova porta amb un duel exclusiu. Un sol vot per dia!</p>
+    </div>
+
     {{ if not .CampaignActive }}
     <!-- No active campaign right now -->
     <div class="countdown-inactive">
@@ -50,25 +59,174 @@
     </div>
     {{ else }}
     <!-- Today's featured duel -->
-    <div class="stats-header">
-        <h1 class="stats-title">Duel de l'Advent</h1>
-        <p class="stats-subtitle">El duel d'avui: {{ .ClassName }}. Un sol vot per dia!</p>
+
+    <p class="sr-only">Calendari amb 24 portes: avui pots obrir el duel destacat de més avall; la resta es van revelant durant tot desembre.</p>
+
+    <div class="advent-legend">
+        <div class="advent-legend-item">
+            <span class="advent-legend-swatch advent-legend-swatch--today" aria-hidden="true"></span>
+            <span class="advent-legend-label">Avui</span>
+        </div>
+        <div class="advent-legend-item">
+            <span class="advent-legend-swatch advent-legend-swatch--locked" aria-hidden="true"></span>
+            <span class="advent-legend-label">Tancada</span>
+        </div>
     </div>
 
-    <div id="voting-instructions" class="sr-only">
-        Escull un dels dos torrons fent clic o prement Enter. També pots usar Tab per navegar entre opcions.
+    <div class="advent-grid">
+        <a href="#advent-duel-today" class="advent-door advent-door--today" aria-label="Obre el duel destacat d'avui: {{ .ClassName }}">
+            <span class="advent-door-ribbon">AVUI</span>
+            <span class="advent-door-vs" aria-hidden="true">
+                <span class="advent-door-swatch advent-door-swatch--a"></span>
+                <span class="advent-door-vs-badge">VS</span>
+                <span class="advent-door-swatch advent-door-swatch--b"></span>
+            </span>
+            <span class="advent-door-today-label">{{ .ClassName }}<br>Toca per obrir →</span>
+        </a>
+
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">1</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">2</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">3</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">4</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">5</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">6</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">7</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">8</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">9</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">10</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">11</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">12</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">13</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">14</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">15</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">16</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">17</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">18</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">19</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">20</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">21</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">22</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
+        <div class="advent-door advent-door--locked" aria-hidden="true">
+            <span class="advent-door-lock"></span>
+            <span class="advent-door-num">23</span>
+            <span class="advent-door-hint">Encara tancada</span>
+        </div>
     </div>
-    <div class="torron-comparison" role="group" aria-label="Duel de l'Advent d'avui">
-        {{ range .Torrons }}
-            {{ template "advent-torro" . }}
-        {{ end }}
+
+    <div id="advent-duel-today" class="advent-duel">
+        <div class="stats-header">
+            <h2 class="stats-title">Duel d'avui</h2>
+            <p class="stats-subtitle">El duel d'avui: {{ .ClassName }}. Un sol vot per dia!</p>
+        </div>
+
+        <div id="voting-instructions" class="sr-only">
+            Escull un dels dos torrons fent clic o prement Enter. També pots usar Tab per navegar entre opcions.
+        </div>
+        <div class="torron-comparison advent-torron-comparison" role="group" aria-label="Duel de l'Advent d'avui">
+            {{ range $i, $t := .Torrons }}
+                {{ if $i }}<div class="advent-vs-badge" aria-hidden="true">VS</div>{{ end }}
+                {{ template "advent-torro" $t }}
+            {{ end }}
+        </div>
     </div>
     {{ end }}
+
+    <div class="advent-footer">
+        <span class="advent-footer-tag">torrorèndum · el referèndum del torró</span>
+    </div>
 </div>
 {{ end }}
 
 {{ define "advent-torro" }}
-<div class="torron-card"
+<div class="torron-card advent-torron-card"
      hx-post="/pairings/{{ .Pairing }}/vote?id={{ .Id }}&advent=true"
      hx-trigger="click delay:0.2s"
      hx-target="#advent-container"
