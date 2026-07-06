@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/public/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
     <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Classificació - Torrorèndum 2025</title>
@@ -44,9 +44,42 @@
     </div>
     {{ else }}
 
-    <!-- Category selector -->
     <div class="leaderboard-header">
+        <!-- Eyebrow: current category + live indicator -->
+        <div class="leaderboard-eyebrow">
+            <div class="eyebrow-kicker">
+                <span class="eyebrow-mark" aria-hidden="true"></span>
+                <span class="eyebrow-text">{{ if eq .SelectedCategory "global" }}Global{{ else }}{{ range .Categories }}{{ if eq $.SelectedCategory .Id }}{{ .Name }}{{ end }}{{ end }}{{ end }} · Classificació</span>
+            </div>
+            <div class="leaderboard-live-badge">
+                <span class="live-dot" aria-hidden="true"></span>En viu
+            </div>
+        </div>
+
         <h1 class="leaderboard-title">{{ .Title }}</h1>
+        <p class="leaderboard-subtitle">Es recalcula amb cada vot, en directe.</p>
+
+        <!-- View toggle -->
+        <div class="view-toggle">
+            <button class="toggle-btn {{ if eq .ViewType "personal" }}active{{ end }}"
+                    hx-get="/leaderboard?view=personal&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}"
+                    hx-trigger="click"
+                    hx-target="#leaderboard-container"
+                    hx-swap="outerHTML"
+                    hx-push-url="/leaderboard?view=personal&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}">
+                Els meus resultats
+            </button>
+            <button class="toggle-btn {{ if eq .ViewType "global" }}active{{ end }}"
+                    hx-get="/leaderboard?view=global&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}"
+                    hx-trigger="click"
+                    hx-target="#leaderboard-container"
+                    hx-swap="outerHTML"
+                    hx-push-url="/leaderboard?view=global&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}">
+                Resultats globals
+            </button>
+        </div>
+
+        <!-- Category selector -->
         {{ if .ShowCategoryFilter }}
         <div class="category-selector">
             <button class="category-btn {{ if eq .SelectedCategory "global" }}active{{ end }}"
@@ -69,26 +102,6 @@
             {{ end }}
         </div>
         {{ end }}
-
-        <!-- View toggle -->
-        <div class="view-toggle">
-            <button class="toggle-btn {{ if eq .ViewType "personal" }}active{{ end }}"
-                    hx-get="/leaderboard?view=personal&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}"
-                    hx-trigger="click"
-                    hx-target="#leaderboard-container"
-                    hx-swap="outerHTML"
-                    hx-push-url="/leaderboard?view=personal&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}">
-                Els meus resultats
-            </button>
-            <button class="toggle-btn {{ if eq .ViewType "global" }}active{{ end }}"
-                    hx-get="/leaderboard?view=global&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}"
-                    hx-trigger="click"
-                    hx-target="#leaderboard-container"
-                    hx-swap="outerHTML"
-                    hx-push-url="/leaderboard?view=global&category={{ .SelectedCategory }}&vegan={{ .FilterVegan }}&gluten_free={{ .FilterGlutenFree }}&lactose_free={{ .FilterLactoseFree }}&organic={{ .FilterOrganic }}">
-                Resultats globals
-            </button>
-        </div>
 
         <!-- Dietary/allergen filter chips -->
         <div class="filter-chips" role="group" aria-label="Filtres dietètics">
@@ -188,36 +201,38 @@
 </div>
 {{ end }}
 
-{{ define "leaderboard-entry" }}
-<div class="leaderboard-entry rank-{{ .Rank }}">
-    <div class="rank-badge">
-        {{ if eq .Rank 1 }}
-        <span class="rank-number gold">🥇</span>
-        {{ else if eq .Rank 2 }}
-        <span class="rank-number silver">🥈</span>
-        {{ else if eq .Rank 3 }}
-        <span class="rank-number bronze">🥉</span>
-        {{ else }}
-        <span class="rank-number">{{ .Rank }}</span>
-        {{ end }}
-        {{ if .RankChangeSymbol }}
-        <span class="rank-change {{ if eq .RankChangeSymbol "↑" }}rank-up{{ else if eq .RankChangeSymbol "↓" }}rank-down{{ else if eq .RankChangeSymbol "NOU" }}rank-new{{ else }}rank-same{{ end }}">
-            {{ .RankChangeSymbol }}{{ if and (ne .RankChangeSymbol "—") (ne .RankChangeSymbol "NOU") (gt .RankChangeAbs 0) }} {{ .RankChangeAbs }}{{ end }}
-        </span>
-        {{ end }}
-    </div>
+{{/* Shared rank-change indicator: a decorative up/down triangle + delta,
+     a "NOU" pill, or a flat dash. Used by both the hero (top-3) and the
+     compact row entry layouts below. */}}
+{{ define "rank-change-badge" }}
+{{ if .RankChangeSymbol }}
+<span class="rank-change {{ if eq .RankChangeSymbol "↑" }}rank-up{{ else if eq .RankChangeSymbol "↓" }}rank-down{{ else if eq .RankChangeSymbol "NOU" }}rank-new{{ else }}rank-same{{ end }}">
+    {{ if eq .RankChangeSymbol "↑" }}
+    <span class="rank-change-arrow rank-change-arrow-up" aria-hidden="true"></span><span class="rank-change-value">{{ if gt .RankChangeAbs 0 }}+{{ .RankChangeAbs }}{{ end }}</span>
+    {{ else if eq .RankChangeSymbol "↓" }}
+    <span class="rank-change-arrow rank-change-arrow-down" aria-hidden="true"></span><span class="rank-change-value">{{ if gt .RankChangeAbs 0 }}−{{ .RankChangeAbs }}{{ end }}</span>
+    {{ else if eq .RankChangeSymbol "NOU" }}
+    <span class="rank-change-value rank-change-badge-pill">NOU</span>
+    {{ else }}
+    <span class="rank-change-value rank-change-dash">{{ .RankChangeSymbol }}</span>
+    {{ end }}
+</span>
+{{ end }}
+{{ end }}
 
-    <div class="entry-image">
+{{ define "leaderboard-entry" }}
+{{ if le .Rank 3 }}
+<!-- Top-3 "hero" treatment: rank 1 burgundy (competition accent), 2 & 3 caramel-badged cream cards -->
+<div class="leaderboard-entry leaderboard-entry-hero rank-{{ .Rank }}">
+    <div class="hero-rank-badge" aria-hidden="true">{{ .Rank }}</div>
+
+    <div class="hero-entry-image">
         <img src="/public/images/{{ .TorronImage }}" alt="{{ .TorronName }}">
     </div>
 
     <div class="entry-details">
         <div class="entry-name">{{ .TorronName }}</div>
         <div class="entry-stats">
-            <span class="stat-item">
-                <span class="stat-label">ELO:</span>
-                <span class="stat-value">{{ printf "%.0f" .Rating }}</span>
-            </span>
             <span class="stat-item">
                 <span class="stat-label">Vots:</span>
                 <span class="stat-value">{{ .VoteCount }}</span>
@@ -233,12 +248,55 @@
         </a>
     </div>
 
-    <div class="entry-rating">
+    <div class="hero-entry-rating">
+        <div class="hero-entry-elo">{{ printf "%.0f" .Rating }}</div>
+        <div class="hero-entry-elo-label">ELO</div>
         <div class="rating-bar">
             <div class="rating-fill" style="width: {{ .RatingPercentage }}%"></div>
         </div>
+        <div class="rank-change-slot rank-change-slot--hero">{{ template "rank-change-badge" . }}</div>
     </div>
 </div>
+{{ else }}
+<!-- Compact row treatment for rank 4+ -->
+<div class="leaderboard-entry leaderboard-entry-row">
+    <div class="row-rank-number">{{ .Rank }}</div>
+
+    <div class="row-entry-image">
+        <img src="/public/images/{{ .TorronImage }}" alt="{{ .TorronName }}">
+    </div>
+
+    <div class="entry-details">
+        <div class="entry-name">{{ .TorronName }}</div>
+        <div class="entry-stats">
+            <span class="stat-item">
+                <span class="stat-label">Vots:</span>
+                <span class="stat-value">{{ .VoteCount }}</span>
+            </span>
+        </div>
+        <div class="row-entry-rating">
+            <div class="rating-bar">
+                <div class="rating-fill" style="width: {{ .RatingPercentage }}%"></div>
+            </div>
+        </div>
+        <a class="torron-info-link"
+           href="/torro/{{ .TorronId }}"
+           hx-get="/torro/{{ .TorronId }}"
+           hx-target="#main-content"
+           hx-push-url="/torro/{{ .TorronId }}"
+           aria-label="Més informació sobre {{ .TorronName }}">
+            ℹ️ més info
+        </a>
+    </div>
+
+    <div class="row-entry-elo">
+        <div class="row-elo-value">{{ printf "%.0f" .Rating }}</div>
+        <div class="row-elo-label">ELO</div>
+    </div>
+
+    <div class="rank-change-slot rank-change-slot--row">{{ template "rank-change-badge" . }}</div>
+</div>
+{{ end }}
 {{ end }}
 
 <script>

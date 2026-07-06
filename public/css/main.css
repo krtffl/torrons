@@ -2153,117 +2153,178 @@ button.arena-card-action:focus-visible {
 }
 
 .leaderboard-header {
-    text-align: center;
-    margin-bottom: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Eyebrow: current category name + live indicator */
+.leaderboard-eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.eyebrow-kicker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.eyebrow-mark {
+    width: 12px;
+    height: 12px;
+    flex: none;
+    border-left: 3px solid var(--color-text);
+    border-bottom: 3px solid var(--color-text);
+    transform: rotate(45deg);
+}
+
+.eyebrow-text {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+}
+
+.leaderboard-live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 10.5px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    padding: 5px 11px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+}
+
+.live-dot {
+    width: 6px;
+    height: 6px;
+    flex: none;
+    border-radius: 50%;
+    background-color: var(--color-text);
+    animation: leaderboardLivePulse 2s ease-out infinite;
+}
+
+@keyframes leaderboardLivePulse {
+    /* Pulse ring reuses --color-competition's RGB (custom properties can't be
+       animated through rgba() alpha steps), just at lower opacities. */
+    0% { box-shadow: 0 0 0 0 rgba(138, 38, 56, 0.35); }
+    100% { box-shadow: 0 0 0 8px rgba(138, 38, 56, 0); }
 }
 
 .leaderboard-title {
+    font-family: var(--font-family-display);
+    font-weight: 800;
     font-size: var(--font-size-2xl);
+    line-height: 1.1;
+    color: var(--color-text);
+    margin: var(--spacing-sm) 0 2px;
+}
+
+.leaderboard-subtitle {
+    font-family: var(--font-family);
+    font-style: italic;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    margin: 0 0 var(--spacing-md);
+}
+
+/* View toggle (segmented pill) */
+.view-toggle {
+    display: flex;
+    gap: 4px;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+    margin: var(--spacing-md) 0;
+}
+
+.toggle-btn {
+    flex: 1;
+    text-align: center;
+    padding: var(--spacing-sm) var(--spacing-sm);
+    background-color: transparent;
+    color: var(--color-text-light);
+    border: none;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-sm);
     font-weight: 700;
-    color: var(--color-primary);
-    margin-bottom: var(--spacing-lg);
+    letter-spacing: 0.2px;
+    transition: all var(--transition-fast);
+}
+
+.toggle-btn:hover {
+    color: var(--color-text);
+}
+
+.toggle-btn.active {
+    background-color: var(--color-text);
+    color: var(--color-card);
 }
 
 /* Category selector */
 .category-selector {
     display: flex;
-    justify-content: center;
     flex-wrap: wrap;
     gap: var(--spacing-sm);
-    margin: var(--spacing-lg) 0;
+    margin: var(--spacing-md) 0;
 }
 
 .category-btn {
-    padding: var(--spacing-sm) var(--spacing-md);
-    background-color: var(--color-white);
-    color: var(--color-text);
-    border: 2px solid var(--color-primary);
-    border-radius: var(--border-radius);
+    padding: 8px 16px;
+    background-color: var(--color-card);
+    color: var(--color-text-light-dark);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-pill);
     cursor: pointer;
     font-family: var(--font-family-display);
     font-size: var(--font-size-sm);
-    font-weight: 500;
+    font-weight: 700;
     transition: all var(--transition-fast);
 }
 
 .category-btn:hover {
-    background-color: var(--color-primary-light);
-    color: var(--color-white);
-    transform: translateY(-1px);
+    border-color: var(--color-primary);
+    color: var(--color-text);
 }
 
 .category-btn.active {
     background-color: var(--color-primary);
-    color: var(--color-white);
+    border-color: var(--color-primary);
+    color: var(--color-text);
 }
 
 /* Dietary/allergen filter chips (reuses .category-btn look) */
 .filter-chips {
     display: flex;
-    justify-content: center;
     flex-wrap: wrap;
     gap: var(--spacing-sm);
-    margin: var(--spacing-md) 0 var(--spacing-lg);
+    margin: var(--spacing-sm) 0 var(--spacing-md);
 }
 
-/* View toggle */
-.view-toggle {
-    display: flex;
-    justify-content: center;
-    gap: var(--spacing-sm);
-    margin: var(--spacing-lg) 0;
-}
-
-.toggle-btn {
-    padding: var(--spacing-sm) var(--spacing-lg);
-    background-color: var(--color-background);
-    color: var(--color-text);
-    border: 2px solid var(--color-primary);
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    font-family: var(--font-family-display);
-    font-size: var(--font-size-base);
-    font-weight: 500;
-    transition: all var(--transition-fast);
-}
-
-.toggle-btn:hover {
-    background-color: var(--color-primary-light);
-    color: var(--color-white);
-}
-
-.toggle-btn.active {
-    background-color: var(--color-primary);
-    color: var(--color-white);
-}
-
-/* Leaderboard list */
+/* Leaderboard list. Hero (top-3) cards keep their own gap; the compact rows
+   below rank 3 are visually joined into one bordered "table" card. */
 .leaderboard-list {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
     margin: var(--spacing-lg) 0;
 }
 
-/* Leaderboard entry */
 .leaderboard-entry {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    background-color: var(--color-white);
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-md);
-    box-shadow: var(--shadow-md);
-    transition: all var(--transition-normal);
     animation: slideUp 0.4s ease-out;
 }
 
-.leaderboard-entry:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-}
-
-/* Stagger animation for entries */
 .leaderboard-entry:nth-child(1) { animation-delay: 0.05s; }
 .leaderboard-entry:nth-child(2) { animation-delay: 0.1s; }
 .leaderboard-entry:nth-child(3) { animation-delay: 0.15s; }
@@ -2271,108 +2332,241 @@ button.arena-card-action:focus-visible {
 .leaderboard-entry:nth-child(5) { animation-delay: 0.25s; }
 .leaderboard-entry:nth-child(n+6) { animation-delay: 0.3s; }
 
-/* Top 3 special styling */
-.leaderboard-entry.rank-1 {
-    border: 3px solid var(--color-gold);
-    background: linear-gradient(to right, var(--color-gold-bg), var(--color-white));
-}
-
-.leaderboard-entry.rank-2 {
-    border: 3px solid var(--color-silver);
-    background: linear-gradient(to right, var(--color-neutral-light), var(--color-white));
-}
-
-.leaderboard-entry.rank-3 {
-    border: 3px solid var(--color-bronze);
-    background: linear-gradient(to right, var(--color-bronze-bg), var(--color-white));
-}
-
-/* Rank badge */
-.rank-badge {
-    flex-shrink: 0;
-    width: 50px;
-    text-align: center;
+/* --- Top-3 "hero" cards --- */
+.leaderboard-entry-hero {
+    position: relative;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-sticker);
+    margin-bottom: var(--spacing-sm);
 }
 
-.rank-number {
-    font-size: var(--font-size-2xl);
-    font-weight: 700;
+.leaderboard-entry-hero.rank-1 {
+    background-color: var(--color-competition);
+    border: 2px solid var(--color-brand-gold);
+    transform: rotate(-2deg);
+}
+
+.leaderboard-entry-hero.rank-2 {
+    background-color: var(--color-card);
+    border: 1.5px solid var(--color-border);
+    transform: rotate(1deg);
+}
+
+.leaderboard-entry-hero.rank-3 {
+    background-color: var(--color-card);
+    border: 1.5px solid var(--color-border);
+    transform: rotate(-1deg);
+}
+
+.hero-rank-badge {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 28px;
+    height: 28px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: 13px;
+    box-shadow: var(--shadow-sticker-badge);
+}
+
+.rank-1 .hero-rank-badge {
+    background-color: var(--color-brand-gold);
     color: var(--color-text);
 }
 
-.rank-change {
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: var(--border-radius);
-    white-space: nowrap;
+.rank-2 .hero-rank-badge {
+    background-color: var(--color-primary);
+    color: var(--color-text);
 }
 
-.rank-up {
-    color: var(--color-success);
-    background-color: var(--color-success-bg);
+.rank-3 .hero-rank-badge {
+    background-color: var(--color-primary-light);
+    color: var(--color-card);
 }
 
-.rank-down {
-    color: var(--color-danger);
-    background-color: var(--color-danger-bg);
-}
-
-.rank-new {
-    color: var(--color-warning);
-    background-color: var(--color-warning-bg);
-}
-
-.rank-same {
-    color: var(--color-text-light);
-    background-color: var(--color-shadow-faint);
-}
-
-.rank-number.gold {
-    font-size: 2.5rem;
-}
-
-.rank-number.silver {
-    font-size: 2.5rem;
-}
-
-.rank-number.bronze {
-    font-size: 2.5rem;
-}
-
-/* Entry image */
-.entry-image {
-    flex-shrink: 0;
-    width: 80px;
-    height: 80px;
-    border-radius: var(--border-radius);
+.hero-entry-image {
+    width: 64px;
+    height: 64px;
+    flex: none;
+    border-radius: 14px;
     overflow: hidden;
+    border: 1px solid var(--color-border);
+    background-image: repeating-linear-gradient(135deg, var(--color-placeholder-1), var(--color-placeholder-1) 6px, var(--color-placeholder-2) 6px, var(--color-placeholder-2) 12px);
 }
 
-.entry-image img {
+.rank-1 .hero-entry-image {
+    border-color: rgba(239, 194, 110, 0.5);
+}
+
+.hero-entry-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
-/* Entry details */
+.hero-entry-rating {
+    flex: none;
+    text-align: right;
+}
+
+.hero-entry-elo {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: var(--font-size-xl);
+    line-height: 1;
+    color: var(--color-text);
+}
+
+.rank-1 .hero-entry-elo {
+    color: var(--color-competition-contrast);
+}
+
+.hero-entry-elo-label {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    color: var(--color-text-light);
+    margin-top: 2px;
+}
+
+.rank-1 .hero-entry-elo-label {
+    color: rgba(255, 250, 241, 0.65);
+}
+
+.hero-entry-rating .rating-bar {
+    width: 72px;
+    margin: 8px 0 0 auto;
+}
+
+.rank-change-slot--hero {
+    margin-top: 6px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* --- Compact rows (rank 4+), visually joined into one bordered card --- */
+.leaderboard-entry-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-card);
+    border-left: 1px solid var(--color-border);
+    border-right: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.leaderboard-entry-hero + .leaderboard-entry-row {
+    border-top: 1px solid var(--color-border);
+    border-top-left-radius: var(--radius-card);
+    border-top-right-radius: var(--radius-card);
+    margin-top: var(--spacing-md);
+}
+
+.leaderboard-entry-row:last-child {
+    border-bottom-left-radius: var(--radius-card);
+    border-bottom-right-radius: var(--radius-card);
+}
+
+.row-rank-number {
+    width: 22px;
+    flex: none;
+    text-align: center;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--color-text-light-dark);
+}
+
+.row-entry-image {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background-image: repeating-linear-gradient(135deg, var(--color-placeholder-1), var(--color-placeholder-1) 5px, var(--color-placeholder-2) 5px, var(--color-placeholder-2) 10px);
+}
+
+.row-entry-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.row-entry-rating {
+    margin-top: 4px;
+}
+
+.row-entry-rating .rating-bar {
+    height: 3px;
+}
+
+.row-entry-elo {
+    flex: none;
+    text-align: right;
+}
+
+.row-elo-value {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: var(--font-size-base);
+    line-height: 1;
+    color: var(--color-text);
+}
+
+.row-elo-label {
+    font-family: var(--font-family-display);
+    font-weight: 600;
+    font-size: 9px;
+    letter-spacing: 0.4px;
+    color: var(--color-text-light-dark);
+    margin-top: 2px;
+}
+
+.rank-change-slot--row {
+    flex: none;
+    width: 40px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* --- Shared entry details (name, vote count, info link) --- */
 .entry-details {
     flex-grow: 1;
     min-width: 0;
 }
 
 .entry-name {
-    font-size: var(--font-size-lg);
+    font-family: var(--font-family-display);
     font-weight: 700;
-    color: var(--color-primary);
-    margin-bottom: var(--spacing-xs);
+    font-size: var(--font-size-base);
+    color: var(--color-text);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.leaderboard-entry-hero .entry-name {
+    font-weight: 800;
+    font-size: var(--font-size-lg);
+}
+
+.rank-1 .entry-name {
+    color: var(--color-competition-contrast);
 }
 
 .entry-stats {
@@ -2380,48 +2574,126 @@ button.arena-card-action:focus-visible {
     gap: var(--spacing-md);
     font-size: var(--font-size-sm);
     color: var(--color-text-light);
+    margin-top: 2px;
 }
 
-.stat-item {
-    display: flex;
-    gap: var(--spacing-xs);
+.rank-1 .stat-label,
+.rank-1 .stat-value {
+    color: var(--color-competition-contrast);
+    opacity: 0.85;
 }
 
-.stat-label {
-    font-weight: 500;
+.rank-1 .torron-info-link {
+    color: rgba(255, 250, 241, 0.85);
 }
 
-.stat-value {
-    font-weight: 700;
-    color: var(--color-text);
+.rank-1 .torron-info-link:hover,
+.rank-1 .torron-info-link:focus-visible {
+    color: var(--color-brand-gold);
 }
 
-/* Entry rating bar */
-.entry-rating {
-    flex-shrink: 0;
-    width: 100px;
-}
-
+/* Rating bar (reused by both hero and row layouts) */
 .rating-bar {
-    height: 20px;
-    background-color: var(--color-neutral-light);
-    border-radius: var(--border-radius);
+    height: 6px;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-pill);
     overflow: hidden;
     position: relative;
 }
 
 .rating-fill {
     height: 100%;
-    background: linear-gradient(to right, var(--color-primary), var(--color-primary-light));
+    border-radius: var(--radius-pill);
+    background: linear-gradient(to right, var(--color-primary-light), var(--color-primary));
     transition: width 0.5s ease;
+}
+
+.rank-1 .rating-bar {
+    background-color: rgba(255, 250, 241, 0.25);
+}
+
+.rank-1 .rating-fill {
+    background: var(--color-brand-gold);
+}
+
+/* Rank-change indicator: CSS-drawn triangle + delta, a "NOU" pill, or a dash */
+.rank-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 0.75rem;
+}
+
+.rank-change-slot--hero .rank-change {
+    font-size: var(--font-size-sm);
+}
+
+.rank-change-arrow {
+    width: 0;
+    height: 0;
+    flex: none;
+}
+
+.rank-change-arrow-up {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 6px solid currentColor;
+}
+
+.rank-change-arrow-down {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid currentColor;
+}
+
+.rank-up {
+    color: var(--color-primary-light);
+}
+
+.rank-down {
+    /* Audit fix: canonical secondary-text token, not an undocumented neutral (#B3A182) */
+    color: var(--color-text-light);
+}
+
+.rank-new .rank-change-value {
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+}
+
+.rank-same {
+    color: var(--color-border-dashed);
+}
+
+.rank-1 .rank-up {
+    color: var(--color-brand-gold);
+}
+
+.rank-1 .rank-down {
+    color: rgba(255, 250, 241, 0.65);
+}
+
+.rank-1 .rank-new .rank-change-value {
+    background-color: var(--color-brand-gold);
+    color: var(--color-text);
+}
+
+.rank-1 .rank-same {
+    color: rgba(255, 250, 241, 0.5);
 }
 
 /* Error state */
 .leaderboard-error {
     text-align: center;
     padding: var(--spacing-xl);
-    background-color: var(--color-white);
-    border-radius: var(--border-radius-lg);
+    background-color: var(--color-card);
+    border-radius: var(--radius-card);
     box-shadow: var(--shadow-md);
     margin: var(--spacing-xl) auto;
     max-width: 500px;
@@ -2433,6 +2705,7 @@ button.arena-card-action:focus-visible {
 }
 
 .error-message {
+    font-family: var(--font-family-display);
     font-size: var(--font-size-lg);
     font-weight: 700;
     color: var(--color-text);
@@ -2454,51 +2727,39 @@ button.arena-card-action:focus-visible {
 
 /* Responsive design */
 @media (max-width: 768px) {
-    .leaderboard-entry {
-        flex-wrap: wrap;
+    .leaderboard-entry-hero {
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm);
     }
 
-    .entry-rating {
-        width: 100%;
-        margin-top: var(--spacing-sm);
+    .hero-entry-image {
+        width: 52px;
+        height: 52px;
     }
 
-    .rank-badge {
-        width: 40px;
+    .hero-entry-elo {
+        font-size: var(--font-size-lg);
     }
 
-    .rank-number {
-        font-size: var(--font-size-xl);
+    /* Horizontal-scroll pill strip, matching .topbar-nav's mobile pattern,
+       instead of stacking every chip full-width down the page. */
+    .category-selector,
+    .filter-chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 2px;
     }
 
-    .rank-number.gold,
-    .rank-number.silver,
-    .rank-number.bronze {
-        font-size: 2rem;
-    }
-
-    .entry-image {
-        width: 60px;
-        height: 60px;
-    }
-
-    .category-selector {
-        flex-direction: column;
+    .category-selector::-webkit-scrollbar,
+    .filter-chips::-webkit-scrollbar {
+        display: none;
     }
 
     .category-btn {
-        width: 100%;
-        max-width: 300px;
-    }
-
-    .view-toggle {
-        flex-direction: column;
-        gap: var(--spacing-xs);
-    }
-
-    .toggle-btn {
-        width: 100%;
-        max-width: 300px;
+        flex: none;
+        white-space: nowrap;
     }
 }
 
