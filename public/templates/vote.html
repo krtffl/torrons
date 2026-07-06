@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/public/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
     <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Vota - Torrorèndum 2025</title>
@@ -36,15 +36,16 @@
 <div id="voting-instructions" class="sr-only">
     Escull un dels dos torrons fent clic o prement Enter. També pots usar Tab per navegar entre opcions.
 </div>
-<div class="torron-comparison" role="group" aria-label="Comparació de torrons">
+<div class="torron-comparison vote-duel" role="group" aria-label="Comparació de torrons">
     {{ range .Torrons }}
         {{ template "torro" . }}
     {{ end }}
+    <div class="vote-vs-badge" aria-hidden="true">VS</div>
 </div>
 {{ end }}
 
 {{ define "torro" }}
-<div class="torron-card"
+<div class="torron-card vote-card"
      onclick="updateProgress(event);"
      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"
      hx-post="/pairings/{{ .Pairing }}/vote?id={{ .Id }}"
@@ -55,25 +56,57 @@
      role="button"
      aria-label="Vota per {{ .Name }}"
      aria-describedby="voting-instructions">
-    <div class="torron-name">
-       {{ .Name }}
+    <div class="vote-card-media">
+        <img class="torron-image" src="/public/images/{{ .Image }}" alt="{{ .Name }} - Torrons Vicens">
+        {{ if .IsNew2025 }}<span class="vote-badge-new">NOU</span>{{ end }}
     </div>
-    <img class="torron-image" src="/public/images/{{ .Image }}" alt="{{ .Name }} - Torrons Vicens">
-    <a class="torron-info-link"
-       href="/torro/{{ .Id }}"
-       hx-get="/torro/{{ .Id }}"
-       hx-target="#main-content"
-       hx-push-url="/torro/{{ .Id }}"
-       aria-label="Més informació sobre {{ .Name }}"
-       onclick="event.stopPropagation();"
-       onkeydown="event.stopPropagation();">
-        ℹ️ més info
-    </a>
+    <div class="vote-card-body">
+        <div class="torron-name">
+           {{ .Name }}
+        </div>
+        {{ if or .IsVegan .IsGlutenFree .IsLactoseFree .IsOrganic }}
+        <div class="vote-diet-badges">
+            {{ if .IsVegan }}<span class="vote-diet-badge" role="img" aria-label="Vegà">🌱</span>{{ end }}
+            {{ if .IsGlutenFree }}<span class="vote-diet-badge" role="img" aria-label="Sense gluten">🌾</span>{{ end }}
+            {{ if .IsLactoseFree }}<span class="vote-diet-badge" role="img" aria-label="Sense lactosa">🥛</span>{{ end }}
+            {{ if .IsOrganic }}<span class="vote-diet-badge" role="img" aria-label="Ecològic">🍃</span>{{ end }}
+        </div>
+        {{ end }}
+        <a class="torron-info-link"
+           href="/torro/{{ .Id }}"
+           hx-get="/torro/{{ .Id }}"
+           hx-target="#main-content"
+           hx-push-url="/torro/{{ .Id }}"
+           aria-label="Més informació sobre {{ .Name }}"
+           onclick="event.stopPropagation();"
+           onkeydown="event.stopPropagation();">
+            ℹ️ més info
+        </a>
+    </div>
 </div>
 {{ end }}
 
 {{ define "progress" }}
 <div id="progress">
+    <div class="vote-round-header">
+        <div class="vote-round-label">
+            <span class="vote-round-icon" aria-hidden="true"></span>
+            <span>RONDA OBERTA</span>
+        </div>
+        {{ if gt .CurrentStreak 0 }}
+        <div class="streak-pill{{ if .StreakAtRisk }} streak-pill--risk{{ end }}"
+             role="status"
+             aria-label="Ratxa de {{ .CurrentStreak }} {{ if eq .CurrentStreak 1 }}dia{{ else }}dies{{ end }} seguits votant{{ if .StreakAtRisk }}. Vota avui per no perdre-la{{ end }}">
+            <span class="streak-flame" aria-hidden="true">
+                {{ if .StreakAtRisk }}<span class="streak-risk-dot"></span>{{ end }}
+            </span>
+            <span class="streak-count">
+                <span class="streak-number">{{ .CurrentStreak }}</span>
+                <span class="streak-label">{{ if .StreakAtRisk }}vota avui{{ else }}dies{{ end }}</span>
+            </span>
+        </div>
+        {{ end }}
+    </div>
     <div class="progress-container">
         <div id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
