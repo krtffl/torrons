@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/public/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
     <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Bracket - Torrorèndum 2025</title>
@@ -31,14 +31,20 @@
 
 {{ define "bracket-overview" }}
 <div id="bracket-container">
-    <div class="stats-header">
+    <div class="stats-header bracket-page-header">
+        <div class="bracket-eyebrow">
+            <span class="bracket-eyebrow-badge" aria-hidden="true">VS</span>
+            <span class="bracket-eyebrow-text">torrorèndum &middot; fase eliminatòria</span>
+        </div>
         <h1 class="stats-title">Bracket - {{ .ClassName }}</h1>
         {{ if not .BracketExists }}
         <p class="stats-subtitle">Encara no hi ha bracket per aquesta categoria.</p>
         {{ else if eq .Bracket.Status "completed" }}
         <p class="stats-subtitle">Bracket finalitzat!</p>
+        <span class="bracket-status-pill is-closed">Torneig tancat</span>
         {{ else }}
         <p class="stats-subtitle">Ronda {{ .Bracket.CurrentRound }} de {{ .TotalRounds }}</p>
+        <span class="bracket-status-pill is-open">Torneig obert</span>
         {{ end }}
     </div>
 
@@ -59,8 +65,8 @@
     <div class="bracket-champion">
         <img class="bracket-champion-image" src="/public/images/{{ .Champion.Image }}" alt="{{ .Champion.Name }}">
         <div class="bracket-champion-icon">🏆</div>
-        <div class="bracket-champion-name">{{ .Champion.Name }}</div>
         <div class="bracket-champion-label">Campió del bracket</div>
+        <div class="bracket-champion-name">{{ .Champion.Name }}</div>
     </div>
     {{ else }}
     <div class="bracket-cta">
@@ -70,20 +76,30 @@
     </div>
     {{ end }}
 
-    <!-- Round by round results -->
-    {{ range .Rounds }}
-    <div class="bracket-round">
-        <h2 class="section-title">
-            {{ if .IsFinal }}Gran Final{{ else }}Ronda {{ .Round }}{{ end }}
-            {{ if .IsCurrent }}<span class="bracket-current-badge">ronda actual</span>{{ end }}
-        </h2>
-        <div class="bracket-match-list">
-            {{ range .Matches }}
-            {{ template "bracket-match-summary" . }}
+    <!-- Round by round results: the full bracket tree, horizontally
+         scrollable so it never clips on narrow viewports (audit fix). -->
+    <div class="bracket-tree-hint">
+        <span class="bracket-tree-hint-label">El quadre complet</span>
+        <span class="bracket-tree-hint-rule" aria-hidden="true"></span>
+        <span class="bracket-tree-hint-swipe">llisca en horitzontal &rarr;</span>
+    </div>
+    <div class="bracket-tree-scroll" tabindex="0" role="group" aria-label="Quadre complet del bracket, desplaçable horitzontalment">
+        <div class="bracket-tree">
+            {{ range .Rounds }}
+            <div class="bracket-round{{ if .IsCurrent }} is-current{{ end }}{{ if .IsFinal }} is-final{{ end }}">
+                <h2 class="section-title">
+                    {{ if .IsFinal }}Gran Final{{ else }}Ronda {{ .Round }}{{ end }}
+                    {{ if .IsCurrent }}<span class="bracket-current-badge">ronda actual</span>{{ end }}
+                </h2>
+                <div class="bracket-match-list">
+                    {{ range .Matches }}
+                    {{ template "bracket-match-summary" . }}
+                    {{ end }}
+                </div>
+            </div>
             {{ end }}
         </div>
     </div>
-    {{ end }}
 
     {{ end }}
 
@@ -140,7 +156,7 @@
     <link rel="stylesheet" href="/public/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
     <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Vota al bracket - Torrorèndum 2025</title>
@@ -163,6 +179,7 @@
 
 
 {{ define "bracket-vote" }}
+<div id="bracket-vote-container">
 {{ if not .BracketExists }}
 <div class="history-empty">
     <div class="empty-icon">🏆</div>
@@ -226,4 +243,5 @@
     {{ end }}
 </div>
 {{ end }}
+</div>
 {{ end }}

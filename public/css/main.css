@@ -2458,7 +2458,74 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ========================================
    Bracket (Phase 2 - The knockout)
+   See docs/design-deliverables/Torrorendum Bracket.dc.html and
+   ".../Torrorendum Bracket Tree.dc.html". This section owns every
+   .bracket-* class outright (bracket.html is their only consumer) and
+   additionally carries a few *scoped* overrides — selectors prefixed with
+   #bracket-container / #bracket-vote-container — for shared components
+   (.torron-card, .history-*, .stats-*, .section-title, .winner-badge…)
+   that other screens also use. Those overrides only ever match inside
+   this page's markup; the shared base rules they layer on top of (defined
+   earlier in this file) are left untouched for the other screens that
+   still own them.
    ======================================== */
+
+.bracket-page-header {
+    position: relative;
+}
+
+.bracket-eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.bracket-eyebrow-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: var(--color-competition);
+    color: var(--color-competition-contrast);
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: 0.6rem;
+    transform: rotate(-8deg);
+}
+
+.bracket-eyebrow-text {
+    font-family: var(--font-family);
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+}
+
+.bracket-status-pill {
+    display: inline-block;
+    margin-top: var(--spacing-sm);
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px var(--spacing-md);
+    border-radius: var(--radius-pill);
+}
+
+.bracket-status-pill.is-open {
+    background-color: var(--color-primary-tint);
+    color: var(--color-primary-dark);
+}
+
+.bracket-status-pill.is-closed {
+    background-color: var(--color-text);
+    color: var(--color-brand-gold);
+}
 
 .bracket-cta {
     text-align: center;
@@ -2466,44 +2533,132 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .bracket-champion {
-    /* Competition-only moment (winner banner) — burdeus, not the generic caramel accent. */
-    background: linear-gradient(135deg, var(--color-competition) 0%, var(--color-competition-dark) 100%);
+    /* Competition-only moment (winner banner) — burdeus/cacau + gold, not
+       the generic caramel accent. Mirrors the champion banner in the
+       Bracket Tree mockup (#3A2A1C card, #EFC26E border). */
+    position: relative;
+    background-color: var(--color-text);
     color: var(--color-competition-contrast);
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-xl);
+    border: 2px solid var(--color-brand-gold);
+    border-radius: var(--radius-card);
+    padding: var(--spacing-xl) var(--spacing-lg);
     text-align: center;
     box-shadow: var(--shadow-lg);
     margin-bottom: var(--spacing-xl);
+    transform: rotate(-1deg);
 }
 
 .bracket-champion-image {
     width: 120px;
     height: 120px;
     object-fit: cover;
-    border-radius: 50%;
-    border: 4px solid var(--color-gold);
+    border-radius: var(--radius-button);
+    border: 3px solid var(--color-brand-gold);
     margin-bottom: var(--spacing-md);
+    box-shadow: var(--shadow-md);
 }
 
 .bracket-champion-icon {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
+}
+
+.bracket-champion-label {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-brand-gold);
+    margin-top: var(--spacing-xs);
 }
 
 .bracket-champion-name {
     font-size: var(--font-size-2xl);
-    font-weight: 700;
+    font-weight: 800;
     margin: var(--spacing-xs) 0;
 }
 
-.bracket-champion-label {
-    font-size: var(--font-size-sm);
-    opacity: 0.85;
+/* --- The full bracket tree ---
+   Audit fix #1: this must never clip on mobile. It's wrapped in a
+   horizontal-scroll container with a visible scroll hint, so at any
+   viewport width (390px included) every round column stays reachable. */
+
+.bracket-tree-hint {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin: 0 4px var(--spacing-md);
+}
+
+.bracket-tree-hint-label {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    color: var(--color-text-light);
+    white-space: nowrap;
+}
+
+.bracket-tree-hint-rule {
+    flex: 1;
+    height: 1px;
+    background-color: var(--color-border);
+}
+
+.bracket-tree-hint-swipe {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 0.7rem;
+    color: var(--color-primary-dark);
+    white-space: nowrap;
+}
+
+.bracket-tree-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -4px var(--spacing-lg);
+    padding: 4px 4px var(--spacing-sm);
+}
+
+.bracket-tree-scroll:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--border-radius);
+}
+
+.bracket-tree {
+    --bracket-gap: 40px;
+    display: flex;
+    align-items: stretch;
+    gap: var(--bracket-gap);
+    min-width: max-content;
 }
 
 .bracket-round {
-    margin-bottom: var(--spacing-xl);
+    flex: 0 0 250px;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.bracket-round .section-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-md);
+}
+
+.bracket-round.is-final .section-title {
+    color: var(--color-competition);
 }
 
 .bracket-current-badge {
@@ -2519,54 +2674,207 @@ h1, h2, h3, h4, h5, h6 {
     vertical-align: middle;
 }
 
+.bracket-round .bracket-current-badge {
+    margin-left: 0;
+}
+
 .bracket-match-list {
+    flex: 1;
     display: flex;
     flex-direction: column;
+    justify-content: space-around;
     gap: var(--spacing-md);
+    position: relative;
+}
+
+/* Structural connectors — audit fix #2: always the border token
+   (var(--color-border), #E8D6B4), never an ad hoc gray. */
+.bracket-round:not(:last-child) .bracket-match::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: calc(var(--bracket-gap) / -2);
+    width: calc(var(--bracket-gap) / 2);
+    height: 2px;
+    background-color: var(--color-border);
+}
+
+.bracket-round:not(:first-child) .bracket-match::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: calc(var(--bracket-gap) / -2);
+    width: calc(var(--bracket-gap) / 2);
+    height: 2px;
+    background-color: var(--color-border);
+}
+
+.bracket-round:not(:first-child) .bracket-match-list::before {
+    content: "";
+    position: absolute;
+    left: calc(var(--bracket-gap) / -2);
+    top: 10%;
+    bottom: 10%;
+    width: 2px;
+    background-color: var(--color-border);
 }
 
 .bracket-match {
+    position: relative;
     display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    background-color: var(--color-white);
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-md) var(--spacing-lg);
-    box-shadow: var(--shadow-sm);
-    border-left: 4px solid var(--color-border-muted);
+    flex-direction: column;
+    gap: 6px;
+    background-color: var(--color-card);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-card);
+    padding: var(--spacing-sm) var(--spacing-md);
+    box-shadow: var(--shadow-sticker);
     transition: all var(--transition-normal);
 }
 
 .bracket-match.decided {
-    border-left-color: var(--color-success);
+    border-color: var(--color-primary-dark);
 }
 
 .bracket-competitor {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
-    flex: 1;
+    padding: 2px 0;
     min-width: 0;
 }
 
+.bracket-competitor.winner .history-torron-name {
+    color: var(--color-primary-dark);
+    font-weight: 700;
+}
+
 .bracket-competitor.loser {
-    opacity: 0.55;
+    opacity: 0.5;
 }
 
 .bracket-competitor.bracket-bye {
+    justify-content: center;
+    padding: var(--spacing-sm) 0;
     color: var(--color-text-light);
     font-style: italic;
 }
 
 .bracket-seed {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: var(--color-surface);
+    color: var(--color-text-light);
+    font-family: ui-monospace, Menlo, monospace;
     font-weight: 700;
-    color: var(--color-primary);
-    font-size: var(--font-size-sm);
+    font-size: 0.65rem;
     margin-right: var(--spacing-xs);
 }
 
 .bracket-bye-label {
     font-size: var(--font-size-sm);
+}
+
+/* Scoped: the shared history-* row components, sized down to fit inside a
+   250px-wide bracket-tree column instead of history.html's full-width row. */
+#bracket-container .history-torron-img {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    flex: none;
+}
+
+#bracket-container .history-torron-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+#bracket-container .history-torron-name {
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#bracket-container .winner-badge {
+    align-self: flex-start;
+    font-size: 0.65rem;
+}
+
+#bracket-container .history-vs {
+    font-family: var(--font-family-display);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-competition);
+    text-align: center;
+    padding: 3px 0;
+    border-top: 1px solid var(--color-surface);
+}
+
+#bracket-container .history-empty,
+#bracket-vote-container .history-empty {
+    background-color: var(--color-card);
+    border: 1.5px dashed var(--color-border-dashed);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-sticker);
+}
+
+@media (max-width: 480px) {
+    .bracket-tree {
+        --bracket-gap: 24px;
+    }
+
+    .bracket-round {
+        flex-basis: 208px;
+        width: 208px;
+    }
+}
+
+/* --- Bracket vote screen (GET /bracket/{classId}/vote) ---
+   Reuses the shared .torron-comparison/.torron-card head-to-head voting
+   component; scoped so the sticker treatment only applies here and the
+   shared base rules stay untouched for the other screens that use them. */
+#bracket-vote-container .torron-card {
+    border-radius: var(--radius-card);
+    border: 2px solid var(--color-border);
+    box-shadow: var(--shadow-sticker);
+}
+
+#bracket-vote-container .torron-card:nth-child(1) {
+    transform: rotate(-1.5deg);
+}
+
+#bracket-vote-container .torron-card:nth-child(2) {
+    transform: rotate(1.5deg);
+}
+
+#bracket-vote-container .torron-card:nth-child(1):hover {
+    transform: rotate(-1.5deg) translateY(-5px);
+    border-color: var(--color-primary);
+}
+
+#bracket-vote-container .torron-card:nth-child(2):hover {
+    transform: rotate(1.5deg) translateY(-5px);
+    border-color: var(--color-primary);
+}
+
+#bracket-vote-container .torron-name {
+    font-family: var(--font-family-display);
+    color: var(--color-text);
+}
+
+#bracket-vote-container .torron-image {
+    border-radius: var(--radius-button);
 }
 
 /* ========================================
