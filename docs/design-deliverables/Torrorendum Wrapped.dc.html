@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<style>
+  body{margin:0;background:#17100c;font-family:'Newsreader',serif}
+  @keyframes torrWrapFill{from{width:0%}to{width:100%}}
+  @keyframes torrWrapGlow{0%,100%{opacity:.55;transform:translate(-50%,-50%) scale(1)}50%{opacity:.85;transform:translate(-50%,-50%) scale(1.08)}}
+  @keyframes torrWrapIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</helmet>
+
+<div style="width:100%;max-width:480px;height:900px;margin:0 auto;position:relative;overflow:hidden;background:{{ slideBg }};box-shadow:0 24px 70px rgba(20,12,8,.4);font-family:'Newsreader',serif;user-select:none;transition:background .5s ease" data-screen-label="Torrorèndum Wrapped">
+
+  <!-- ambient glow (persistent) -->
+  <div style="position:absolute;z-index:0;top:300px;left:50%;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(239,194,110,.22) 0%,rgba(239,194,110,0) 70%);transform:translate(-50%,-50%);animation:torrWrapGlow 5s ease-in-out infinite;pointer-events:none"></div>
+  <div style="position:absolute;z-index:0;top:130px;left:70px;width:12px;height:12px;border-radius:50%;background:rgba(239,194,110,.3);pointer-events:none"></div>
+  <div style="position:absolute;z-index:0;top:780px;right:64px;width:16px;height:16px;background:rgba(138,38,56,.3);transform:rotate(45deg);border-radius:4px;pointer-events:none"></div>
+
+  <!-- TAP ZONES -->
+  <div onClick="{{ tapPrev }}" style="position:absolute;z-index:1;top:82px;left:0;bottom:0;width:32%;cursor:pointer"></div>
+  <div onClick="{{ tapNext }}" style="position:absolute;z-index:1;top:82px;right:0;bottom:0;width:68%;cursor:pointer"></div>
+
+  <!-- SLIDE 0 — COLD OPEN -->
+  <sc-if value="{{ isSlide0 }}" hint-placeholder-val="{{ true }}">
+    <div style="position:relative;z-index:2;pointer-events:none;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 48px;animation:torrWrapIn .6s ease forwards">
+      <div style="display:inline-flex;align-items:center;gap:8px;border:1.5px dashed rgba(255,250,241,.35);border-radius:999px;padding:8px 18px;margin-bottom:28px">
+        <div style="width:7px;height:7px;border-radius:50%;background:#EFC26E"></div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;color:rgba(255,250,241,.75)">TEMPORADA 2026 · RESUM</div>
+      </div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:20px;letter-spacing:1px;color:#EFC26E">EL TEU</div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:58px;line-height:1.02;color:#FFFAF1;margin-top:6px">Torrorèndum</div>
+      <div style="font-family:'Newsreader',serif;font-style:italic;font-size:18px;line-height:1.5;color:rgba(255,250,241,.68);margin-top:22px;max-width:330px">Un any sencer de duels, vots i torrons. Aquí tens el teu resum.</div>
+      <div style="margin-top:46px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;color:rgba(255,250,241,.45)">TOCA PER COMENÇAR →</div>
+    </div>
+  </sc-if>
+
+  <!-- SLIDE 1 — TOTAL VOTES -->
+  <sc-if value="{{ isSlide1 }}" hint-placeholder-val="{{ false }}">
+    <div style="position:relative;z-index:2;pointer-events:none;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 44px;animation:torrWrapIn .6s ease forwards">
+      <div style="display:inline-flex;align-items:center;gap:8px;border:1.5px dashed rgba(255,250,241,.35);border-radius:999px;padding:7px 16px;margin-bottom:26px">
+        <div style="width:6px;height:6px;border-radius:50%;background:#EFC26E"></div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:2px;color:rgba(255,250,241,.75)">LA TEVA TEMPORADA, EN XIFRES</div>
+      </div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:132px;line-height:.95;color:#FFFAF1">{{ votesCount }}</div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;letter-spacing:3px;color:#EFC26E;margin-top:10px">VOTS EMESOS</div>
+      <div style="font-family:'Newsreader',serif;font-style:italic;font-size:17px;line-height:1.5;color:rgba(255,250,241,.65);margin-top:22px;max-width:310px">Això són més de dos vots cada tres dies de campanya.</div>
+      <div style="display:flex;gap:12px;margin-top:34px">
+        <div style="background:rgba(255,250,241,.07);border:1px solid rgba(255,250,241,.14);border-radius:18px;padding:16px 20px;min-width:132px">
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;color:#EFC26E">12 dies</div>
+          <div style="font:600 9.5px ui-monospace,Menlo,monospace;color:rgba(255,250,241,.5);letter-spacing:.4px;margin-top:6px">RÀFEGA MÉS LLARGA</div>
+        </div>
+        <div style="background:rgba(255,250,241,.07);border:1px solid rgba(255,250,241,.14);border-radius:18px;padding:16px 20px;min-width:132px">
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;color:#EFC26E">Clàssics</div>
+          <div style="font:600 9.5px ui-monospace,Menlo,monospace;color:rgba(255,250,241,.5);letter-spacing:.4px;margin-top:6px">CATEGORIA FAVORITA</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- SLIDE 2 — MOST CONTESTED DUEL -->
+  <sc-if value="{{ isSlide2 }}" hint-placeholder-val="{{ false }}">
+    <div style="position:relative;z-index:2;pointer-events:none;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 40px;animation:torrWrapIn .6s ease forwards">
+      <div style="display:inline-flex;align-items:center;gap:8px;border:1.5px dashed rgba(255,250,241,.35);border-radius:999px;padding:7px 16px">
+        <div style="width:6px;height:6px;border-radius:50%;background:#EFC26E"></div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:2px;color:rgba(255,250,241,.75)">EL TEU DUEL MÉS REÑIT</div>
+      </div>
+      <div style="font-family:'Newsreader',serif;font-style:italic;font-size:21px;line-height:1.4;color:#FFFAF1;margin-top:22px;max-width:320px">Un marge de només dos punts. El vot més ajustat de la teva temporada.</div>
+
+      <div style="margin-top:26px;width:100%;max-width:360px;background:#FFFAF1;border:1.5px solid #EFC26E;border-radius:24px;padding:22px;box-shadow:0 16px 40px rgba(20,12,8,.3)">
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="width:56px;height:78px;border-radius:12px;flex:none;background:repeating-linear-gradient(135deg,#F0DFC2,#F0DFC2 6px,#E2CB9E 6px,#E2CB9E 12px);border:1px solid #E8D6B4"></div>
+          <div style="flex:1;text-align:left;min-width:0">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:16.5px;color:#3A2A1C">Torró de xocolata</div>
+            <div style="font:600 8.5px ui-monospace,Menlo,monospace;color:#B96F26;margin-top:3px;letter-spacing:.3px">GUANYADOR DEL DUEL</div>
+          </div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:25px;color:#8A2638;flex:none">{{ duelA }}%</div>
+        </div>
+        <div style="height:1px;background:#F0DFC2;margin:15px 0"></div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="width:56px;height:78px;border-radius:12px;flex:none;background:repeating-linear-gradient(135deg,#F0DFC2,#F0DFC2 6px,#E2CB9E 6px,#E2CB9E 12px);border:1px solid #E8D6B4"></div>
+          <div style="flex:1;text-align:left;min-width:0">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:16.5px;color:#3A2A1C">Massapà</div>
+            <div style="font:600 8.5px ui-monospace,Menlo,monospace;color:#8A2638;margin-top:3px;letter-spacing:.3px">LA TEVA TRIA</div>
+          </div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:25px;color:#6B5A44;flex:none">{{ duelB }}%</div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;font:600 10px ui-monospace,Menlo,monospace;color:rgba(255,250,241,.45);letter-spacing:.4px">XOCOLATA · QUARTS DE FINAL</div>
+    </div>
+  </sc-if>
+
+  <!-- SLIDE 3 — MOST UNPOPULAR PICK -->
+  <sc-if value="{{ isSlide3 }}" hint-placeholder-val="{{ false }}">
+    <div style="position:relative;z-index:2;pointer-events:none;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 44px;animation:torrWrapIn .6s ease forwards">
+      <div style="display:inline-flex;align-items:center;gap:8px;border:1.5px dashed rgba(255,250,241,.35);border-radius:999px;padding:7px 16px">
+        <div style="width:6px;height:6px;border-radius:50%;background:#EFC26E"></div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:2px;color:rgba(255,250,241,.75)">LA TEVA TRIA MÉS IMPOPULAR</div>
+      </div>
+
+      <div style="margin-top:22px;width:100%;max-width:340px">
+        <div style="display:grid;grid-template-columns:repeat(10,1fr);gap:7px;justify-items:center">
+          <sc-for list="{{ unpopularDots }}" as="dot" hint-placeholder-count="100">
+            <div style="{{ dot.style }}"></div>
+          </sc-for>
+        </div>
+        <div style="text-align:center;margin-top:16px;font:600 11px ui-monospace,Menlo,monospace;color:rgba(255,250,241,.55);letter-spacing:.3px">Només el {{ unpopularPct }}% dels votants va triar com tu</div>
+      </div>
+
+      <div style="display:inline-flex;margin-top:22px;border:1.5px solid rgba(239,194,110,.6);border-radius:999px;padding:8px 20px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;color:#EFC26E">{{ unpopularBadge }}</div>
+
+      <div style="margin-top:18px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;color:#FFFAF1">Torró de coco <span style="font-family:'Newsreader',serif;font-style:italic;font-weight:400;color:rgba(255,250,241,.5)">sobre</span> Torró d'Agramunt</div>
+
+      <div style="font-family:'Newsreader',serif;font-style:italic;font-size:16px;line-height:1.5;color:rgba(255,250,241,.65);margin-top:16px;max-width:300px">{{ unpopularTagline }}</div>
+    </div>
+  </sc-if>
+
+  <!-- SLIDE 4 — PATH TO GRAN FINAL -->
+  <sc-if value="{{ isSlide4 }}" hint-placeholder-val="{{ false }}">
+    <div style="position:relative;z-index:2;pointer-events:none;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 44px;animation:torrWrapIn .6s ease forwards">
+      <div style="display:inline-flex;align-items:center;gap:8px;border:1.5px dashed rgba(255,250,241,.35);border-radius:999px;padding:7px 16px">
+        <div style="width:6px;height:6px;border-radius:50%;background:#EFC26E"></div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:2px;color:rgba(255,250,241,.75)">EL TEU CAMÍ FINS A LA GRAN FINAL</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;margin-top:24px;width:100%;max-width:320px">
+        <div style="width:100%;background:rgba(255,250,241,.08);border:1px solid rgba(255,250,241,.16);border-radius:16px;padding:11px 15px;display:flex;align-items:center;gap:11px">
+          <div style="width:34px;height:34px;border-radius:9px;flex:none;background:repeating-linear-gradient(135deg,rgba(255,250,241,.14),rgba(255,250,241,.14) 5px,rgba(255,250,241,.05) 5px,rgba(255,250,241,.05) 10px);border:1px solid rgba(255,250,241,.2)"></div>
+          <div style="flex:1;text-align:left;min-width:0">
+            <div style="font:600 8px ui-monospace,Menlo,monospace;color:rgba(255,250,241,.45);letter-spacing:.4px">QUARTS DE FINAL</div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13.5px;color:#FFFAF1;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Torró d'Agramunt</div>
+          </div>
+          <div style="width:20px;height:20px;border-radius:50%;background:#EFC26E;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:8px;height:4px;border-left:2px solid #241812;border-bottom:2px solid #241812;transform:rotate(-45deg);margin-top:-2px"></div></div>
+        </div>
+        <div style="width:2px;height:14px;background:#EFC26E"></div>
+        <div style="width:100%;background:rgba(255,250,241,.08);border:1px solid rgba(255,250,241,.16);border-radius:16px;padding:11px 15px;display:flex;align-items:center;gap:11px">
+          <div style="width:34px;height:34px;border-radius:9px;flex:none;background:repeating-linear-gradient(135deg,rgba(255,250,241,.14),rgba(255,250,241,.14) 5px,rgba(255,250,241,.05) 5px,rgba(255,250,241,.05) 10px);border:1px solid rgba(255,250,241,.2)"></div>
+          <div style="flex:1;text-align:left;min-width:0">
+            <div style="font:600 8px ui-monospace,Menlo,monospace;color:rgba(255,250,241,.45);letter-spacing:.4px">SEMIFINALS</div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13.5px;color:#FFFAF1;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Torró d'Agramunt</div>
+          </div>
+          <div style="width:20px;height:20px;border-radius:50%;background:#EFC26E;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:8px;height:4px;border-left:2px solid #241812;border-bottom:2px solid #241812;transform:rotate(-45deg);margin-top:-2px"></div></div>
+        </div>
+        <div style="width:2px;height:14px;background:#EFC26E"></div>
+        <div style="width:100%;background:#FFFAF1;border:2px solid #EFC26E;border-radius:18px;padding:15px 17px;display:flex;align-items:center;gap:13px;box-shadow:0 14px 34px rgba(20,12,8,.3)">
+          <div style="width:44px;height:44px;border-radius:11px;flex:none;background:repeating-linear-gradient(135deg,#F0DFC2,#F0DFC2 5px,#E2CB9E 5px,#E2CB9E 10px);border:1.5px solid #EFC26E"></div>
+          <div style="flex:1;text-align:left;min-width:0">
+            <div style="font:700 8px ui-monospace,Menlo,monospace;color:#8A2638;letter-spacing:.4px">GRAN FINAL · CAMPIÓ</div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:16px;color:#3A2A1C;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Torró d'Agramunt</div>
+          </div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:17px;color:#8A2638;flex:none">54%</div>
+        </div>
+      </div>
+
+      <div style="display:inline-flex;margin-top:20px;border:1.5px solid rgba(239,194,110,.6);border-radius:999px;padding:8px 20px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;color:#EFC26E">RONDA PERFECTA · 3 DE 3</div>
+      <div style="font-family:'Newsreader',serif;font-style:italic;font-size:16px;line-height:1.5;color:rgba(255,250,241,.65);margin-top:14px;max-width:290px">Cada ronda, vas votar pel campió. Ho vas veure venir des del principi.</div>
+    </div>
+  </sc-if>
+
+  <!-- SLIDE 5 — FINAL SHAREABLE CARD -->
+  <sc-if value="{{ isSlide5 }}" hint-placeholder-val="{{ false }}">
+    <div style="position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;padding:70px 0 20px;animation:torrWrapIn .6s ease forwards">
+      <div style="pointer-events:none;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;color:rgba(255,250,241,.6);text-align:center">EL TEU RESUM, LLEST PER COMPARTIR</div>
+      <div style="pointer-events:none;width:340px;height:604px;overflow:hidden;margin-top:14px;border-radius:20px;box-shadow:0 20px 50px rgba(20,12,8,.4)">
+        <div style="width:1080px;height:1920px;transform:scale(0.3148);transform-origin:top left">
+          <dc-import name="Torrorendum Story Card" variant="wrapped" year="{{ wrappedYear }}" total-duels-cast="{{ wrappedDuelsCast }}" rounds-voted="{{ wrappedRoundsVoted }}" longest-streak="{{ wrappedLongestStreak }}" most-contrarian-pick="{{ wrappedContrarianPick }}" favorite-category="{{ wrappedFavoriteCategory }}" wrapped-persona-label="{{ wrappedPersonaLabel }}" wrapped-tagline="{{ wrappedTagline }}" top-torro-name="{{ wrappedTopTorroName }}" top-torro-tag="{{ wrappedTopTorroTag }}" top-torro-votes="{{ wrappedTopTorroVotes }}" head-to-head="{{ wrappedHeadToHead }}" tieback="{{ wrappedTieback }}" show-sponsor="{{ false }}" hint-size="1080px,1920px"></dc-import>
+        </div>
+      </div>
+      <div onClick="{{ shareAction }}" style="pointer-events:auto;margin-top:20px;background:#EFC26E;color:#3A2A1C;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;letter-spacing:.6px;padding:14px 32px;border-radius:16px;box-shadow:0 6px 0 #B96F26;cursor:pointer">{{ shareLabel }}</div>
+      <div onClick="{{ restart }}" style="pointer-events:auto;margin-top:13px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;letter-spacing:.3px;color:rgba(255,250,241,.55);text-decoration:underline;cursor:pointer">↻ Torna a veure el resum</div>
+    </div>
+  </sc-if>
+
+  <!-- TOP BAR (always on top) -->
+  <div style="position:absolute;z-index:10;top:0;left:0;right:0;padding:18px 20px 0">
+    <div style="display:flex;gap:5px">
+      <sc-for list="{{ segments }}" as="seg" hint-placeholder-count="6">
+        <div style="flex:1;height:3px;border-radius:2px;background:rgba(255,250,241,.22);overflow:hidden">
+          <div style="{{ seg.style }}"></div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:13px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:19px;height:19px;border-radius:50%;border:2px solid #EFC26E;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:6px;height:6px;border-radius:50%;background:#EFC26E"></div></div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:14px;color:#FFFAF1">torrorèndum</div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;letter-spacing:1.5px;color:rgba(255,250,241,.4);margin-left:2px">WRAPPED</div>
+      </div>
+      <div onClick="{{ togglePause }}" style="width:28px;height:28px;border-radius:50%;background:rgba(255,250,241,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+        <sc-if value="{{ isPaused }}" hint-placeholder-val="{{ false }}">
+          <div style="width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:9px solid #FFFAF1;margin-left:2px"></div>
+        </sc-if>
+        <sc-if value="{{ isRunning }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;gap:3px"><div style="width:3px;height:11px;background:#FFFAF1;border-radius:1px"></div><div style="width:3px;height:11px;background:#FFFAF1;border-radius:1px"></div></div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:480,&quot;height&quot;:900},&quot;autoAdvance&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;unpopularTone&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;pride&quot;,&quot;options&quot;:[&quot;pride&quot;,&quot;roast&quot;],&quot;tsType&quot;:&quot;'pride'|'roast'&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+class Component extends DCLogic {
+  state = { idx: 0, paused: false, votesCount: 0, duelA: 0, duelB: 0, unpopularPct: 0, shared: false };
+  DURATIONS = [4200, 5200, 6200, 6200, 6800, 999999];
+  TARGETS = { 1: { votesCount: 63 }, 2: { duelA: 51, duelB: 49 }, 3: { unpopularPct: 8 } };
+  BGS = [
+    'linear-gradient(165deg,#241812 0%,#332119 45%,#4A2130 100%)',
+    'linear-gradient(165deg,#241812 0%,#3A2A1C 50%,#332119 100%)',
+    'linear-gradient(165deg,#2A1620 0%,#4A2130 55%,#332119 100%)',
+    'linear-gradient(165deg,#201812 0%,#2E2018 55%,#241812 100%)',
+    'linear-gradient(160deg,#241812 0%,#3A2A1C 45%,#4A3826 100%)',
+    'linear-gradient(165deg,#241812 0%,#332119 45%,#4A2130 100%)',
+  ];
+
+  componentDidMount() {
+    this.animateSlide(0);
+    this.scheduleNext();
+    this._key = (e) => {
+      if (e.key === 'ArrowRight') this.next();
+      else if (e.key === 'ArrowLeft') this.prev();
+      else if (e.key === ' ') { e.preventDefault(); this.togglePause(); }
+    };
+    window.addEventListener('keydown', this._key);
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this._t);
+    clearTimeout(this._animT);
+    clearTimeout(this._shareT);
+    cancelAnimationFrame(this._raf);
+    window.removeEventListener('keydown', this._key);
+  }
+
+  scheduleNext = () => {
+    clearTimeout(this._t);
+    if (this.props.autoAdvance === false) return;
+    if (this.state.paused) return;
+    const idx = this.state.idx;
+    if (idx >= this.DURATIONS.length - 1) return;
+    this._t = setTimeout(() => this.next(), this.DURATIONS[idx]);
+  };
+
+  advanceEffects = () => {
+    this.animateSlide(this.state.idx);
+    this.scheduleNext();
+  };
+
+  next = () => {
+    this.setState((s) => ({ idx: Math.min(this.DURATIONS.length - 1, s.idx + 1) }), this.advanceEffects);
+  };
+
+  prev = () => {
+    this.setState((s) => ({ idx: Math.max(0, s.idx - 1) }), this.advanceEffects);
+  };
+
+  restart = () => {
+    cancelAnimationFrame(this._raf);
+    clearTimeout(this._animT);
+    this.setState({ idx: 0, paused: false, votesCount: 0, duelA: 0, duelB: 0, unpopularPct: 0, shared: false }, this.advanceEffects);
+  };
+
+  togglePause = () => {
+    this.setState((s) => ({ paused: !s.paused }), () => {
+      if (this.state.paused) clearTimeout(this._t);
+      else this.scheduleNext();
+    });
+  };
+
+  animateSlide = (idx) => {
+    cancelAnimationFrame(this._raf);
+    clearTimeout(this._animT);
+    const targets = this.TARGETS[idx];
+    if (!targets) return;
+    const reset = {};
+    Object.keys(targets).forEach((k) => { reset[k] = 0; });
+    this.setState(reset);
+    const duration = 900;
+    this._animT = setTimeout(() => {
+      const start = performance.now();
+      const step = (t) => {
+        const p = Math.min(1, (t - start) / duration);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const upd = {};
+        Object.entries(targets).forEach(([k, v]) => { upd[k] = Math.round(eased * v); });
+        this.setState(upd);
+        if (p < 1) this._raf = requestAnimationFrame(step);
+      };
+      this._raf = requestAnimationFrame(step);
+    }, 220);
+  };
+
+  tapPrev = () => this.prev();
+  tapNext = () => this.next();
+
+  shareAction = () => {
+    clearTimeout(this._shareT);
+    this.setState({ shared: true });
+    this._shareT = setTimeout(() => this.setState({ shared: false }), 1800);
+  };
+
+  renderVals() {
+    const idx = this.state.idx;
+    const lastIdx = this.DURATIONS.length - 1;
+    const effectivePaused = this.state.paused || this.props.autoAdvance === false;
+
+    const segments = this.DURATIONS.map((d, i) => {
+      if (i < idx || i === lastIdx && idx === lastIdx) {
+        return { style: 'width:100%;height:100%;background:#EFC26E;border-radius:2px;' };
+      }
+      if (i > idx) {
+        return { style: 'width:0%;height:100%;background:#EFC26E;border-radius:2px;' };
+      }
+      return {
+        style: `width:0%;height:100%;background:#EFC26E;border-radius:2px;animation:torrWrapFill ${d}ms linear forwards;animation-play-state:${effectivePaused ? 'paused' : 'running'};`,
+      };
+    });
+
+    const target = this.state.unpopularPct;
+    const total = 100;
+    const spacing = Math.max(1, Math.floor(total / Math.max(1, target)));
+    const highlightSet = new Set();
+    for (let k = 0; k < target; k++) {
+      let hi = (k * spacing + Math.floor(spacing / 2)) % total;
+      while (highlightSet.has(hi)) hi = (hi + 1) % total;
+      highlightSet.add(hi);
+    }
+    const unpopularDots = Array.from({ length: total }, (_, i) => ({
+      style: highlightSet.has(i)
+        ? 'width:9px;height:9px;border-radius:50%;background:#EFC26E;box-shadow:0 0 6px rgba(239,194,110,.7);'
+        : 'width:9px;height:9px;border-radius:50%;background:rgba(255,250,241,.16);',
+    }));
+
+    const tone = this.props.unpopularTone === 'roast' ? 'roast' : 'pride';
+
+    return {
+      slideBg: this.BGS[idx],
+      isSlide0: idx === 0,
+      isSlide1: idx === 1,
+      isSlide2: idx === 2,
+      isSlide3: idx === 3,
+      isSlide4: idx === 4,
+      isSlide5: idx === 5,
+      segments,
+      isPaused: effectivePaused,
+      isRunning: !effectivePaused,
+      togglePause: this.togglePause,
+      tapPrev: this.tapPrev,
+      tapNext: this.tapNext,
+      restart: this.restart,
+      votesCount: this.state.votesCount,
+      duelA: this.state.duelA,
+      duelB: this.state.duelB,
+      unpopularPct: this.state.unpopularPct,
+      unpopularDots,
+      unpopularBadge: tone === 'roast' ? 'TRIA POLÈMICA' : 'ORGULL CONTRARI',
+      unpopularTagline: tone === 'roast'
+        ? 'Gairebé ningú et va seguir. Tu vas seguir endavant igualment.'
+        : 'Vas confiar en el teu paladar quan gairebé ningú més ho feia.',
+      shareAction: this.shareAction,
+      shareLabel: this.state.shared ? '✓ ENLLAÇ COPIAT' : 'COMPARTEIX EL TEU RESUM',
+      wrappedYear: 2026,
+      wrappedDuelsCast: 63,
+      wrappedRoundsVoted: 24,
+      wrappedLongestStreak: 12,
+      wrappedContrarianPick: "Torró de coco",
+      wrappedFavoriteCategory: 'Clàssics',
+      wrappedPersonaLabel: 'EL VIDENT DEL TORRÓ',
+      wrappedTagline: 'Vas encertar el campió abans que ningú.',
+      wrappedTopTorroName: "Torró d'Agramunt",
+      wrappedTopTorroTag: 'CAMPIÓ · TRIAT PER TU DES DEL PRINCIPI',
+      wrappedTopTorroVotes: 8,
+      wrappedHeadToHead: '6–0',
+      wrappedTieback: "Cap altre torró t\u2019ha convençut tant.",
+    };
+  }
+}
+
+</script>
+</body>
+</html>

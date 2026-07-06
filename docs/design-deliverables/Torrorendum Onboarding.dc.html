@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<style>
+  body{margin:0;background:#E7E0D0;background-image:radial-gradient(1100px 560px at 50% -6%,rgba(255,250,241,.6),rgba(231,224,208,0) 68%);background-attachment:fixed;font-family:'Newsreader',serif}
+</style>
+</helmet>
+
+<div data-screen-label="Onboarding">
+  <sc-if value="{{ isVisible }}" hint-placeholder-val="{{ true }}">
+    <!-- SCRIM -->
+    <div style="position:fixed;inset:0;background:rgba(58,42,28,.55);display:flex;align-items:center;justify-content:center;padding:24px;z-index:1000">
+
+      <!-- CARD -->
+      <div style="width:100%;max-width:420px;background:#FFFAF1;border:1.5px solid #E8D6B4;border-radius:28px;padding:30px 26px 26px;box-shadow:0 20px 50px rgba(58,42,28,.28);position:relative">
+
+        <div onClick="{{ dismiss }}" style="position:absolute;top:20px;right:20px;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:#F0DFC2">
+          <div style="position:relative;width:11px;height:11px">
+            <div style="position:absolute;top:5px;left:0;width:11px;height:2px;background:#8A7458;transform:rotate(45deg)"></div>
+            <div style="position:absolute;top:5px;left:0;width:11px;height:2px;background:#8A7458;transform:rotate(-45deg)"></div>
+          </div>
+        </div>
+
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;color:#6B5A44">COM FUNCIONA · {{ stepLabel }}</div>
+
+        <!-- STEP 0 — OVERVIEW -->
+        <sc-if value="{{ isStep0 }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-top:18px;width:60px;height:60px;border-radius:50%;background:#8A2638;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:19px;color:#FFFAF1;transform:rotate(-8deg);box-shadow:3px 4px 0 rgba(58,42,28,.18)">VS</div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px;color:#3A2A1C;margin-top:18px;line-height:1.15">Dues fases, un guanyador</div>
+          <div style="font-family:'Newsreader',serif;font-size:15px;line-height:1.5;color:#6B5A44;margin-top:10px">El Torrorèndum es juga en dues rondes: primer vots oberts per a tothom, després un quadre eliminatori. Quatre passos ràpids i ho tindràs clar.</div>
+        </sc-if>
+
+        <!-- STEP 1 — OPEN SEASON -->
+        <sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:18px;width:60px;height:60px;border-radius:50%;background:#FBF2E3;border:1px solid #E8D6B4;display:flex;align-items:center;justify-content:center">
+            <div style="width:34px;height:34px;border-radius:50%;border:4px solid #E0923F;display:flex;align-items:center;justify-content:center"><div style="width:8px;height:8px;border-radius:50%;background:#E0923F"></div></div>
+          </div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px;color:#3A2A1C;margin-top:18px;line-height:1.15">Fase 1 — Temporada oberta</div>
+          <div style="font-family:'Newsreader',serif;font-size:15px;line-height:1.5;color:#6B5A44;margin-top:10px">Tres setmanes de duels lliures entre tots els torrons. Vota tants cops com vulguis i defensa el teu preferit.</div>
+        </sc-if>
+
+        <!-- STEP 2 — BRACKET -->
+        <sc-if value="{{ isStep2 }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:18px;width:60px;height:60px;border-radius:50%;background:#FBF2E3;border:1px solid #E8D6B4;display:flex;align-items:center;justify-content:center">
+            <div style="width:34px;height:34px;border-radius:50%;border:4px solid #EFC26E"></div>
+          </div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px;color:#3A2A1C;margin-top:18px;line-height:1.15">Fase 2 — Quadre eliminatori</div>
+          <div style="font-family:'Newsreader',serif;font-size:15px;line-height:1.5;color:#6B5A44;margin-top:10px">Els torrons més votats passen a un quadre d'eliminatòria directa. Cada ronda n'elimina la meitat, fins que en queden dos.</div>
+        </sc-if>
+
+        <!-- STEP 3 — FINAL -->
+        <sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:18px;width:60px;height:60px;border-radius:50%;background:#FBF2E3;border:3px solid #EFC26E;display:flex;align-items:center;justify-content:center;transform:rotate(-4deg)">
+            <div style="width:12px;height:12px;border-radius:50%;background:#8A2638"></div>
+          </div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px;color:#3A2A1C;margin-top:18px;line-height:1.15">La Gran Final</div>
+          <div style="font-family:'Newsreader',serif;font-size:15px;line-height:1.5;color:#6B5A44;margin-top:10px">El dia de Reis, els dos finalistes s'enfronten en directe. Un sol torró s'endú la corona.</div>
+        </sc-if>
+
+        <!-- PROGRESS DOTS -->
+        <div style="display:flex;gap:6px;margin-top:24px">
+          <div style="{{ dot0 }}"></div>
+          <div style="{{ dot1 }}"></div>
+          <div style="{{ dot2 }}"></div>
+          <div style="{{ dot3 }}"></div>
+        </div>
+
+        <!-- FOOTER -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:22px">
+          <sc-if value="{{ isStep0 }}" hint-placeholder-val="{{ true }}"><div style="width:1px"></div></sc-if>
+          <sc-if value="{{ isNotStep0 }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ back }}" style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;color:#8A7458;cursor:pointer;padding:12px 6px">Enrere</div>
+          </sc-if>
+
+          <sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ dismiss }}" style="background:#E0923F;color:#3A2A1C;text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;padding:13px 26px;border-radius:16px;transform:rotate(-1deg);box-shadow:0 4px 0 #B96F26;cursor:pointer">Comença a votar</div>
+          </sc-if>
+          <sc-if value="{{ isNotStep3 }}" hint-placeholder-val="{{ true }}">
+            <div onClick="{{ next }}" style="background:#E0923F;color:#3A2A1C;text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;padding:13px 26px;border-radius:16px;transform:rotate(-1deg);box-shadow:0 4px 0 #B96F26;cursor:pointer">Següent</div>
+          </sc-if>
+        </div>
+
+      </div>
+    </div>
+  </sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:480,&quot;height&quot;:640},&quot;forceOpen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;initialStep&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:3,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  state = { step: 0, dismissed: false };
+  static STORAGE_KEY = 'torrorendum-onboarding-seen-v1';
+
+  componentDidMount() {
+    const start = Number.isInteger(this.props.initialStep) ? this.props.initialStep : 0;
+    if (start > 0) this.setState({ step: Math.min(3, Math.max(0, start)) });
+
+    if (!this.props.forceOpen) {
+      try {
+        if (localStorage.getItem(Component.STORAGE_KEY)) {
+          this.setState({ dismissed: true });
+        }
+      } catch (e) {}
+    }
+  }
+
+  finish() {
+    try { localStorage.setItem(Component.STORAGE_KEY, '1'); } catch (e) {}
+    this.setState({ dismissed: true });
+  }
+
+  renderVals() {
+    const step = this.state.step;
+    const labels = ['INTRODUCCIÓ', 'FASE 1 DE 2', 'FASE 2 DE 2', 'GRAN FINAL'];
+    const dotBase = 'height:6px;border-radius:999px;transition:all .2s ease';
+    const dotOn = 'width:20px;background:#E0923F';
+    const dotOff = 'width:6px;background:#E8D6B4';
+
+    return {
+      isVisible: !this.state.dismissed,
+      isStep0: step === 0,
+      isStep1: step === 1,
+      isStep2: step === 2,
+      isStep3: step === 3,
+      isNotStep0: step !== 0,
+      isNotStep3: step !== 3,
+      stepLabel: labels[step],
+      dot0: `${dotBase};${step === 0 ? dotOn : dotOff}`,
+      dot1: `${dotBase};${step === 1 ? dotOn : dotOff}`,
+      dot2: `${dotBase};${step === 2 ? dotOn : dotOff}`,
+      dot3: `${dotBase};${step === 3 ? dotOn : dotOff}`,
+      next: () => this.setState(s => ({ step: Math.min(3, s.step + 1) })),
+      back: () => this.setState(s => ({ step: Math.max(0, s.step - 1) })),
+      dismiss: () => this.finish(),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

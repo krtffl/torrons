@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<style>
+  body{margin:0;background:#E7E0D0;background-image:radial-gradient(1100px 560px at 50% -6%,rgba(255,250,241,.6),rgba(231,224,208,0) 68%);background-attachment:fixed;font-family:'Newsreader',serif}
+  @keyframes torrLivePulse2{0%{box-shadow:0 0 0 0 rgba(138,38,56,.35)}100%{box-shadow:0 0 0 8px rgba(138,38,56,0)}}
+</style>
+</helmet>
+
+<div style="max-width:480px;margin:0 auto;background:#FBF2E3;min-height:100vh;box-shadow:0 0 60px rgba(58,42,28,.12);position:relative;overflow:hidden;display:flex;flex-direction:column" data-screen-label="Challenge Friend">
+
+  <dc-import name="Torrorendum Nav Bar" active-link="estadistiques" hint-size="100%,72px"></dc-import>
+
+  <!-- HEADER -->
+  <div style="padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:16px;height:16px;border-left:3px solid #3A2A1C;border-bottom:3px solid #3A2A1C;transform:rotate(45deg)"></div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:11px;letter-spacing:.8px;color:#8A7458">TORRORÈNDUM · REPTA UN AMIC</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;background:#E0923F;color:#3A2A1C;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10.5px;padding:5px 11px;border-radius:999px;white-space:nowrap">
+      <div style="width:6px;height:6px;border-radius:50%;background:#3A2A1C;animation:torrLivePulse2 2s ease-out infinite"></div>EN VIU
+    </div>
+  </div>
+
+  <!-- HEADLINE -->
+  <div style="padding:16px 24px 0">
+    <div style="font:700 9.5px ui-monospace,Menlo,monospace;color:#B96F26;letter-spacing:.6px">REPTE PERSONAL</div>
+
+    <sc-if value="{{ isDirectHeadline }}" hint-placeholder-val="{{ true }}">
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:29px;line-height:1.1;color:#3A2A1C;margin-top:6px">El teu gust contra el meu.</div>
+      <div style="font-family:'Newsreader',serif;font-style:italic;font-size:14px;color:#8A7458;margin-top:8px;line-height:1.4">Comparteix el teu enllaç personal. Guanya qui triï millor torró.</div>
+    </sc-if>
+    <sc-if value="{{ isTauntHeadline }}" hint-placeholder-val="{{ false }}">
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:29px;line-height:1.1;color:#3A2A1C;margin-top:6px">Suposo que tries pitjor que jo.</div>
+      <div style="font-family:'Newsreader',serif;font-style:italic;font-size:14px;color:#8A7458;margin-top:8px;line-height:1.4">Demostra-m'ho. Envia el teu repte i que decideixin els vots.</div>
+    </sc-if>
+  </div>
+
+  <!-- DUEL PREVIEW CARD -->
+  <div style="margin:18px 20px 0;background:#FFFAF1;border:1.5px solid #E8D6B4;border-radius:22px;padding:20px;box-shadow:0 3px 0 #E8D6B4">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+
+      <!-- YOU -->
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0">
+        <div style="width:60px;height:60px;border-radius:50%;background:repeating-linear-gradient(135deg,#F0DFC2,#F0DFC2 6px,#E2CB9E 6px,#E2CB9E 12px);border:2px solid #EFC26E;display:flex;align-items:center;justify-content:center">
+          <span style="font:600 7px ui-monospace,Menlo,monospace;color:#6B5A44">foto</span>
+        </div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;color:#3A2A1C">Tu</div>
+        <div style="font:600 9px ui-monospace,Menlo,monospace;color:#8A7458;text-align:center">{{ userEloText }} · {{ userRecordText }}</div>
+      </div>
+
+      <!-- VS -->
+      <div style="width:42px;height:42px;border-radius:50%;background:#8A2638;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:12px;color:#FFFAF1;transform:rotate(-8deg);flex:none;box-shadow:2px 2px 0 rgba(58,42,28,.18)">VS</div>
+
+      <!-- THEM -->
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0">
+        <sc-if value="{{ hasFriends }}" hint-placeholder-val="{{ false }}">
+          <div style="position:relative;width:60px;height:60px">
+            <sc-for list="{{ friendDots }}" as="fd" hint-placeholder-count="2">
+              <div style="{{ fd.style }}"></div>
+            </sc-for>
+          </div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;color:#3A2A1C">{{ friendsCountText }}</div>
+          <div style="font:600 9px ui-monospace,Menlo,monospace;color:#8A7458;text-align:center">han acceptat</div>
+        </sc-if>
+        <sc-if value="{{ noFriendsYet }}" hint-placeholder-val="{{ true }}">
+          <div style="width:60px;height:60px;border-radius:50%;border:2px dashed #D8C097;display:flex;align-items:center;justify-content:center">
+            <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:20px;color:#D8C097">?</span>
+          </div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;color:#6B5A44">buit</div>
+          <div style="font-family:'Newsreader',serif;font-style:italic;font-size:10.5px;color:#6B5A44;text-align:center">encara ningú</div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+
+  <!-- LINK BOX -->
+  <div style="margin:14px 20px 0;background:#FFFAF1;border:1.5px dashed #D8C097;border-radius:16px;padding:14px 14px 14px 16px;display:flex;align-items:center;gap:10px">
+    <div style="flex:1;min-width:0;font:600 12.5px ui-monospace,Menlo,monospace;color:#3A2A1C;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ linkText }}</div>
+    <sc-if value="{{ isCopied }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ copyLink }}" style="flex:none;background:#EFC26E;color:#3A2A1C;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;padding:9px 16px;border-radius:12px;cursor:pointer;white-space:nowrap">Copiat!</div>
+    </sc-if>
+    <sc-if value="{{ isNotCopied }}" hint-placeholder-val="{{ true }}">
+      <div onClick="{{ copyLink }}" style="flex:none;background:#3A2A1C;color:#FFFAF1;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;padding:9px 16px;border-radius:12px;cursor:pointer;white-space:nowrap">Copiar</div>
+    </sc-if>
+  </div>
+
+  <!-- QR (optional) -->
+  <sc-if value="{{ showQR }}" hint-placeholder-val="{{ false }}">
+    <div style="margin:12px 20px 0;background:#FFFAF1;border:1px solid #E8D6B4;border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px">
+      <div style="width:56px;height:56px;border-radius:8px;flex:none;background:repeating-linear-gradient(90deg,#3A2A1C,#3A2A1C 4px,#FFFAF1 4px,#FFFAF1 8px),repeating-linear-gradient(0deg,#3A2A1C,#3A2A1C 4px,transparent 4px,transparent 8px);background-blend-mode:multiply;border:1px solid #E8D6B4"></div>
+      <div style="font-family:'Newsreader',serif;font-style:italic;font-size:12px;color:#8A7458;line-height:1.4">Escaneja per acceptar el repte cara a cara.</div>
+    </div>
+  </sc-if>
+
+  <!-- SHARE ROW -->
+  <div style="margin:16px 20px 0;display:flex;gap:8px">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border:1px solid #E8D6B4;border-radius:16px;background:#FFFAF1;cursor:pointer" style-hover="background:#FDF0DE">
+      <div style="position:relative;width:20px;height:16px;border-radius:5px 5px 5px 2px;border:2px solid #3A2A1C"></div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;color:#3A2A1C">Missatges</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border:1px solid #E8D6B4;border-radius:16px;background:#FFFAF1;cursor:pointer" style-hover="background:#FDF0DE">
+      <div style="position:relative;width:20px;height:15px;border-radius:3px;border:2px solid #3A2A1C">
+        <div style="position:absolute;top:-1px;left:1px;width:6px;height:6px;border-top:2px solid #3A2A1C;border-left:2px solid #3A2A1C;transform:rotate(45deg)"></div>
+      </div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;color:#3A2A1C">Correu</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border:1px solid #E8D6B4;border-radius:16px;background:#FFFAF1;cursor:pointer" style-hover="background:#FDF0DE">
+      <div style="position:relative;width:20px;height:16px">
+        <div style="position:absolute;top:0;right:0;width:6px;height:6px;border-radius:50%;background:#3A2A1C"></div>
+        <div style="position:absolute;bottom:0;right:0;width:6px;height:6px;border-radius:50%;background:#3A2A1C"></div>
+        <div style="position:absolute;top:6px;left:0;width:6px;height:6px;border-radius:50%;background:#3A2A1C"></div>
+        <div style="position:absolute;top:3px;left:5px;width:9px;height:1.5px;background:#3A2A1C;transform:rotate(20deg)"></div>
+        <div style="position:absolute;bottom:3px;left:5px;width:9px;height:1.5px;background:#3A2A1C;transform:rotate(-20deg)"></div>
+      </div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;color:#3A2A1C">Xarxes</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border:1px solid #E8D6B4;border-radius:16px;background:#FFFAF1;cursor:pointer" style-hover="background:#FDF0DE">
+      <div style="display:flex;align-items:center;gap:3px;height:16px">
+        <div style="width:4px;height:4px;border-radius:50%;background:#3A2A1C"></div>
+        <div style="width:4px;height:4px;border-radius:50%;background:#3A2A1C"></div>
+        <div style="width:4px;height:4px;border-radius:50%;background:#3A2A1C"></div>
+      </div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;color:#3A2A1C">Més</div>
+    </div>
+  </div>
+
+  <!-- BRIDGE TO FRIEND LEADERBOARD -->
+  <a href="Torrorendum Friend Leaderboard.dc.html" style="text-decoration:none;display:block">
+    <div style="margin:16px 20px 20px;background:#FDF0DE;border:1.5px dashed #E0923F;border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:11px;cursor:pointer">
+      <div style="width:34px;height:34px;border-radius:50%;background:#E0923F;flex:none;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:14px;color:#3A2A1C">{{ friendsCountText }}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12.5px;color:#3A2A1C">{{ bridgeHeadline }}</div>
+        <div style="font-family:'Newsreader',serif;font-style:italic;font-size:11.5px;color:#8A7458;margin-top:2px">Veure la classificació del teu cercle →</div>
+      </div>
+    </div>
+  </a>
+
+</div>
+
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:480,&quot;height&quot;:900},&quot;headlineVariant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;direct&quot;,&quot;options&quot;:[&quot;direct&quot;,&quot;taunt&quot;],&quot;tsType&quot;:&quot;'direct'|'taunt'&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;friendsAcceptedCount&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:0,&quot;max&quot;:12,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;showQR&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;linkCode&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;marc92&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+class Component extends DCLogic {
+  state = { copied: false };
+
+  copyLink() {
+    const url = 'https://' + this.linkHost();
+    try {
+      navigator.clipboard && navigator.clipboard.writeText(url);
+    } catch (e) {}
+    this.setState({ copied: true });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ copied: false }), 1800);
+  }
+
+  linkHost() {
+    return 'torrorendum.cat/r/' + (this.props.linkCode || 'marc92');
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this._t);
+  }
+
+  renderVals() {
+    const variant = this.props.headlineVariant === 'taunt' ? 'taunt' : 'direct';
+    const friendsCount = Math.max(0, Number.isFinite(this.props.friendsAcceptedCount) ? this.props.friendsAcceptedCount : 3);
+
+    const dotStyles = [
+      'position:absolute;top:0;left:8px;width:38px;height:38px;border-radius:50%;background:repeating-linear-gradient(135deg,#F0DFC2,#F0DFC2 5px,#E2CB9E 5px,#E2CB9E 10px);border:2px solid #FFFAF1;z-index:3',
+      'position:absolute;top:6px;left:22px;width:38px;height:38px;border-radius:50%;background:repeating-linear-gradient(135deg,#E9DAC0,#E9DAC0 5px,#DBC79C 5px,#DBC79C 10px);border:2px solid #FFFAF1;z-index:2',
+      'position:absolute;top:12px;left:36px;width:32px;height:32px;border-radius:50%;background:#F0DFC2;border:2px solid #FFFAF1;z-index:1;display:flex;align-items:center;justify-content:center;font:700 9px \'Bricolage Grotesque\',sans-serif;color:#8A7458',
+    ];
+    const friendDots = dotStyles.slice(0, Math.min(3, friendsCount || 1)).map((s, i) => ({ style: s }));
+    if (friendsCount > 3 && friendDots.length === 3) {
+      friendDots[2] = { style: dotStyles[2] };
+    }
+
+    return {
+      isDirectHeadline: variant === 'direct',
+      isTauntHeadline: variant === 'taunt',
+      userEloText: '1755 ELO',
+      userRecordText: '14–3',
+      hasFriends: friendsCount > 0,
+      noFriendsYet: friendsCount === 0,
+      friendsCountText: friendsCount,
+      friendDots,
+      linkText: this.linkHost(),
+      isCopied: this.state.copied,
+      isNotCopied: !this.state.copied,
+      showQR: this.props.showQR === true,
+      copyLink: () => this.copyLink(),
+      bridgeHeadline: friendsCount === 0
+        ? 'Sigues el primer a acceptar'
+        : (friendsCount === 1 ? '1 amic ja ha acceptat el repte' : `${friendsCount} amics ja han acceptat el repte`),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

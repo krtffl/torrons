@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<style>
+  body{margin:0;background:#E7E0D0;background-image:radial-gradient(1100px 560px at 50% -6%,rgba(255,250,241,.6),rgba(231,224,208,0) 68%);background-attachment:fixed;font-family:'Newsreader',serif}
+</style>
+</helmet>
+
+<div style="max-width:480px;margin:0 auto;background:#FFFAF1;border-bottom:1.5px solid #E8D6B4;box-shadow:0 2px 0 rgba(58,42,28,.04)" data-screen-label="Nav Bar">
+  <div style="display:flex;align-items:center;gap:10px;padding:12px 16px">
+
+    <!-- LOGO MARK -->
+    <div style="display:flex;align-items:center;gap:7px;flex:none;cursor:pointer;padding-right:8px;border-right:1px solid #E8D6B4">
+      <div style="width:28px;height:28px;border-radius:50%;background:#8A2638;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:9px;color:#FFFAF1;transform:rotate(-8deg);flex:none;box-shadow:2px 2px 0 rgba(58,42,28,.18)">VS</div>
+    </div>
+
+    <!-- NAV ITEMS -->
+    <div style="flex:1;display:flex;align-items:stretch;gap:4px;min-width:0">
+
+      <!-- VOTA -->
+      <sc-if value="{{ isVoteActive }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ goVota }}" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border-radius:14px;background:#E0923F;transform:rotate(-2deg);cursor:pointer">
+          <div style="width:16px;height:16px;border-radius:50%;border:2.5px solid #3A2A1C;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:5px;height:5px;border-radius:50%;background:#3A2A1C"></div></div>
+          <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;letter-spacing:.3px;color:#3A2A1C;white-space:nowrap">Vota</div></sc-if>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isVoteInactive }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ goVota }}" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border-radius:14px;cursor:pointer" style-hover="background:#FBF2E3">
+          <div style="width:16px;height:16px;border-radius:50%;border:2px solid #8A7458;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:5px;height:5px;border-radius:50%;background:#8A7458"></div></div>
+          <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;letter-spacing:.3px;color:#8A7458;white-space:nowrap">Vota</div></sc-if>
+        </div>
+      </sc-if>
+
+      <!-- CLASSIFICACIÓ -->
+      <sc-if value="{{ isClassActive }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ goClass }}" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border-radius:14px;background:#E0923F;transform:rotate(-2deg);cursor:pointer">
+          <div style="display:flex;align-items:flex-end;gap:2px;height:14px;flex:none"><div style="width:3.5px;height:6px;border-radius:1.5px 1.5px 0 0;background:#3A2A1C"></div><div style="width:3.5px;height:11px;border-radius:1.5px 1.5px 0 0;background:#3A2A1C"></div><div style="width:3.5px;height:8px;border-radius:1.5px 1.5px 0 0;background:#3A2A1C"></div></div>
+          <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;letter-spacing:.1px;color:#3A2A1C;white-space:nowrap">Classificació</div></sc-if>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isClassInactive }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ goClass }}" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border-radius:14px;cursor:pointer" style-hover="background:#FBF2E3">
+          <div style="display:flex;align-items:flex-end;gap:2px;height:14px;flex:none"><div style="width:3.5px;height:6px;border-radius:1.5px 1.5px 0 0;background:#8A7458"></div><div style="width:3.5px;height:11px;border-radius:1.5px 1.5px 0 0;background:#8A7458"></div><div style="width:3.5px;height:8px;border-radius:1.5px 1.5px 0 0;background:#8A7458"></div></div>
+          <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;letter-spacing:.1px;color:#8A7458;white-space:nowrap">Classificació</div></sc-if>
+        </div>
+      </sc-if>
+
+      <!-- ESTADÍSTIQUES -->
+      <sc-if value="{{ isStatsActive }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ goStats }}" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border-radius:14px;background:#E0923F;transform:rotate(-2deg);cursor:pointer">
+          <div style="width:15px;height:15px;border-radius:50%;border:3px solid #3A2A1C;border-top-color:transparent;transform:rotate(25deg);flex:none"></div>
+          <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;letter-spacing:.1px;color:#3A2A1C;white-space:nowrap">Estadístiques</div></sc-if>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isStatsInactive }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ goStats }}" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border-radius:14px;cursor:pointer" style-hover="background:#FBF2E3">
+          <div style="width:15px;height:15px;border-radius:50%;border:3px solid #8A7458;border-top-color:transparent;transform:rotate(25deg);flex:none"></div>
+          <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;letter-spacing:.1px;color:#8A7458;white-space:nowrap">Estadístiques</div></sc-if>
+        </div>
+      </sc-if>
+
+      <!-- HISTORIAL -->
+      <sc-if value="{{ isHistActive }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ goHist }}" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border-radius:14px;background:#E0923F;transform:rotate(-2deg);cursor:pointer">
+          <div style="position:relative;width:15px;height:15px;border-radius:50%;border:2px solid #3A2A1C;flex:none">
+            <div style="position:absolute;top:2px;left:50%;width:1.5px;height:5px;background:#3A2A1C;transform:translateX(-50%)"></div>
+            <div style="position:absolute;top:50%;left:50%;width:4px;height:1.5px;background:#3A2A1C;transform-origin:left center;transform:rotate(35deg)"></div>
+          </div>
+          <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;letter-spacing:.1px;color:#3A2A1C;white-space:nowrap">Historial</div></sc-if>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isHistInactive }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ goHist }}" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border-radius:14px;cursor:pointer" style-hover="background:#FBF2E3">
+          <div style="position:relative;width:15px;height:15px;border-radius:50%;border:2px solid #8A7458;flex:none">
+            <div style="position:absolute;top:2px;left:50%;width:1.5px;height:5px;background:#8A7458;transform:translateX(-50%)"></div>
+            <div style="position:absolute;top:50%;left:50%;width:4px;height:1.5px;background:#8A7458;transform-origin:left center;transform:rotate(35deg)"></div>
+          </div>
+          <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;letter-spacing:.1px;color:#8A7458;white-space:nowrap">Historial</div></sc-if>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:480,&quot;height&quot;:72},&quot;activeLink&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;vota&quot;,&quot;tsType&quot;:&quot;'vota'|'classificacio'|'estadistiques'|'historial'&quot;,&quot;options&quot;:[&quot;vota&quot;,&quot;classificacio&quot;,&quot;estadistiques&quot;,&quot;historial&quot;]},&quot;showLabels&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { active: null };
+
+  renderVals() {
+    const active = this.state.active || this.props.activeLink || 'vota';
+    const showLabels = this.props.showLabels !== false;
+    return {
+      showLabels,
+      isVoteActive: active === 'vota',
+      isVoteInactive: active !== 'vota',
+      isClassActive: active === 'classificacio',
+      isClassInactive: active !== 'classificacio',
+      isStatsActive: active === 'estadistiques',
+      isStatsInactive: active !== 'estadistiques',
+      isHistActive: active === 'historial',
+      isHistInactive: active !== 'historial',
+      goVota: () => this.setState({ active: 'vota' }),
+      goClass: () => this.setState({ active: 'classificacio' }),
+      goStats: () => this.setState({ active: 'estadistiques' }),
+      goHist: () => this.setState({ active: 'historial' }),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

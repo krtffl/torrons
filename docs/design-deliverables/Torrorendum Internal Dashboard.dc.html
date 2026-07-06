@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<style>
+  body{margin:0;background:#E7E0D0;font-family:ui-monospace,Menlo,monospace}
+  .tid-tab{font-variant-numeric:tabular-nums}
+  input.tid-field::placeholder{color:#6B5A44}
+</style>
+</helmet>
+
+<div style="min-height:100vh;font-family:'Bricolage Grotesque',sans-serif" data-screen-label="Internal Dashboard">
+
+  <!-- ============ LOGIN (static mockup) ============ -->
+  <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+    <div style="min-height:100vh;background:#1E1712;display:flex;align-items:center;justify-content:center;padding:24px" data-screen-label="Login">
+      <div style="width:100%;max-width:380px;background:#FFFAF1;border-radius:10px;padding:40px 36px 32px;box-shadow:0 24px 60px rgba(0,0,0,.35)">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:22px;height:22px;border-radius:50%;background:#8A2638;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:6px;height:6px;border-radius:50%;background:#EFC26E"></div></div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;letter-spacing:.3px;color:#3A2A1C">TORRORÈNDUM</div>
+        </div>
+        <div style="font:600 10px ui-monospace,Menlo,monospace;letter-spacing:1.2px;color:#8A7458;margin-top:14px">PANELL INTERN · EQUIP DE MÀRQUETING</div>
+        <div style="font-family:'Newsreader',serif;font-style:italic;font-size:13.5px;color:#8A7458;margin-top:8px;line-height:1.5">Accés restringit. Dades de la campanya en curs per a ús intern de Torrons Vicens.</div>
+
+        <div style="margin-top:28px;display:flex;flex-direction:column;gap:14px">
+          <div>
+            <div style="font:700 10px ui-monospace,Menlo,monospace;letter-spacing:.6px;color:#8A7458;margin-bottom:6px">CORREU ELECTRÒNIC</div>
+            <input class="tid-field" value="marqueting@torronsvicens.cat" readonly style="width:100%;box-sizing:border-box;font:14px ui-monospace,Menlo,monospace;color:#3A2A1C;background:#FBF2E3;border:1px solid #E8D6B4;border-radius:6px;padding:10px 12px" />
+          </div>
+          <div>
+            <div style="font:700 10px ui-monospace,Menlo,monospace;letter-spacing:.6px;color:#8A7458;margin-bottom:6px">CONTRASENYA</div>
+            <input class="tid-field" type="password" value="••••••••••" readonly style="width:100%;box-sizing:border-box;font:14px ui-monospace,Menlo,monospace;color:#3A2A1C;background:#FBF2E3;border:1px solid #E8D6B4;border-radius:6px;padding:10px 12px" />
+          </div>
+        </div>
+
+        <div onClick="{{ goDashboard }}" style="margin-top:22px;text-align:center;background:#E0923F;color:#3A2A1C;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13.5px;letter-spacing:.4px;padding:12px;border-radius:6px;cursor:pointer">ACCEDIR AL PANELL</div>
+
+        <div style="margin-top:18px;padding-top:16px;border-top:1px solid #F0DFC2;font:11px ui-monospace,Menlo,monospace;color:#6B5A44;line-height:1.6">Necessites accés? Contacta amb l'equip digital de Torrons Vicens.</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ DASHBOARD ============ -->
+  <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ false }}">
+    <div style="background:#F0DFC2;min-height:100vh" data-screen-label="Dashboard">
+
+      <!-- TOP BAR -->
+      <div style="background:#1E1712;padding:13px 32px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:9px;padding-right:16px;border-right:1px solid rgba(244,233,213,.14)">
+          <div style="width:18px;height:18px;border-radius:50%;background:#8A2638;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:5px;height:5px;border-radius:50%;background:#EFC26E"></div></div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.4px;color:#FBF2E3">TORRORÈNDUM</div>
+        </div>
+        <div style="font:600 10px ui-monospace,Menlo,monospace;letter-spacing:1px;color:#C2AD8C">PANELL INTERN · MÀRQUETING</div>
+        <div style="background:rgba(244,233,213,.08);color:#C2AD8C;font:700 9px ui-monospace,Menlo,monospace;letter-spacing:.6px;padding:3px 8px;border-radius:4px">PRODUCCIÓ</div>
+        <div style="flex:1;min-width:12px"></div>
+        <div style="display:flex;align-items:center;gap:7px;font:600 10.5px ui-monospace,Menlo,monospace;color:#C2AD8C;white-space:nowrap">
+          <div style="width:6px;height:6px;border-radius:50%;background:#E0923F"></div>EN VIU · actualitzat fa 3 min
+        </div>
+        <div style="width:1px;height:16px;background:rgba(244,233,213,.14)"></div>
+        <div onClick="{{ exportCsv }}" style="cursor:pointer;font:700 11px 'Bricolage Grotesque',sans-serif;letter-spacing:.3px;color:#1E1712;background:#EFC26E;padding:8px 15px;border-radius:6px;white-space:nowrap">Exporta CSV</div>
+        <div onClick="{{ goLogin }}" style="cursor:pointer;font:600 11px ui-monospace,Menlo,monospace;color:#C2AD8C;padding:8px 2px;white-space:nowrap">Tanca la sessió</div>
+      </div>
+
+      <!-- CONTENT -->
+      <div style="max-width:1360px;margin:0 auto;padding:26px 32px 64px">
+
+        <!-- page header -->
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap">
+          <div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:25px;color:#3A2A1C">Vots en directe</div>
+            <div style="font-family:'Newsreader',serif;font-style:italic;font-size:13px;color:#8A7458;margin-top:4px">Temporada 2026 · dia 21 de campanya · 16 jun – 6 jul</div>
+          </div>
+          <div style="font:600 10.5px ui-monospace,Menlo,monospace;color:#8A7458;background:#FFFAF1;border:1px solid #E8D6B4;padding:7px 12px;border-radius:6px">5 arenes actives</div>
+        </div>
+
+        <!-- KPI GRID -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:20px">
+          <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+            <div style="background:#FFFAF1;border:1px solid #E8D6B4;border-radius:8px;padding:18px 20px;min-width:0">
+              <div style="font:700 10px ui-monospace,Menlo,monospace;letter-spacing:1px;color:#8A7458">{{ k.label }}</div>
+              <div class="tid-tab" style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:29px;color:#3A2A1C;margin-top:8px;line-height:1">{{ k.value }}</div>
+              <div style="font:600 11px ui-monospace,Menlo,monospace;color:#8A7458;margin-top:7px">{{ k.delta }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- TREND CHART -->
+        <div style="background:#FFFAF1;border:1px solid #E8D6B4;border-radius:8px;padding:22px 26px 16px;margin-top:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+            <div>
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14.5px;color:#3A2A1C">Evolució de vots</div>
+              <div style="display:flex;align-items:center;gap:14px;margin-top:6px">
+                <div style="display:flex;align-items:center;gap:6px;font:600 10.5px ui-monospace,Menlo,monospace;color:#8A7458"><div style="width:9px;height:9px;border-radius:2px;background:#E0923F;opacity:.6"></div>vots diaris</div>
+                <div style="display:flex;align-items:center;gap:6px;font:600 10.5px ui-monospace,Menlo,monospace;color:#8A7458"><div style="width:12px;height:2px;background:#3A2A1C"></div>acumulat</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:4px;background:#F0DFC2;border-radius:6px;padding:3px">
+              <div onClick="{{ set7d }}" style="{{ chip7d }}">7 dies</div>
+              <div onClick="{{ setAll }}" style="{{ chipAll }}">Tota la campanya</div>
+            </div>
+          </div>
+
+          <svg viewBox="0 0 1240 220" style="width:100%;height:220px;margin-top:14px;display:block">
+            <line x1="0" y1="180" x2="1240" y2="180" stroke="#E8D6B4" strokeWidth="1"></line>
+            <line x1="0" y1="135" x2="1240" y2="135" stroke="#E8D6B4" strokeWidth="1"></line>
+            <line x1="0" y1="90" x2="1240" y2="90" stroke="#E8D6B4" strokeWidth="1"></line>
+            <line x1="0" y1="45" x2="1240" y2="45" stroke="#E8D6B4" strokeWidth="1"></line>
+            <line x1="0" y1="10" x2="1240" y2="10" stroke="#E8D6B4" strokeWidth="1"></line>
+
+            <sc-for list="{{ chartBars }}" as="bar" hint-placeholder-count="21">
+              <rect x="{{ bar.x }}" y="{{ bar.y }}" width="{{ bar.w }}" height="{{ bar.h }}" rx="2" fill="#E0923F" opacity="0.55"></rect>
+            </sc-for>
+
+            <polyline points="{{ linePoints }}" fill="none" stroke="#3A2A1C" strokeWidth="2.5"></polyline>
+
+            <sc-for list="{{ chartMarkers }}" as="m" hint-placeholder-count="5">
+              <circle cx="{{ m.x }}" cy="{{ m.y }}" r="3.5" fill="#3A2A1C"></circle>
+            </sc-for>
+
+            <sc-for list="{{ chartTicks }}" as="tk" hint-placeholder-count="5">
+              <text x="{{ tk.x }}" y="204" fontSize="10" fill="#8A7458" textAnchor="middle" fontFamily="ui-monospace,Menlo,monospace">{{ tk.label }}</text>
+            </sc-for>
+          </svg>
+        </div>
+
+        <!-- CATEGORY BREAKDOWN -->
+        <div style="background:#FFFAF1;border:1px solid #E8D6B4;border-radius:8px;margin-top:16px;overflow-x:auto">
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14.5px;color:#3A2A1C;padding:18px 22px 4px">Desglossament per arena</div>
+          <div style="display:grid;grid-template-columns:1.7fr 1.7fr 1fr 0.9fr 1.3fr 1fr;gap:10px;padding:12px 22px;background:#F0DFC2;margin-top:10px;min-width:600px;font:700 9.5px ui-monospace,Menlo,monospace;letter-spacing:.6px;color:#8A7458">
+            <div>ARENA</div><div>LÍDER ACTUAL</div><div>VOTS</div><div>QUOTA</div><div>TENDÈNCIA</div><div>ESTAT</div>
+          </div>
+          <sc-for list="{{ categories }}" as="cat" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:1.7fr 1.7fr 1fr 0.9fr 1.3fr 1fr;gap:10px;align-items:center;padding:14px 22px;min-width:600px;border-top:1px solid #F0DFC2">
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13.5px;color:#3A2A1C">{{ cat.name }}</div>
+              <div style="font-family:'Newsreader',serif;font-style:italic;font-size:12.5px;color:#8A7458">{{ cat.leader }}</div>
+              <div class="tid-tab" style="font:700 13px ui-monospace,Menlo,monospace;color:#3A2A1C">{{ cat.votesFmt }}</div>
+              <div style="font:700 13px ui-monospace,Menlo,monospace;color:#B96F26">{{ cat.pctText }}</div>
+              <div style="height:6px;border-radius:999px;background:#F0DFC2;overflow:hidden">
+                <div style="height:100%;border-radius:999px;background:#E0923F;width:{{ cat.pctText }}"></div>
+              </div>
+              <div style="{{ cat.pillStyle }}">{{ cat.status }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- LEADERBOARD -->
+        <sc-if value="{{ showLeaderboard }}" hint-placeholder-val="{{ true }}">
+          <div style="background:#FFFAF1;border:1px solid #E8D6B4;border-radius:8px;margin-top:16px;overflow-x:auto">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14.5px;color:#3A2A1C;padding:18px 22px 4px">Rànquing de torrons — top 8</div>
+            <div style="display:grid;grid-template-columns:0.5fr 2.2fr 1.4fr 1fr 1fr 0.8fr;gap:10px;padding:12px 22px;background:#F0DFC2;margin-top:10px;min-width:640px;font:700 9.5px ui-monospace,Menlo,monospace;letter-spacing:.6px;color:#8A7458">
+              <div>#</div><div>TORRÓ</div><div>ARENA</div><div>VOTS</div><div>QUOTA ARENA</div><div>TEND.</div>
+            </div>
+            <sc-for list="{{ leaderboard }}" as="lb" hint-placeholder-count="8">
+              <div style="display:grid;grid-template-columns:0.5fr 2.2fr 1.4fr 1fr 1fr 0.8fr;gap:10px;align-items:center;padding:12px 22px;min-width:640px;border-top:1px solid #F0DFC2">
+                <div style="font:700 12px ui-monospace,Menlo,monospace;color:#6B5A44">{{ lb.rank }}</div>
+                <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;color:#3A2A1C">{{ lb.name }}</div>
+                <div style="font:600 10.5px ui-monospace,Menlo,monospace;color:#8A7458">{{ lb.category }}</div>
+                <div class="tid-tab" style="font:700 12.5px ui-monospace,Menlo,monospace;color:#3A2A1C">{{ lb.votesFmt }}</div>
+                <div style="font:600 12.5px ui-monospace,Menlo,monospace;color:#8A7458">{{ lb.share }}%</div>
+                <div style="font:700 13px ui-monospace,Menlo,monospace;color:{{ lb.trendColor }}">{{ lb.trend }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- FOOTER / METHODOLOGY -->
+        <p style="font:11px ui-monospace,Menlo,monospace;line-height:1.7;color:#8A7458;max-width:760px;margin:24px 0 0">Metodologia: recomptes en temps real dels duels de la campanya oberta. La quota es calcula sobre el total de vots emesos fins al moment. Dades d'ús intern — no publicar sense aprovació de l'equip de màrqueting.</p>
+
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1100},&quot;defaultView&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;login&quot;,&quot;options&quot;:[&quot;login&quot;,&quot;dashboard&quot;],&quot;tsType&quot;:&quot;'login'|'dashboard'&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;showLeaderboard&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;chartRangeDefault&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;21d&quot;,&quot;options&quot;:[&quot;7d&quot;,&quot;21d&quot;],&quot;tsType&quot;:&quot;'7d'|'21d'&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+class Component extends DCLogic {
+  state = {
+    view: (this.props && this.props.defaultView === 'dashboard') ? 'dashboard' : 'login',
+    chartRange: (this.props && this.props.chartRangeDefault === '7d') ? '7d' : '21d',
+  };
+
+  renderVals() {
+    const p = this.props || {};
+    const view = this.state.view;
+    const showLeaderboard = p.showLeaderboard !== false;
+
+    // ---- daily votes, 16 jun – 6 jul 2026 (21 days) ----
+    const dailyAll = [3800,4200,4650,5100,4900,5460,5980,6320,6100,6740,7050,6890,7220,7480,7010,7350,7690,7940,7600,7880,8120];
+    const monthsCa = ['gen','feb','mar','abr','maig','jun','jul','ago','set','oct','nov','des'];
+    const startDate = new Date(2026, 5, 16);
+    const dateLabel = (i) => {
+      const d = new Date(startDate.getTime());
+      d.setDate(d.getDate() + i);
+      return d.getDate() + ' ' + monthsCa[d.getMonth()];
+    };
+
+    const totalAll = dailyAll.reduce((a, b) => a + b, 0);
+    const votesToday = dailyAll[dailyAll.length - 1];
+    const votesYesterday = dailyAll[dailyAll.length - 2];
+    const deltaToday = votesToday - votesYesterday;
+    const avgDaily = totalAll / dailyAll.length;
+    const deltaPct = Math.round((deltaToday / avgDaily) * 100);
+
+    const fmt = (n) => Math.round(n).toLocaleString('ca-ES');
+
+    const kpis = [
+      { label: 'VOTS TOTALS', value: fmt(totalAll), delta: '+' + fmt(deltaToday) + ' vs ahir' },
+      { label: 'VOTS AVUI', value: fmt(votesToday), delta: (deltaPct >= 0 ? '+' : '') + deltaPct + '% vs mitjana diària' },
+      { label: 'PARTICIPANTS ÚNICS', value: '38.412', delta: '+912 avui' },
+      { label: 'MARGE DEL LÍDER', value: '14,5 pp', delta: 'Agramunt vs Torró dur · Clàssics' },
+    ];
+
+    // ---- chart geometry ----
+    const range = this.state.chartRange;
+    const offset = range === '7d' ? dailyAll.length - 7 : 0;
+    const daily = dailyAll.slice(offset);
+    const n = daily.length;
+    const W = 1240, chartTop = 10, chartBottom = 180, chartH = chartBottom - chartTop;
+    const slot = W / n;
+    const barW = Math.max(4, slot * 0.5);
+    const maxDaily = Math.max(...daily);
+
+    const chartBars = daily.map((d, i) => {
+      const h = (d / maxDaily) * chartH;
+      return { x: i * slot + (slot - barW) / 2, y: chartBottom - h, w: barW, h };
+    });
+
+    let running = 0;
+    const cumArr = daily.map((d) => { running += d; return running; });
+    const maxCum = cumArr[cumArr.length - 1];
+    const linePts = cumArr.map((c, i) => {
+      const x = i * slot + slot / 2;
+      const y = chartBottom - (c / maxCum) * chartH;
+      return { x, y };
+    });
+    const linePoints = linePts.map(pt => pt.x.toFixed(1) + ',' + pt.y.toFixed(1)).join(' ');
+
+    const markerIdx = n <= 8 ? linePts.map((_, i) => i) : [0, Math.floor((n - 1) / 4), Math.floor((n - 1) / 2), Math.floor((3 * (n - 1)) / 4), n - 1];
+    const chartMarkers = markerIdx.map(i => linePts[i]);
+
+    const tickCount = n <= 8 ? n : 5;
+    const tickIdx = n <= 8 ? linePts.map((_, i) => i) : [0, Math.floor((n - 1) / 4), Math.floor((n - 1) / 2), Math.floor((3 * (n - 1)) / 4), n - 1];
+    const chartTicks = tickIdx.map(i => ({ x: (i * slot + slot / 2).toFixed(1), label: dateLabel(offset + i) }));
+
+    const chipBase = 'font:700 10.5px \'Bricolage Grotesque\',sans-serif;letter-spacing:.3px;padding:6px 12px;border-radius:5px;cursor:pointer';
+    const chip7d = range === '7d' ? `${chipBase};background:#3A2A1C;color:#FFFAF1` : `${chipBase};background:transparent;color:#8A7458`;
+    const chipAll = range === '21d' ? `${chipBase};background:#3A2A1C;color:#FFFAF1` : `${chipBase};background:transparent;color:#8A7458`;
+
+    // ---- category breakdown ----
+    const catDefs = [
+      { name: 'Clàssics', leader: 'Torró d\u2019Agramunt', pct: 29, status: 'Obert' },
+      { name: 'Novetats', leader: 'Torró de pistatxo picant', pct: 22, status: 'Obert' },
+      { name: 'Xocolata', leader: 'Torró negre 70%', pct: 19, status: 'Obert' },
+      { name: 'Adrià Natura', leader: 'Torró de safrà i mel', pct: 13, status: 'Obert' },
+      { name: 'Global', leader: 'Es defineix en tancar les 4 arenes', pct: 17, status: 'Bloquejat' },
+    ];
+    const categories = catDefs.map(c => {
+      const votes = Math.round(totalAll * c.pct / 100);
+      const isOpen = c.status === 'Obert';
+      return {
+        ...c,
+        votesFmt: fmt(votes),
+        pctText: c.pct + '%',
+        pillStyle: isOpen
+          ? "justify-self:start;font:700 9px 'Bricolage Grotesque',sans-serif;letter-spacing:.4px;color:#3A2A1C;border:1px solid #E8D6B4;padding:4px 9px;border-radius:999px"
+          : "justify-self:start;font:700 9px 'Bricolage Grotesque',sans-serif;letter-spacing:.4px;color:#8A7458;border:1px dashed #E8D6B4;padding:4px 9px;border-radius:999px",
+      };
+    });
+
+    // ---- leaderboard ----
+    const lbDefs = [
+      { rank: 1, name: 'Torró d\u2019Agramunt', category: 'Clàssics', votes: 18240, share: '43,2', trend: '▲' },
+      { rank: 2, name: 'Torró de pistatxo picant', category: 'Novetats', votes: 14760, share: '46,8', trend: '▲' },
+      { rank: 3, name: 'Torró negre 70%', category: 'Xocolata', votes: 13980, share: '50,2', trend: '▼' },
+      { rank: 4, name: 'Torró de safrà i mel', category: 'Adrià Natura', votes: 9640, share: '51,0', trend: '▲' },
+      { rank: 5, name: 'Torró dur', category: 'Clàssics', votes: 12100, share: '28,7', trend: '▬' },
+      { rank: 6, name: 'Torró de coco cremat', category: 'Novetats', votes: 9320, share: '29,6', trend: '▲' },
+      { rank: 7, name: 'Torró de llet merengada', category: 'Xocolata', votes: 7540, share: '27,1', trend: '▼' },
+      { rank: 8, name: 'Guirlache', category: 'Clàssics', votes: 6980, share: '16,6', trend: '▲' },
+    ];
+    const trendColor = { '▲': '#B96F26', '▼': '#6B5A44', '▬': '#8A7458' };
+    const leaderboard = lbDefs.map(l => ({ ...l, votesFmt: fmt(l.votes), trendColor: trendColor[l.trend] }));
+
+    // ---- export ----
+    const exportCsv = () => {
+      const rows = [['Arena', 'Líder actual', 'Vots', 'Quota %', 'Estat']];
+      categories.forEach(c => rows.push([c.name, c.leader, c.votesFmt, c.pct, c.status]));
+      rows.push([]);
+      rows.push(['Rànquing', 'Torró', 'Arena', 'Vots', 'Quota arena %']);
+      leaderboard.forEach(l => rows.push([l.rank, l.name, l.category, l.votesFmt, l.share]));
+      const csv = rows.map(r => r.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'torrorendum-dades-' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
+    return {
+      isLogin: view === 'login',
+      isDashboard: view === 'dashboard',
+      goDashboard: () => this.setState({ view: 'dashboard' }),
+      goLogin: () => this.setState({ view: 'login' }),
+      showLeaderboard,
+      kpis,
+      chartBars,
+      linePoints,
+      chartMarkers,
+      chartTicks,
+      chip7d,
+      chipAll,
+      set7d: () => this.setState({ chartRange: '7d' }),
+      setAll: () => this.setState({ chartRange: '21d' }),
+      categories,
+      leaderboard,
+      exportCsv,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

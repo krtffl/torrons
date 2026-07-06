@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,500;1,400;1,500&display=swap">
+<style>
+  @keyframes crownGlow{0%{box-shadow:0 0 0 0 rgba(239,194,110,.45)}100%{box-shadow:0 0 0 12px rgba(239,194,110,0)}}
+</style>
+</helmet>
+
+<div style="width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:14px 0 20px;font-family:'Newsreader',serif" data-screen-label="Bracket Tree">
+<div style="min-width:1344px;padding:0 16px">
+  <div style="display:flex;align-items:center;gap:10px;margin:0 4px 12px">
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:11px;letter-spacing:.6px;color:#8A7458;white-space:nowrap">EL QUADRE COMPLET</div>
+    <div style="flex:1;height:1px;background:#E8D6B4"></div>
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10px;letter-spacing:.3px;color:#B96F26;white-space:nowrap">llisca en horitzontal →</div>
+  </div>
+<div style="position:relative;width:1344px;height:740px;font-family:'Newsreader',serif;flex:none">
+
+  <!-- COLUMN HEADERS -->
+  <div style="position:absolute;left:0px;top:14px;width:216px;text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:12px;letter-spacing:1.5px;color:#8A7458">QUARTS DE FINAL</div>
+  <div style="position:absolute;left:256px;top:14px;width:240px;text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:12px;letter-spacing:1.5px;color:#8A7458">SEMIFINALS</div>
+  <div style="position:absolute;left:532px;top:14px;width:280px;text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:12px;letter-spacing:1.5px;color:#8A2638">GRAN FINAL</div>
+  <div style="position:absolute;left:848px;top:14px;width:240px;text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:12px;letter-spacing:1.5px;color:#8A7458">SEMIFINALS</div>
+  <div style="position:absolute;left:1128px;top:14px;width:216px;text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:12px;letter-spacing:1.5px;color:#8A7458">QUARTS DE FINAL</div>
+
+  <!-- ===================== NEUTRAL STRUCTURAL CONNECTORS ===================== -->
+  <!-- left elbow: QF-left -> SF-left -->
+  <div style="position:absolute;left:216px;top:159px;width:20px;height:2px;background:#E8D6B4"></div>
+  <div style="position:absolute;left:216px;top:439px;width:20px;height:2px;background:#E8D6B4"></div>
+  <div style="position:absolute;left:235px;top:159px;width:2px;height:281px;background:#E8D6B4"></div>
+  <div style="position:absolute;left:236px;top:299px;width:20px;height:2px;background:#E8D6B4"></div>
+  <!-- right elbow: QF-right -> SF-right -->
+  <div style="position:absolute;left:1108px;top:159px;width:20px;height:2px;background:#E8D6B4"></div>
+  <div style="position:absolute;left:1108px;top:439px;width:20px;height:2px;background:#E8D6B4"></div>
+  <div style="position:absolute;left:1107px;top:159px;width:2px;height:281px;background:#E8D6B4"></div>
+  <div style="position:absolute;left:1088px;top:299px;width:20px;height:2px;background:#E8D6B4"></div>
+
+  <!-- ===================== CHAMPION PATH OVERLAY (burgundy) ===================== -->
+  <div style="position:absolute;left:216px;top:159px;width:20px;height:3px;background:#8A2638;border-radius:2px"></div>
+  <div style="position:absolute;left:496px;top:299px;width:36px;height:3px;background:#8A2638;border-radius:2px"></div>
+  <div style="position:absolute;left:671px;top:384px;width:3px;height:156px;background:#8A2638;border-radius:2px"></div>
+
+  <!-- straight: SF-left -> Final -->
+  <div style="position:absolute;left:496px;top:299px;width:36px;height:2px;background:#E8D6B4"></div>
+  <!-- straight: Final -> SF-right -->
+  <div style="position:absolute;left:812px;top:299px;width:36px;height:2px;background:#E8D6B4"></div>
+
+  <!-- ===================== QF LEFT TOP — QF1 (champion match) ===================== -->
+  <div style="position:absolute;left:0px;top:97px;width:216px;height:126px;background:#FFFAF1;border:1.5px solid #8A2638;border-radius:16px;padding:9px 12px;display:flex;flex-direction:column;justify-content:center;gap:5px;box-shadow:0 3px 0 #E8D6B4">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:18px;height:18px;border-radius:50%;background:#F0DFC2;display:flex;align-items:center;justify-content:center;flex:none"><span style="font:700 8.5px ui-monospace,Menlo,monospace;color:#8A7458">1</span></div>
+      <div style="width:26px;height:26px;border-radius:7px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 5px,#E3E0D6 5px,#E3E0D6 10px);border:1px solid #E3E0D6;flex:none"></div>
+      <div style="flex:1;min-width:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12.5px;color:#3A2A1C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Torró d'Agramunt</div>
+      <div style="font:700 12px ui-monospace,Menlo,monospace;color:#8A2638;flex:none">68%</div>
+    </div>
+    <div style="height:1px;background:#F0DFC2"></div>
+    <div style="display:flex;align-items:center;gap:8px;opacity:.48">
+      <div style="width:18px;height:18px;border-radius:50%;background:#F0DFC2;display:flex;align-items:center;justify-content:center;flex:none"><span style="font:700 8.5px ui-monospace,Menlo,monospace;color:#8A7458">8</span></div>
+      <div style="width:26px;height:26px;border-radius:7px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 5px,#E3E0D6 5px,#E3E0D6 10px);border:1px solid #E3E0D6;flex:none"></div>
+      <div style="flex:1;min-width:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:12.5px;color:#3A2A1C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Torró de coco</div>
+      <div style="font:600 12px ui-monospace,Menlo,monospace;color:#6B5A44;flex:none">32%</div>
+    </div>
+  </div>
+
+  <!-- QF LEFT BOTTOM — QF2 -->
+  <div style="position:absolute;left:0px;top:377px;width:216px;height:126px;background:#FFFAF1;border:1.5px solid #E8D6B4;border-radius:16px;padding:9px 12px;display:flex;flex-direction:column;justify-content:center;gap:5px;box-shadow:0 3px 0 #E8D6B4">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:18px;height:18px;border-radius:50%;background:#F0DFC2;display:flex;align-items:center;justify-content:center;flex:none"><span style="font:700 8.5px ui-monospace,Menlo,monospace;color:#8A7458">4</span></div>
+      <div style="width:26px;height:26px;border-radius:7px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 5px,#E3E0D6 5px,#E3E0D6 10px);border:1px solid #E3E0D6;flex:none"></div>
+      <div style="flex:1;min-width:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12.5px;color:#3A2A1C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Torró de xocolata</div>
+      <div style="font:700 12px ui-monospace,Menlo,monospace;color:#B96F26;flex:none">55%</div>
+    </div>
+    <div style="height:1px;background:#F0DFC2"></div>
+    <div style="display:flex;align-items:center;gap:8px;opacity:.48">
+      <div style="width:18px;height:18px;border-radius:50%;background:#F0DFC2;display:flex;align-items:center;justify-content:center;flex:none"><span style="font:700 8.5px ui-monospace,Menlo,monospace;color:#8A7458">5</span></div>
+      <div style="width:26px;height:26px;border-radius:7px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 5px,#E3E0D6 5px,#E3E0D6 10px);border:1px solid #E3E0D6;flex:none"></div>
+      <div style="flex:1;min-width:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:12.5px;color:#3A2A1C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Massapà</div>
+      <div style="font:600 12px ui-monospace,Menlo,monospace;color:#6B5A44;flex:none">45%</div>
+    </div>
+  </div>
+
+  <!-- SF LEFT — champion match -->
+  <div style="position:absolute;left:256px;top:230px;width:240px;height:140px;background:#FFFAF1;border:1.5px solid #8A2638;border-radius:18px;padding:11px 14px;display:flex;flex-direction:column;justify-content:center;gap:7px;box-shadow:0 3px 0 #E8D6B4">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:20px;height:20px;border-radius:50%;background:#F0DFC2;display:flex;align-items:center;justify-content:center;flex:none"><span style="font:700 9.5px ui-monospace,Menlo,monospace;color:#8A7458">1</span></div>
+      <div style="width:30px;height:30px;border-radius:9px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 5px,#E3E0D6 5px,#E3E0D6 10px);border:1px solid #E3E0D6;flex:none"></div>
+      <div style="flex:1;min-width:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;color:#3A2A1C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Torró d'Agramunt</div>
+      <div style="font:700 13.5px ui-monospace,Menlo,monospace;color:#8A2638;flex:none">71%</div>
+    </div>
+    <div style="height:1px;background:#F0DFC2"></div>
+    <div style="display:flex;align-items:center;gap:8px;opacity:.48">
+      <div style="width:20px;height:20px;border-radius:50%;background:#F0DFC2;display:flex;align-items:center;justify-content:center;flex:none"><span style="font:700 9.5px ui-monospace,Menlo,monospace;color:#8A7458">4</span></div>
+      <div style="width:30px;height:30px;border-radius:9px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 5px,#E3E0D6 5px,#E3E0D6 10px);border:1px solid #E3E0D6;flex:none"></div>
+      <div style="flex:1;min-width:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:14px;color:#3A2A1C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Torró de xocolata</div>
+      <div style="font:600 13.5px ui-monospace,Menlo,monospace;color:#6B5A44;flex:none">29%</div>
+    </div>
+  </div>
+
+  <!-- FINAL — the marquee card -->
+  <div style="position:absolute;left:532px;top:216px;width:280px;height:168px;background:#FFFAF1;border:2px solid #8A2638;border-radius:20px;padding:14px 18px;display:flex;flex-direction:column;justify-content:center;gap:9px;box-shadow:0 6px 0 #E8D6B4,0 14px 30px rgba(58,42,28,.16)">
+    <div style="position:absolute;top:-13px;left:50%;transform:translateX(-50%) rotate(-2deg);background:#EFC26E;color:#3A2A1C;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:10.5px;letter-spacing:.6px;padding:5px 14px;border-radius:999px;box-shadow:0 3px 0 rgba(58,42,28,.18);white-space:nowrap">GRAN FINAL · DECIDIT</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:22px;height:22px;border-radius:50%;background:#F0DFC2;display:flex;align-items:center;justify-content:center;flex:none"><span style="font:700 10px ui-monospace,Menlo,monospace;color:#8A7458">1</span></div>
+      <div style="width:44px;height:44px;border-radius:11px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 5px,#E3E0D6 5px,#E3E0D6 10px);border:1.5px solid #EFC26E;flex:none"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:16.5px;color:#3A2A1C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Torró d'Agramunt</div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;letter-spacing:.5px;color:#8A2638;margin-top:1px">CAMPIÓ</div>
+      </div>
+      <div style="font:800 17px ui-monospace,Menlo,monospace;color:#8A2638;flex:none">54%</div>
+    </div>
+    <div style="height:1px;background:#F0DFC2"></div>
+    <div style="display:flex;align-items:center;gap:10px;opacity:.5">
+      <div style="width:22px;height:22px;border-radius:50%;background:#F0DFC2;display:flex;align-items:center;justify-content:center;flex:none"><span style="font:700 10px ui-monospace,Menlo,monospace;color:#8A7458">2</span></div>
+      <div style="width:44px;height:44px;border-radius:11px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 5px,#E3E0D6 5px,#E3E0D6 10px);border:1px solid #E3E0D6;flex:none"></div>
+      <div style="flex:1;min-width:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:14.5px;color:#3A2A1C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Torró de Xixona</div>
+      <div style="font:600 14.5px ui-monospace,Menlo,monospace;color:#6B5A44;flex:none">46%</div>
+    </div>
+  </div>
+
+  <!-- SF RIGHT -->
+  <div style="position:absolute;left:848px;top:230px;width:240px;height:140px;background:#FFFAF1;border:1.5px solid #E8D6B4;border-radius:18px;padding:11px 14px;display:flex;flex-direction:column;justify-content:center;gap:7px;box-shadow:0 3px 0 #E8D6B4">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:20px;height:20px;border-radius:50%;background:#F0DFC2;display:flex;align-items:center;justify-content:center;flex:none"><span style="font:700 9.5px ui-monospace,Menlo,monospace;color:#8A7458">2</span></div>
+      <div style="width:30px;height:30px;border-radius:9px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 5px,#E3E0D6 5px,#E3E0D6 10px);border:1px solid #E3E0D6;flex:none"></div>
+      <div style="flex:1;min-width:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;color:#3A2A1C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Torró de Xixona</div>
+      <div style="font:700 13.5px ui-monospace,Menlo,monospace;color:#B96F26;flex:none">58%</div>
+    </div>
+    <div style="height:1px;background:#F0DFC2"></div>
+    <div style="display:flex;align-items:center;gap:8px;opacity:.48">
+      <div style="width:20px;height:20px;border-radius:50%;background:#F0DFC2;display:flex;align-items:center;justify-content:center;flex:none"><span style="font:700 9.5px ui-monospace,Menlo,monospace;color:#8A7458">3</span></div>
+      <div style="width:30px;height:30px;border-radius:9px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 5px,#E3E0D6 5px,#E3E0D6 10px);border:1px solid #E3E0D6;flex:none"></div>
+      <div style="flex:1;min-width:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:14px;color:#3A2A1C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Torró dur</div>
+      <div style="font:600 13.5px ui-monospace,Menlo,monospace;color:#6B5A44;flex:none">42%</div>
+    </div>
+  </div>
+
+  <!-- QF RIGHT TOP — QF4 -->
+  <div style="position:absolute;left:1128px;top:97px;width:216px;height:126px;background:#FFFAF1;border:1.5px solid #E8D6B4;border-radius:16px;padding:9px 12px;display:flex;flex-direction:column;justify-content:center;gap:5px;box-shadow:0 3px 0 #E8D6B4">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:18px;height:18px;border-radius:50%;background:#F0DFC2;display:flex;align-items:center;justify-content:center;flex:none"><span style="font:700 8.5px ui-monospace,Menlo,monospace;color:#8A7458">2</span></div>
+      <div style="width:26px;height:26px;border-radius:7px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 5px,#E3E0D6 5px,#E3E0D6 10px);border:1px solid #E3E0D6;flex:none"></div>
+      <div style="flex:1;min-width:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12.5px;color:#3A2A1C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Torró de Xixona</div>
+      <div style="font:700 12px ui-monospace,Menlo,monospace;color:#B96F26;flex:none">52%</div>
+    </div>
+    <div style="height:1px;background:#F0DFC2"></div>
+    <div style="display:flex;align-items:center;gap:8px;opacity:.48">
+      <div style="width:18px;height:18px;border-radius:50%;background:#F0DFC2;display:flex;align-items:center;justify-content:center;flex:none"><span style="font:700 8.5px ui-monospace,Menlo,monospace;color:#8A7458">7</span></div>
+      <div style="width:26px;height:26px;border-radius:7px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 5px,#E3E0D6 5px,#E3E0D6 10px);border:1px solid #E3E0D6;flex:none"></div>
+      <div style="flex:1;min-width:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:12.5px;color:#3A2A1C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Guirlache</div>
+      <div style="font:600 12px ui-monospace,Menlo,monospace;color:#6B5A44;flex:none">48%</div>
+    </div>
+  </div>
+
+  <!-- QF RIGHT BOTTOM — QF3 -->
+  <div style="position:absolute;left:1128px;top:377px;width:216px;height:126px;background:#FFFAF1;border:1.5px solid #E8D6B4;border-radius:16px;padding:9px 12px;display:flex;flex-direction:column;justify-content:center;gap:5px;box-shadow:0 3px 0 #E8D6B4">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:18px;height:18px;border-radius:50%;background:#F0DFC2;display:flex;align-items:center;justify-content:center;flex:none"><span style="font:700 8.5px ui-monospace,Menlo,monospace;color:#8A7458">3</span></div>
+      <div style="width:26px;height:26px;border-radius:7px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 5px,#E3E0D6 5px,#E3E0D6 10px);border:1px solid #E3E0D6;flex:none"></div>
+      <div style="flex:1;min-width:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12.5px;color:#3A2A1C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Torró dur</div>
+      <div style="font:700 12px ui-monospace,Menlo,monospace;color:#B96F26;flex:none">61%</div>
+    </div>
+    <div style="height:1px;background:#F0DFC2"></div>
+    <div style="display:flex;align-items:center;gap:8px;opacity:.48">
+      <div style="width:18px;height:18px;border-radius:50%;background:#F0DFC2;display:flex;align-items:center;justify-content:center;flex:none"><span style="font:700 8.5px ui-monospace,Menlo,monospace;color:#8A7458">6</span></div>
+      <div style="width:26px;height:26px;border-radius:7px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 5px,#E3E0D6 5px,#E3E0D6 10px);border:1px solid #E3E0D6;flex:none"></div>
+      <div style="flex:1;min-width:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:12.5px;color:#3A2A1C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Torró tou</div>
+      <div style="font:600 12px ui-monospace,Menlo,monospace;color:#6B5A44;flex:none">39%</div>
+    </div>
+  </div>
+
+  <!-- ===================== CHAMPION BANNER ===================== -->
+  <div style="position:absolute;left:362px;top:540px;width:620px;height:180px;background:#3A2A1C;border:2px solid #EFC26E;border-radius:24px;padding:26px 32px;display:flex;align-items:center;gap:26px;box-shadow:0 10px 0 rgba(0,0,0,.18),0 20px 40px rgba(58,42,28,.32);overflow:visible">
+
+    <div style="position:absolute;top:-10px;right:36px;width:14px;height:14px;border-radius:50%;background:#E0923F;opacity:.8"></div>
+    <div style="position:absolute;bottom:-8px;left:60px;width:10px;height:10px;border-radius:50%;background:#8A2638;opacity:.7"></div>
+    <div style="position:absolute;top:20px;right:-8px;width:9px;height:9px;border-radius:2px;background:#EFC26E;transform:rotate(20deg);opacity:.8"></div>
+
+    <div style="width:110px;height:150px;border-radius:16px;background:repeating-linear-gradient(135deg,rgba(255,250,241,.14),rgba(255,250,241,.14) 6px,rgba(255,250,241,.05) 6px,rgba(255,250,241,.05) 12px);border:2.5px solid #EFC26E;flex:none;display:flex;align-items:center;justify-content:center;animation:crownGlow 2.4s ease-out infinite">
+      <span style="font:600 8px ui-monospace,Menlo,monospace;color:rgba(255,250,241,.5)">foto</span>
+    </div>
+
+    <div style="flex:1;min-width:0">
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:11px;letter-spacing:2px;color:#EFC26E">CAMPIÓ · CLÀSSICS · FASE 2</div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:34px;color:#FFFAF1;line-height:1.08;margin-top:6px">Torró d'Agramunt</div>
+      <div style="font-family:'Newsreader',serif;font-style:italic;font-size:14.5px;color:#D8C7A8;margin-top:4px">Tres victòries, cap derrota en aquesta fase.</div>
+      <div style="display:flex;align-items:baseline;gap:10px;margin-top:14px">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:20px;color:#EFC26E">54%</div>
+        <div style="font-family:'Newsreader',serif;font-style:italic;font-size:13px;color:rgba(255,250,241,.55)">contra Torró de Xixona a la gran final</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+</div>
+
+</x-dc>
+</body>
+</html>

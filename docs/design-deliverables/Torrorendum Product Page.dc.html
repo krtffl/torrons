@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<style>
+  body{margin:0;background:#E7E0D0;background-image:radial-gradient(1100px 560px at 50% -6%,rgba(255,250,241,.6),rgba(231,224,208,0) 68%);background-attachment:fixed;font-family:'Newsreader',serif}
+</style>
+</helmet>
+
+<div style="max-width:480px;margin:0 auto;background:#FBF2E3;min-height:100vh;box-shadow:0 0 60px rgba(58,42,28,.12);position:relative;overflow:hidden;display:flex;flex-direction:column" data-screen-label="Product Page">
+
+  <dc-import name="Torrorendum Nav Bar" active-link="vota" hint-size="100%,72px"></dc-import>
+
+  <!-- HEADER -->
+  <div style="padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:16px;height:16px;border-left:3px solid #3A2A1C;border-bottom:3px solid #3A2A1C;transform:rotate(45deg)"></div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:11px;letter-spacing:.8px;color:#8A7458">TORRORÈNDUM · FITXA DEL PRODUCTE</div>
+    </div>
+    <div style="background:#F0DFC2;color:#8A7458;font:700 10px ui-monospace,Menlo,monospace;padding:5px 11px;border-radius:999px;white-space:nowrap;letter-spacing:.3px">CLÀSSICS</div>
+  </div>
+
+  <!-- PRODUCT PHOTO -->
+  <div style="padding:20px 24px 0;display:flex;justify-content:center">
+    <div style="position:relative">
+      <div style="width:196px;height:238px;border-radius:20px;background:#F1EFEA;border:1px solid #E3E0D6;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center">
+        <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);width:120px;height:18px;border-radius:50%;background:radial-gradient(ellipse,rgba(58,42,28,.14),transparent 70%)"></div>
+        <div style="width:86px;height:154px;border-radius:8px;background:#E4E1D8;border:1px solid #D8D4C6"></div>
+        <div style="position:absolute;top:10px;left:10px;font:600 7px ui-monospace,Menlo,monospace;color:#A79C8A">foto producte</div>
+      </div>
+      <div style="position:absolute;top:10px;right:10px;background:rgba(255,250,241,.92);color:#3A2A1C;font:700 10px ui-monospace,Menlo,monospace;padding:4px 9px;border-radius:999px;letter-spacing:.3px;border:1px solid #E8D6B4">#1 · EN VIU</div>
+    </div>
+  </div>
+
+  <!-- TITLE + DESCRIPTION -->
+  <div style="padding:18px 28px 0">
+    <div style="font:700 9.5px ui-monospace,Menlo,monospace;color:#B96F26;letter-spacing:.6px">CLÀSSICS · L'ORIGINAL</div>
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:30px;line-height:1.08;color:#3A2A1C;margin-top:5px">Torró d'Agramunt</div>
+    <div style="font-family:'Newsreader',serif;font-size:14.5px;line-height:1.5;color:#6B5A44;margin-top:10px">Ametlla marcona torrada, mel natural i un punt de canyella. La recepta original dels mestres torronaires d'Agramunt, sense canvis des de 1775.</div>
+  </div>
+
+  <!-- SPEC ROW: weight / price / format -->
+  <div style="margin:18px 20px 0;background:#FFFAF1;border:1px solid #E8D6B4;border-radius:16px;display:flex">
+    <div style="flex:1;padding:13px 10px;text-align:center">
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:17px;color:#3A2A1C">200 g</div>
+      <div style="font:600 8px ui-monospace,Menlo,monospace;color:#6B5A44;letter-spacing:.5px;margin-top:3px">PES</div>
+    </div>
+    <div style="width:1px;background:#F0DFC2;margin:10px 0"></div>
+    <div style="flex:1;padding:13px 10px;text-align:center">
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:17px;color:#3A2A1C">8,90 €</div>
+      <div style="font:600 8px ui-monospace,Menlo,monospace;color:#6B5A44;letter-spacing:.5px;margin-top:3px">PREU</div>
+    </div>
+    <div style="width:1px;background:#F0DFC2;margin:10px 0"></div>
+    <div style="flex:1;padding:13px 10px;text-align:center">
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:13.5px;color:#3A2A1C;line-height:1.2;margin-top:2px">Tauleta</div>
+      <div style="font:600 8px ui-monospace,Menlo,monospace;color:#6B5A44;letter-spacing:.5px;margin-top:3px">FORMAT</div>
+    </div>
+  </div>
+
+  <!-- INTENSITY METER -->
+  <div style="margin:20px 24px 0">
+    <div style="display:flex;align-items:baseline;justify-content:space-between">
+      <div style="font:700 10.5px ui-monospace,Menlo,monospace;color:#8A7458;letter-spacing:1px">INTENSITAT DE SABOR</div>
+      <div style="font-family:'Newsreader',serif;font-style:italic;font-size:12.5px;color:#B96F26">{{ intensityDescriptor }}</div>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:9px">
+      <sc-for list="{{ intensitySquares }}" as="sq" hint-placeholder-count="5">
+        <div style="{{ sq.style }}"></div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- ALLERGENS & DIETARY -->
+  <div style="margin:22px 24px 0">
+    <div style="font:700 10.5px ui-monospace,Menlo,monospace;color:#8A7458;letter-spacing:1px">AL·LÈRGENS I DIETA</div>
+    <div style="margin:10px 20px 0 0;background:#FFFAF1;border:1px solid #E8D6B4;border-radius:16px;padding:16px 10px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+      <sc-for list="{{ dietaryItems }}" as="d" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center">
+          <div style="width:38px;height:38px;border-radius:50%;flex:none;position:relative;display:flex;align-items:center;justify-content:center;background:{{ d.circleBg }};border:{{ d.circleBorder }}">
+            <sc-if value="{{ d.isLeaf }}" hint-placeholder-val="{{ false }}">
+              <div style="width:16px;height:16px;border-radius:0 100% 0 100%;background:{{ d.glyphColor }};transform:rotate(-45deg)"></div>
+            </sc-if>
+            <sc-if value="{{ d.isCrossedCircle }}" hint-placeholder-val="{{ false }}">
+              <div style="width:17px;height:17px;border-radius:50%;border:2.5px solid {{ d.glyphColor }};position:relative"><div style="position:absolute;left:-1px;right:-1px;top:50%;height:0;border-top:2.5px solid {{ d.glyphColor }};transform:rotate(-45deg)"></div></div>
+            </sc-if>
+            <sc-if value="{{ d.isStamp }}" hint-placeholder-val="{{ false }}">
+              <div style="font:700 8px ui-monospace,Menlo,monospace;color:{{ d.glyphColor }};letter-spacing:.3px">ECO</div>
+            </sc-if>
+          </div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9.5px;color:{{ d.labelColor }};line-height:1.2">{{ d.label }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font-family:'Newsreader',serif;font-style:italic;font-size:12px;color:#6B5A44;margin-top:10px;line-height:1.45">Conté fruits secs (ametlla) i traces d'ou. Elaborat en un obrador que també manipula altres fruits secs.</div>
+  </div>
+
+  <!-- LIVE RANK + ELO TREND -->
+  <div style="margin:22px 20px 0;background:#FFFAF1;border:1px solid #E8D6B4;border-radius:18px;padding:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:6px">
+        <div style="width:6px;height:6px;border-radius:50%;background:#8A2638"></div>
+        <div style="font:700 10px ui-monospace,Menlo,monospace;color:#8A7458;letter-spacing:.8px">RÀNQUING EN VIU · CLÀSSICS</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:flex-end;gap:16px;margin-top:12px">
+      <div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:34px;color:#3A2A1C;line-height:1">#1</div>
+        <div style="font:600 8.5px ui-monospace,Menlo,monospace;color:#6B5A44;letter-spacing:.5px;margin-top:2px">POSICIÓ</div>
+      </div>
+      <div style="width:1px;height:40px;background:#F0DFC2"></div>
+      <div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;color:#3A2A1C;line-height:1">1.928</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:5px">
+          <div style="width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:6.5px solid #E0923F"></div>
+          <span style="font:700 10px ui-monospace,Menlo,monospace;color:#B96F26">+1 avui</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <svg viewBox="0 0 300 64" style="width:100%;height:56px;display:block" preserveAspectRatio="none">
+        <polyline points="0,44 15,38 30,40 45,30 60,24 75,27 90,17 105,20 120,10 135,13 150,6 165,9 180,3 195,7 210,2 225,5 240,1 255,4 270,1 285,3 300,1" fill="none" stroke="#8A2638" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        <polygon points="0,44 15,38 30,40 45,30 60,24 75,27 90,17 105,20 120,10 135,13 150,6 165,9 180,3 195,7 210,2 225,5 240,1 255,4 270,1 285,3 300,1 300,64 0,64" fill="rgba(138,38,56,.08)"></polygon>
+      </svg>
+      <div style="display:flex;justify-content:space-between;margin-top:4px">
+        <span style="font:600 8.5px ui-monospace,Menlo,monospace;color:#C3BAA6">SETMANA 1</span>
+        <span style="font:600 8.5px ui-monospace,Menlo,monospace;color:#C3BAA6">ARA</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div style="padding:22px 20px 20px;margin-top:auto">
+    <a href="https://www.vicens.com/ca" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#FFFAF1;color:#3A2A1C;text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;padding:16px;border-radius:16px;border:1.5px solid #3A2A1C;text-decoration:none;transition:background .15s ease,transform .15s ease" style-hover="background:#3A2A1C;color:#FFFAF1;transform:translateY(-2px)">
+      Compra'l a Vicens.com
+      <span style="font-size:15px;line-height:1">→</span>
+    </a>
+    <div style="text-align:center;font-family:'Newsreader',serif;font-style:italic;font-size:11.5px;color:#6B5A44;margin-top:9px">Surts de Torrorèndum cap a la botiga oficial.</div>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:480,&quot;height&quot;:900},&quot;intensityLevel&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:4,&quot;min&quot;:1,&quot;max&quot;:5,&quot;step&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Product&quot;},&quot;isVegan&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Dietary&quot;},&quot;isGlutenFree&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Dietary&quot;},&quot;isLactoseFree&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Dietary&quot;},&quot;isOrganic&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Dietary&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const level = Math.max(1, Math.min(5, Math.round(p.intensityLevel ?? 4)));
+    const descriptors = { 1: 'molt suau', 2: 'suau', 3: 'equilibrat', 4: 'cruixent', 5: 'molt cruixent' };
+
+    const intensitySquares = [1, 2, 3, 4, 5].map(n => ({
+      style: `width:100%;flex:1;height:11px;border-radius:3px;` + (n <= level
+        ? `background:#8A2638`
+        : `background:transparent;border:1.5px solid #E8D6B4`),
+    }));
+
+    const isVegan = p.isVegan === true;
+    const isGlutenFree = p.isGlutenFree !== false;
+    const isLactoseFree = p.isLactoseFree !== false;
+    const isOrganic = p.isOrganic === true;
+
+    const makeItem = (active, label, glyph) => ({
+      label,
+      isLeaf: glyph === 'leaf',
+      isCrossedCircle: glyph === 'crossed',
+      isStamp: glyph === 'stamp',
+      circleBg: active ? '#FDF0DE' : '#FBF2E3',
+      circleBorder: active ? '1.5px solid #EAD2A6' : '1px solid #E8D6B4',
+      glyphColor: active ? '#B96F26' : '#D8C7A8',
+      labelColor: active ? '#3A2A1C' : '#C3BAA6',
+    });
+
+    const dietaryItems = [
+      makeItem(isVegan, isVegan ? 'Vegà' : 'No vegà', 'leaf'),
+      makeItem(isGlutenFree, 'Sense gluten', 'crossed'),
+      makeItem(isLactoseFree, 'Sense lactosa', 'crossed'),
+      makeItem(isOrganic, isOrganic ? 'Ecològic' : 'No ecològic', 'stamp'),
+    ];
+
+    return {
+      intensityDescriptor: descriptors[level],
+      intensitySquares,
+      dietaryItems,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

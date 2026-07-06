@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap">
+<style>
+  body{margin:0;background:#E7E0D0;font-family:'Newsreader',Georgia,serif}
+  *{box-sizing:border-box}
+</style>
+</helmet>
+
+<div style="max-width:1040px;margin:0 auto;background:#FBF2E3;min-height:100vh;box-shadow:0 0 80px rgba(58,42,28,.12);padding:clamp(22px,5vw,64px) clamp(18px,4vw,56px) 80px" data-screen-label="Redesign Audit">
+
+  <!-- MASTHEAD -->
+  <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+    <div style="width:20px;height:20px;border-radius:50%;background:#8A2638;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:6px;height:6px;border-radius:50%;background:#EFC26E"></div></div>
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;color:#3A2A1C">torrorèndum</div>
+    <div style="width:1px;height:14px;background:#E0CFAE"></div>
+    <div style="font-family:ui-monospace,Menlo,monospace;font-weight:600;font-size:11px;letter-spacing:1.4px;color:#6B5A44">AUDITORIA · TANCAMENT · QA</div>
+  </div>
+
+  <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(30px,6vw,52px);line-height:1.04;color:#3A2A1C;margin:26px 0 0">Redisseny tancat</h1>
+  <p style="font-family:'Newsreader',serif;font-style:italic;font-size:clamp(15px,2.4vw,19px);line-height:1.5;color:#6B5A44;max-width:720px;margin:14px 0 0">Passada final. Totes les troballes obertes s'han corregit al codi i re-verificades una a una. El bloqueig del Quadre està resolt, el motor de la share-card està unificat, i no queda cap color, tipografia o valor fora del sistema bloquejat (Direcció 1c). El redisseny està a punt d'enviar-se.</p>
+
+  <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:24px">
+    <div style="background:#FFFAF1;border:1px solid #E8D6B4;border-radius:10px;padding:9px 14px;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:#6B5A44">24 artefactes · re-verificats al codi</div>
+    <div style="background:#FFFAF1;border:1px solid #E8D6B4;border-radius:10px;padding:9px 14px;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:#6B5A44">Totes les troballes · resoltes</div>
+    <div style="background:#FBF2E3;border:1.5px solid #5E7A4A;border-radius:10px;padding:9px 14px;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:#3A2A1C">Veredicte: a punt d'enviar</div>
+  </div>
+
+  <!-- VERDICT BANNER -->
+  <div style="margin-top:22px;background:#FFFAF1;border:1px solid #E8D6B4;border-left:4px solid #5E7A4A;border-radius:14px;padding:clamp(16px,3vw,22px)">
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(16px,2.6vw,19px);color:#3A2A1C">Veredicte: sistema net, sense bloquejos</div>
+    <p style="font-size:clamp(13.5px,2.2vw,15px);line-height:1.6;color:#6B5A44;margin:8px 0 0;max-width:820px">El Quadre ja no es retalla en mòbil: viu dins un contenidor amb scroll horitzontal i una pista visible, i els seus connectors usen el token de vora canònic. La Revelació ja no reimplementa res — munta la Story Card real (variant reveal), com el Wrapped, així que la mateixa targeta que l'usuari comparteix és la que veu a l'app. Els darrers colors fora de norma (near-white del Panell, glif de tendència, vora de la Gran Final, punts de porta de l'Advent) s'han reassignat a tokens documentats, i els objectius tàctils de la barra de navegació arriben a 44 px. <strong style="color:#3A2A1C">No queda cap troballa oberta amb acció pendent.</strong></p>
+  </div>
+
+  <!-- RESOLVED -->
+  <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(22px,4vw,30px);color:#3A2A1C;margin:52px 0 0">Corregit en aquesta passada</h2>
+  <p style="font-size:15px;line-height:1.55;color:#6B5A44;margin:10px 0 0;max-width:720px">Cada punt s'ha editat a la pantalla real i verificat al codi.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-top:20px">
+    <sc-for list="{{ resolved }}" as="r" hint-placeholder-count="7">
+      <div style="background:#FFFAF1;border:1px solid #E8D6B4;border-radius:16px;padding:clamp(14px,2.4vw,18px);display:flex;gap:11px;align-items:flex-start">
+        <div style="width:18px;height:18px;border-radius:50%;background:#5E7A4A;flex:none;margin-top:2px;display:flex;align-items:center;justify-content:center"><div style="width:7px;height:4px;border-left:1.6px solid #FFFAF1;border-bottom:1.6px solid #FFFAF1;transform:rotate(-45deg) translate(0,-1px)"></div></div>
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="{{ r.chip }}">{{ r.sev }}</span>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14.5px;color:#3A2A1C;line-height:1.25">{{ r.title }}</div>
+          </div>
+          <div style="font-size:13px;line-height:1.5;color:#6B5A44;margin-top:6px">{{ r.detail }}</div>
+          <div style="font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.4px;color:#8A7458;margin-top:7px">{{ r.where }}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- PER-SCREEN VERIFICATION -->
+  <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(22px,4vw,30px);color:#3A2A1C;margin:56px 0 0">Verificació per pantalla</h2>
+  <p style="font-size:15px;line-height:1.55;color:#6B5A44;margin:10px 0 0;max-width:720px">Estat final de cada artefacte respecte del sistema bloquejat.</p>
+  <div style="margin-top:18px;background:#FFFAF1;border:1px solid #E8D6B4;border-radius:16px;overflow:hidden">
+    <div style="display:grid;grid-template-columns:1.2fr 2fr;gap:10px;padding:12px 18px;background:#F0DFC2;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10px;letter-spacing:.6px;color:#6B5A44">
+      <div>ARTEFACTE</div><div>ESTAT FINAL</div>
+    </div>
+    <sc-for list="{{ verify }}" as="v" hint-placeholder-count="8">
+      <div style="display:grid;grid-template-columns:1.2fr 2fr;gap:10px;padding:13px 18px;border-top:1px solid #F0DFC2;align-items:center">
+        <div style="display:flex;align-items:center;gap:8px;min-width:0">
+          <div style="width:15px;height:15px;border-radius:50%;background:#5E7A4A;flex:none;display:flex;align-items:center;justify-content:center"><div style="width:6px;height:3px;border-left:1.5px solid #FFFAF1;border-bottom:1.5px solid #FFFAF1;transform:rotate(-45deg) translate(0,-1px)"></div></div>
+          <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;color:#3A2A1C">{{ v.name }}</span>
+        </div>
+        <div style="font-size:12.5px;line-height:1.45;color:#6B5A44">{{ v.note }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- ACCEPTED AS-IS -->
+  <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(22px,4vw,30px);color:#3A2A1C;margin:56px 0 0">Acceptat conscientment</h2>
+  <p style="font-size:15px;line-height:1.55;color:#6B5A44;margin:10px 0 0;max-width:720px">No són desviacions: decisions de disseny que deixem tal com estan, documentades perquè no es reobrin per error.</p>
+  <div style="display:flex;flex-direction:column;gap:12px;margin-top:18px">
+    <sc-for list="{{ accepted }}" as="a" hint-placeholder-count="2">
+      <div style="background:#FDF0DE;border:1.5px dashed #E0923F;border-radius:14px;padding:15px 18px">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13.5px;color:#3A2A1C">{{ a.title }}</div>
+        <div style="font-size:13px;line-height:1.5;color:#6B5A44;margin-top:5px">{{ a.detail }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="margin-top:44px;padding-top:22px;border-top:1px solid #E8D6B4;display:flex;flex-direction:column;align-items:center;gap:8px">
+    <div style="font-family:'Newsreader',serif;font-style:italic;font-size:13px;color:#8A7458;text-align:center">Sistema bloquejat respectat a les 24 pantalles. Res pendent abans d'enviar.</div>
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;color:#8A7458">torrorèndum · auditoria tancada</div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const SEV = {
+      'CRÍTIC': '#8A2638', 'ALT': '#B96F26', 'MITJÀ': '#C79A3A', 'BAIX': '#8A7458',
+    };
+    const chip = (sev) => "display:inline-flex;align-items:center;flex:none;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9.5px;letter-spacing:.5px;color:#3A2A1C;background:#FBF2E3;border:1.5px solid " + (SEV[sev] || SEV['BAIX']) + ";border-radius:999px;padding:3px 9px";
+    const mk = (o) => ({ ...o, sev: o.s, chip: chip(o.s) });
+
+    const resolved = [
+      { s:'CRÍTIC', title:'El Quadre ja és responsiu', detail:'Els 1344 px absoluts viuen ara dins un contenidor overflow-x:auto amb pista de scroll («EL QUADRE COMPLET · llisca en horitzontal →»). A 390 px no es retalla res; tot és accessible amb scroll. Els connectors estructurals passen de #D9C7A8 al token de vora #E8D6B4.', where:'Bracket Tree' },
+      { s:'MITJÀ', title:'La Revelació munta la Story Card', detail:'S\u2019ha substituït la revelació reimplementada per un muntatge escalat de la Story Card (variant reveal), amb entrada animada dins del marc fosc de l\u2019app. Un sol motor de render per a Revelació, Wrapped i premsa — la targeta de l\u2019app i la que es comparteix són idèntiques.', where:'Reveal Moment → Story Card' },
+      { s:'BAIX', title:'Near-white i glif del Panell', detail:'El #FBF6EA dels xips de rang de dates passa a #FFFAF1 (token). El glif de tendència plana ▬ passa de #B3A182 a #8A7458 perquè el senyal «sense canvi» sigui llegible.', where:'Internal Dashboard' },
+      { s:'BAIX', title:'Restes decoratives de #B3A182', detail:'El triangle de baixada de la Classificació i el punt de porta futura de l\u2019Advent passen a #8A7458. Ja no queda #B3A182 com a element amb significat enlloc.', where:'Leaderboard · Advent Calendar' },
+      { s:'BAIX', title:'Vora de la Gran Final', detail:'La vora #6E1D2A (variant de burdeus no documentada) de la targeta Gran Final passa al burdeus canònic #8A2638.', where:'Data Page' },
+      { s:'BAIX', title:'Objectius tàctils de la navegació', detail:'El padding vertical dels ítems de la barra puja de 6 px a 10 px, portant cada objectiu tàctil a ~48 px (≥44 px).', where:'Nav Bar' },
+      { s:'ALT', title:'Tokens de facto canonitzats', detail:'#B96F26, #E7E0D0, #D8C097 i #F1EFEA/#E3E0D6 ja consten al full bloquejat (Direcció 1c, secció DERIVATS · «oficials a partir d\u2019ara»). Deixen de ser one-offs no documentats.', where:'Identity · Direcció 1c' },
+    ];
+
+    const verify = [
+      { name:'Bracket Tree', note:'Scroll horitzontal amb pista + connectors canònics. Sense retall en mòbil.' },
+      { name:'Reveal Moment', note:'Munta la Story Card (reveal). Motor de share-card unificat.' },
+      { name:'Internal Dashboard', note:'Burdeus i neutres canònics; #FBF6EA→#FFFAF1; glif ▬ llegible. KPIs auto-fit i taules amb scroll.' },
+      { name:'Story Card', note:'Motor de 3 variants net; etiquetes AA (#6B5A44). Base de Reveal, Wrapped i premsa.' },
+      { name:'Friend Leaderboard', note:'Podi condicional + estat solo honest; insígnies or/caramel/bronze; triangle #8A7458.' },
+      { name:'Advent Calendar', note:'Punts de porta #8A7458; teasers #6B5A44; bloqueig amb neutre discontinu, no burdeus.' },
+      { name:'Data Page', note:'Vora Gran Final #8A2638; xip «17 posicions» #B96F26; layout ample i xifres honestes.' },
+      { name:'Wrapped · Embed Card · Embed Strip', note:'width:100%;max-width — responsius. Foscos alineats al canònic.' },
+      { name:'Votació · Landing · Resultat', note:'Burdeus reservat; secundari #6B5A44; nav a 44 px.' },
+      { name:'Nav Bar · Streak · Countdown', note:'Components compartits amb tokens del sistema; objectius tàctils ≥44 px.' },
+    ];
+
+    const accepted = [
+      { title:'Tons festius decoratius de l\u2019Advent', detail:'#6B4A34, #4A3223, #D8AC4E i #E9D9B8 es mantenen com a decoració temàtica del calendari (fulles, fusta, daurats). No són text ni afordances i no toquen el senyal de burdeus; queden documentats com a «decoratius d\u2019Advent».' },
+      { title:'Enllaços de text secundaris in-line', detail:'Enllaços com «Veure el quadre» es deixen com a text subratllat dins del flux de lectura en comptes d\u2019inflar-los a 44 px, per no trencar la composició. Els objectius tàctils primaris (barra de navegació, botons) sí que compleixen els 44 px.' },
+    ];
+
+    return {
+      resolved: resolved.map(mk),
+      verify,
+      accepted,
+    };
+  }
+}
+</script>
+</body>
+</html>

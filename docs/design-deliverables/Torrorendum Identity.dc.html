@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=League+Spartan:wght@500;600;700;800&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<style>
+body{margin:0;background:#efe8db;font-family:system-ui,sans-serif}
+.dv-turn{padding:44px 48px 36px;border-bottom:1px solid rgba(59,42,30,.12);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:12px;margin:0 0 24px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 8px;background:#3b2a1e;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 14px/1.2 system-ui,sans-serif;color:#3b2a1e}
+.dv-opts{display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:14px;scroll-margin-top:16px}
+.dv-oid{font:700 11px ui-monospace,Menlo,monospace;padding:4px 8px;background:rgba(59,42,30,.1);color:#3b2a1e;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 12px/1.3 system-ui,sans-serif;color:rgba(59,42,30,.6)}
+.dv-opt:target .dv-oid{background:#6b1f2a;color:#fff}
+.dv-next{margin:22px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(59,42,30,.55)}
+.dv-screenrow{display:flex;gap:20px;align-items:flex-start}
+.dv-screencap{margin-top:8px;font:600 11px ui-monospace,Menlo,monospace;color:rgba(59,42,30,.55);text-align:center}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t1">
+  <div class="dv-thd">
+    <a class="dv-tid" href="#t1">1</a>
+    <span class="dv-tname">Torrorèndum visual identity — 3 directions (guide sheet + 5 key screens each)</span>
+  </div>
+  <div class="dv-opts">
+
+    <div class="dv-opt" id="1a" data-screen-label="Direction 1a — Ledger &amp; Seal">
+      <div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Ledger &amp; Seal — heritage-leaning, ticket/stamp motifs</div>
+
+      <!-- ============ GUIDE SHEET A ============ -->
+      <div style="width:1380px;background:#FBF3E6;border:1px solid #D9C7A8;border-radius:10px;padding:48px;display:flex;flex-direction:column;gap:36px;box-shadow:0 14px 40px rgba(59,42,30,.16)" data-screen-label="1a Style Guide">
+
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;border-bottom:2px solid #D9A857;padding-bottom:28px">
+          <div>
+            <div style="display:flex;align-items:center;gap:14px">
+              <div style="width:44px;height:44px;border-radius:50%;border:3px solid #D9A857;display:flex;align-items:center;justify-content:center;flex:none">
+                <div style="width:8px;height:8px;border-radius:50%;background:#D9A857"></div>
+              </div>
+              <div style="font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:52px;letter-spacing:1px;color:#3B2A1E;line-height:1">TORRORÈNDUM</div>
+            </div>
+            <div style="font-family:'Lora',Georgia,serif;font-style:italic;font-size:17px;color:#7A6650;margin:10px 0 0 58px">El referèndum del torró.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+            <div style="font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#6B1F2A">DIRECCIÓ 1A · LEDGER &amp; SEAL</div>
+            <div style="border:1.5px dashed #B8A688;border-radius:6px;padding:8px 14px;font:600 10.5px ui-monospace,Menlo,monospace;color:#8a7458;letter-spacing:.3px">amb la col·laboració de — [espai reservat]</div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#7A6650;margin-bottom:14px">TOKENS DE COLOR</div>
+          <div style="display:flex;gap:20px">
+            <div style="width:170px"><div style="height:84px;border-radius:6px;background:#F3E9D8;border:1px solid #D9C7A8"></div><div style="margin-top:8px;font:600 12px 'Lora',serif;color:#3B2A1E">Crema paper</div><div style="font:11px ui-monospace,monospace;color:#7A6650">#F3E9D8 · fons</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:6px;background:#E9DAC0;border:1px solid #D9C7A8"></div><div style="margin-top:8px;font:600 12px 'Lora',serif;color:#3B2A1E">Crema fosca</div><div style="font:11px ui-monospace,monospace;color:#7A6650">#E9DAC0 · superfície</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:6px;background:#3B2A1E"></div><div style="margin-top:8px;font:600 12px 'Lora',serif;color:#3B2A1E">Espresso</div><div style="font:11px ui-monospace,monospace;color:#7A6650">#3B2A1E · text</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:6px;background:#C8823D"></div><div style="margin-top:8px;font:600 12px 'Lora',serif;color:#3B2A1E">Caramel</div><div style="font:11px ui-monospace,monospace;color:#7A6650">#C8823D · accent</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:6px;background:#D9A857"></div><div style="margin-top:8px;font:600 12px 'Lora',serif;color:#3B2A1E">Or foli</div><div style="font:11px ui-monospace,monospace;color:#7A6650">#D9A857 · filet</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:6px;background:#6B1F2A"></div><div style="margin-top:8px;font:600 12px 'Lora',serif;color:#3B2A1E">Burdeus</div><div style="font:11px ui-monospace,monospace;color:#7A6650">#6B1F2A · competició, únic</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:6px;background:#7A6650"></div><div style="margin-top:8px;font:600 12px 'Lora',serif;color:#3B2A1E">Terra suau</div><div style="font:11px ui-monospace,monospace;color:#7A6650">#7A6650 · text secundari</div></div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#7A6650;margin-bottom:14px">ESCALA TIPOGRÀFICA — Big Shoulders Display + Lora</div>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;align-items:baseline;gap:20px"><div style="width:210px;font:11px ui-monospace,monospace;color:#7A6650">Display / 56 · Wordmark</div><div style="font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:56px;color:#3B2A1E;letter-spacing:.5px">Torró contra torró</div></div>
+            <div style="display:flex;align-items:baseline;gap:20px"><div style="width:210px;font:11px ui-monospace,monospace;color:#7A6650">Display / 22 · Etiqueta UI</div><div style="font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:22px;letter-spacing:1.5px;color:#3B2A1E">COMENÇA A VOTAR</div></div>
+            <div style="display:flex;align-items:baseline;gap:20px"><div style="width:210px;font:11px ui-monospace,monospace;color:#7A6650">Serif / 20 · Subtítol</div><div style="font-family:'Lora',serif;font-size:20px;color:#3B2A1E">Tu tries qui guanya, ronda a ronda.</div></div>
+            <div style="display:flex;align-items:baseline;gap:20px"><div style="width:210px;font:11px ui-monospace,monospace;color:#7A6650">Serif / 16 · Cos</div><div style="font-family:'Lora',serif;font-size:16px;color:#7A6650;max-width:640px">Cada any, els torrons d'Agramunt s'enfronten en duels d'un contra un fins que només en queda un. Vota, comparteix i defensa el teu preferit.</div></div>
+            <div style="display:flex;align-items:baseline;gap:20px"><div style="width:210px;font:11px ui-monospace,monospace;color:#7A6650">Serif itàlica / 14 · Nota</div><div style="font-family:'Lora',serif;font-style:italic;font-size:14px;color:#7A6650">El poble ha parlat.</div></div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#7A6650;margin-bottom:14px">BOTONS I TARGETES</div>
+          <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+            <div style="background:#C8823D;color:#3B2A1E;font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:15px;letter-spacing:1px;padding:14px 26px;border-radius:6px">VOTAR AQUEST TORRÓ</div>
+            <div style="background:transparent;color:#3B2A1E;border:2px solid #3B2A1E;font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:15px;letter-spacing:1px;padding:12px 24px;border-radius:6px">VEURE EL QUADRE</div>
+            <div style="background:#6B1F2A;color:#F3E9D8;font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:15px;letter-spacing:1px;padding:14px 26px;border-radius:6px">COMPARTEIX EL RESULTAT</div>
+            <div style="width:190px;background:#F3E9D8;border:1px solid #D9C7A8;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px">
+              <div style="height:56px;border-radius:4px;background:repeating-linear-gradient(135deg,#E9DAC0,#E9DAC0 6px,#DDCBA8 6px,#DDCBA8 12px);display:flex;align-items:center;justify-content:center"><span style="font:600 9px ui-monospace,monospace;color:#8a7458">foto torró</span></div>
+              <div style="font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:13px;color:#3B2A1E;letter-spacing:.5px">TORRÓ A</div>
+              <div style="font-family:'Lora',serif;font-size:11px;color:#7A6650">nom del torró</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#7A6650;margin-bottom:14px">ICONOGRAFIA — segells i filets, geomètrica mínima</div>
+          <div style="display:flex;gap:36px;align-items:center">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:40px;height:40px;border-radius:50%;border:3px solid #D9A857;display:flex;align-items:center;justify-content:center"><div style="width:7px;height:7px;border-radius:50%;background:#D9A857"></div></div><div style="font:11px ui-monospace,monospace;color:#7A6650">segell</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:34px;height:34px;border:3px solid #3B2A1E;border-radius:4px"></div><div style="font:11px ui-monospace,monospace;color:#7A6650">urna</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:26px;height:26px;background:#C8823D;transform:rotate(45deg);border-radius:3px"></div><div style="font:11px ui-monospace,monospace;color:#7A6650">marcador</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-bottom:22px solid #6B1F2A"></div><div style="font:11px ui-monospace,monospace;color:#7A6650">indicador</div></div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:14px;border-top:1px solid #D9C7A8;padding-top:20px">
+          <div style="font:600 11px ui-monospace,monospace;color:#7A6650;letter-spacing:.5px">MODE DE LES PANTALLES →</div>
+          <div style="display:flex;background:#E9DAC0;border-radius:999px;padding:3px;gap:2px">
+            <div onClick="{{ setLightA }}" style="{{ segLightA }}">Clar</div>
+            <div onClick="{{ setDarkA }}" style="{{ segDarkA }}">Fosc</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ SCREENS A ============ -->
+      <div class="dv-screenrow">
+
+        <div>
+          <div style="width:260px;height:562px;border-radius:28px;overflow:hidden;box-shadow:0 14px 34px rgba(59,42,30,.22);background:{{ pA.bg }};display:flex;flex-direction:column;font-family:'Lora',serif" data-screen-label="1a Home">
+            <div style="padding:22px 20px 0"><div style="display:inline-flex;align-items:center;gap:6px;background:#C8823D;color:#3B2A1E;border-radius:999px;padding:5px 12px;font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:10px;letter-spacing:1px"><div style="width:6px;height:6px;border-radius:50%;background:#3B2A1E"></div>EN VIU · RONDA 2</div></div>
+            <div style="padding:22px 20px 0">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="width:26px;height:26px;border-radius:50%;border:2px solid #D9A857;flex:none"></div>
+                <div style="font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:27px;letter-spacing:.5px;color:{{ pA.ink }};line-height:1">TORRORÈNDUM</div>
+              </div>
+              <div style="font-style:italic;font-size:12px;color:{{ pA.inkMuted }};margin-top:8px;margin-left:34px">El referèndum del torró.</div>
+            </div>
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:16px 20px">
+              <div style="width:78px;height:150px;border-radius:6px;background:repeating-linear-gradient(135deg,{{ pA.card }},{{ pA.card }} 6px,{{ pA.border }} 6px,{{ pA.border }} 12px);border:1px solid {{ pA.border }};display:flex;align-items:center;justify-content:center"><span style="font:600 8px ui-monospace,monospace;color:{{ pA.inkMuted }};writing-mode:vertical-rl">torró a</span></div>
+              <div style="width:34px;height:34px;border-radius:50%;border:2px solid #D9A857;display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-style:italic;font-weight:600;font-size:11px;color:#6B1F2A;flex:none">vs</div>
+              <div style="width:78px;height:150px;border-radius:6px;background:repeating-linear-gradient(135deg,{{ pA.card }},{{ pA.card }} 6px,{{ pA.border }} 6px,{{ pA.border }} 12px);border:1px solid {{ pA.border }};display:flex;align-items:center;justify-content:center"><span style="font:600 8px ui-monospace,monospace;color:{{ pA.inkMuted }};writing-mode:vertical-rl">torró b</span></div>
+            </div>
+            <div style="padding:0 20px 14px;display:flex;flex-direction:column;align-items:center;gap:10px">
+              <div style="width:100%;background:#C8823D;color:#3B2A1E;text-align:center;font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;padding:13px;border-radius:6px">COMENÇA A VOTAR</div>
+              <div style="font-size:11px;color:{{ pA.inkMuted }};text-decoration:underline">Veure el quadre</div>
+            </div>
+            <div style="padding:12px 20px;border-top:1px solid {{ pA.border }};display:flex;align-items:center;justify-content:center">
+              <div style="border:1.5px dashed {{ pA.border }};border-radius:5px;padding:5px 10px;font:600 8px ui-monospace,monospace;color:{{ pA.inkMuted }}">amb la col·laboració de — [espai]</div>
+            </div>
+          </div>
+          <div class="dv-screencap">HOME</div>
+        </div>
+
+        <div>
+          <div style="width:260px;height:562px;border-radius:28px;overflow:hidden;box-shadow:0 14px 34px rgba(59,42,30,.22);background:{{ pA.bg }};display:flex;flex-direction:column;font-family:'Lora',serif" data-screen-label="1a Voting">
+            <div style="padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between">
+              <div style="width:20px;height:20px;border-left:2px solid {{ pA.ink }};border-bottom:2px solid {{ pA.ink }};transform:rotate(45deg);margin-top:4px"></div>
+              <div style="font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;color:{{ pA.ink }}">RONDA 2 · DUEL 5/16</div>
+              <div style="width:20px"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:18px 20px">
+              <div style="border:1px solid {{ pA.border }};border-radius:10px;padding:14px;display:flex;gap:12px;align-items:center;background:{{ pA.card }}">
+                <div style="width:56px;height:80px;border-radius:5px;background:repeating-linear-gradient(135deg,{{ pA.bg }},{{ pA.bg }} 5px,{{ pA.border }} 5px,{{ pA.border }} 10px);flex:none"></div>
+                <div><div style="font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:15px;letter-spacing:.5px;color:{{ pA.ink }}">TORRÓ A</div><div style="font-size:10px;font-style:italic;color:{{ pA.inkMuted }}">nom del torró</div></div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:10px"><div style="flex:1;height:1px;background:{{ pA.border }}"></div><div style="width:32px;height:32px;border-radius:50%;border:2px solid #D9A857;display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-style:italic;font-weight:700;font-size:11px;color:#6B1F2A">vs</div><div style="flex:1;height:1px;background:{{ pA.border }}"></div></div>
+              <div style="border:1px solid {{ pA.border }};border-radius:10px;padding:14px;display:flex;gap:12px;align-items:center;background:{{ pA.card }}">
+                <div style="width:56px;height:80px;border-radius:5px;background:repeating-linear-gradient(135deg,{{ pA.bg }},{{ pA.bg }} 5px,{{ pA.border }} 5px,{{ pA.border }} 10px);flex:none"></div>
+                <div><div style="font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:15px;letter-spacing:.5px;color:{{ pA.ink }}">TORRÓ B</div><div style="font-size:10px;font-style:italic;color:{{ pA.inkMuted }}">nom del torró</div></div>
+              </div>
+            </div>
+            <div style="padding:0 20px 22px;text-align:center"><div style="font-size:11px;color:{{ pA.inkMuted }}">Toca la teva preferida</div></div>
+          </div>
+          <div class="dv-screencap">VOTACIÓ</div>
+        </div>
+
+        <div>
+          <div style="width:260px;height:562px;border-radius:28px;overflow:hidden;box-shadow:0 14px 34px rgba(59,42,30,.22);background:{{ pA.bg }};display:flex;flex-direction:column;font-family:'Lora',serif" data-screen-label="1a Bracket">
+            <div style="padding:20px 20px 0"><div style="font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:19px;color:{{ pA.ink }}">Quadre</div></div>
+            <div style="padding:12px 20px 0;display:flex;gap:6px">
+              <div style="flex:1;text-align:center;background:#C8823D;color:#3B2A1E;border-radius:5px;padding:5px 0;font:700 9px 'Big Shoulders Display',sans-serif;letter-spacing:.5px">VUITENS ✓</div>
+              <div style="flex:1;text-align:center;background:#C8823D;color:#3B2A1E;border-radius:5px;padding:5px 0;font:700 9px 'Big Shoulders Display',sans-serif;letter-spacing:.5px">QUARTS ✓</div>
+              <div style="flex:1;text-align:center;background:#6B1F2A;color:{{ pA.card }};border-radius:5px;padding:5px 0;font:700 9px 'Big Shoulders Display',sans-serif;letter-spacing:.5px">SEMIS</div>
+              <div style="flex:1;text-align:center;border:1px solid {{ pA.border }};color:{{ pA.inkMuted }};border-radius:5px;padding:5px 0;font:700 9px 'Big Shoulders Display',sans-serif;letter-spacing:.5px">FINAL</div>
+            </div>
+            <div style="padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:10px;letter-spacing:1px;color:{{ pA.inkMuted }};font-family:'Big Shoulders Display',sans-serif;font-weight:700">SEMIFINALS — EN JOC</div>
+              <div style="border:1px solid {{ pA.border }};border-radius:8px;padding:10px 12px;background:{{ pA.card }};display:flex;justify-content:space-between;font-size:12px"><span style="color:{{ pA.ink }};font-weight:700">Torró A</span><span style="color:{{ pA.inkMuted }}">Torró D</span></div>
+              <div style="border:1px solid {{ pA.border }};border-radius:8px;padding:10px 12px;background:{{ pA.card }};display:flex;justify-content:space-between;font-size:12px"><span style="color:{{ pA.inkMuted }}">Torró C</span><span style="color:{{ pA.ink }};font-weight:700">Torró B</span></div>
+              <div style="width:1px;height:14px;background:{{ pA.border }};margin:0 auto"></div>
+              <div style="font-size:10px;letter-spacing:1px;color:{{ pA.inkMuted }};font-family:'Big Shoulders Display',sans-serif;font-weight:700">FINAL — BLOQUEJADA</div>
+              <div style="border:1px dashed {{ pA.border }};border-radius:8px;padding:12px;background:{{ pA.bg }};display:flex;align-items:center;justify-content:center;gap:8px"><div style="width:16px;height:16px;border:2px solid {{ pA.inkMuted }};border-radius:3px"></div><span style="font-size:11px;color:{{ pA.inkMuted }}">Es desbloqueja després de les semis</span></div>
+            </div>
+          </div>
+          <div class="dv-screencap">QUADRE</div>
+        </div>
+
+        <div>
+          <div style="width:260px;height:562px;border-radius:28px;overflow:hidden;box-shadow:0 14px 34px rgba(59,42,30,.22);background:{{ pA.bg }};display:flex;flex-direction:column;font-family:'Lora',serif" data-screen-label="1a Result">
+            <div style="padding:26px 20px 0;text-align:center"><div style="display:inline-block;background:#6B1F2A;color:{{ pA.card }};font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;padding:6px 16px;border-radius:999px">GUANYADOR</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:10px 20px">
+              <div style="width:110px;height:150px;border-radius:8px;background:repeating-linear-gradient(135deg,{{ pA.card }},{{ pA.card }} 6px,{{ pA.border }} 6px,{{ pA.border }} 12px);border:2px solid #D9A857;display:flex;align-items:center;justify-content:center"><span style="font:600 9px ui-monospace,monospace;color:{{ pA.inkMuted }}">torró</span></div>
+              <div style="font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:22px;color:{{ pA.ink }}">TORRÓ A</div>
+              <div style="width:100%;display:flex;align-items:center;height:14px;border-radius:999px;overflow:hidden;border:1px solid {{ pA.border }}"><div style="width:64%;background:#6B1F2A;height:100%"></div><div style="width:36%;background:{{ pA.border }};height:100%"></div></div>
+              <div style="display:flex;justify-content:space-between;width:100%;font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:13px"><span style="color:#6B1F2A">64%</span><span style="color:{{ pA.inkMuted }}">36%</span></div>
+              <div style="font-style:italic;font-size:12px;color:{{ pA.inkMuted }}">El poble ha parlat.</div>
+            </div>
+            <div style="padding:0 20px 22px"><div style="background:#6B1F2A;color:{{ pA.card }};text-align:center;font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;padding:13px;border-radius:6px">COMPARTEIX EL RESULTAT</div></div>
+          </div>
+          <div class="dv-screencap">RESULTAT</div>
+        </div>
+
+        <div>
+          <div style="width:260px;height:562px;border-radius:28px;overflow:hidden;box-shadow:0 14px 34px rgba(59,42,30,.22);background:linear-gradient(180deg,{{ pA.bg }},{{ pA.card }});display:flex;flex-direction:column;align-items:center;font-family:'Lora',serif;position:relative" data-screen-label="1a Share Card">
+            <div style="position:absolute;top:18px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:6px"><div style="width:16px;height:16px;border-radius:50%;border:2px solid #D9A857"></div><div style="font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:14px;letter-spacing:.5px;color:{{ pA.ink }}">TORRORÈNDUM</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+              <div style="width:36px;height:36px;border-radius:50%;border:3px solid #D9A857;display:flex;align-items:center;justify-content:center;background:{{ pA.bg }}"><div style="width:8px;height:8px;border-radius:50%;background:#6B1F2A"></div></div>
+              <div style="width:130px;height:190px;border-radius:8px;background:repeating-linear-gradient(135deg,{{ pA.card }},{{ pA.card }} 6px,{{ pA.border }} 6px,{{ pA.border }} 12px);border:2px solid #D9A857"></div>
+              <div style="font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:26px;color:{{ pA.ink }}">TORRÓ A GUANYA</div>
+              <div style="font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:20px;color:#6B1F2A">64% — 36%</div>
+            </div>
+            <div style="padding:16px 0 20px;display:flex;flex-direction:column;align-items:center;gap:8px">
+              <div style="font-size:11px;color:{{ pA.inkMuted }}">#Torrorendum</div>
+              <div style="border:1.5px dashed {{ pA.border }};border-radius:5px;padding:5px 10px;font:600 8px ui-monospace,monospace;color:{{ pA.inkMuted }}">amb la col·laboració de — [espai]</div>
+            </div>
+          </div>
+          <div class="dv-screencap">TARGETA PER COMPARTIR</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="dv-opt" id="1b" data-screen-label="Direction 1b — Flavor Bracket">
+      <div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Flavor Bracket — balanced, sport/tournament energy</div>
+
+      <!-- ============ GUIDE SHEET B ============ -->
+      <div style="width:1380px;background:#FDF6EB;border:1px solid #E0CFAE;border-radius:14px;padding:48px;display:flex;flex-direction:column;gap:36px;box-shadow:0 14px 40px rgba(52,40,30,.16)" data-screen-label="1b Style Guide">
+
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;border-bottom:3px solid #7A2333;padding-bottom:28px">
+          <div style="display:flex;align-items:center;gap:16px">
+            <div style="font-family:'League Spartan',sans-serif;font-weight:800;font-size:52px;letter-spacing:-1px;color:#34281E;line-height:1">Torrorèndum</div>
+            <div style="width:38px;height:38px;background:#34281E;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif;font-weight:800;font-size:13px;color:#F6EBDA;flex:none">VS</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:end;gap:8px">
+            <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#7A2333">DIRECCIÓ 1B · FLAVOR BRACKET</div>
+            <div style="border:1.5px dashed #C8B48F;border-radius:999px;padding:8px 14px;font:600 10.5px ui-monospace,Menlo,monospace;color:#7D6A54;letter-spacing:.3px">amb la col·laboració de — [espai reservat]</div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#7D6A54;margin-bottom:14px">TOKENS DE COLOR</div>
+          <div style="display:flex;gap:20px">
+            <div style="width:170px"><div style="height:84px;border-radius:12px;background:#F6EBDA;border:1px solid #E0CFAE"></div><div style="margin-top:8px;font:600 12px 'Source Serif 4',serif;color:#34281E">Crema càlida</div><div style="font:11px ui-monospace,monospace;color:#7D6A54">#F6EBDA · fons</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:12px;background:#ECDCC0;border:1px solid #E0CFAE"></div><div style="margin-top:8px;font:600 12px 'Source Serif 4',serif;color:#34281E">Crema fosca</div><div style="font:11px ui-monospace,monospace;color:#7D6A54">#ECDCC0 · superfície</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:12px;background:#34281E"></div><div style="margin-top:8px;font:600 12px 'Source Serif 4',serif;color:#34281E">Cacau fosc</div><div style="font:11px ui-monospace,monospace;color:#7D6A54">#34281E · text</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:12px;background:#D08A3E"></div><div style="margin-top:8px;font:600 12px 'Source Serif 4',serif;color:#34281E">Caramel</div><div style="font:11px ui-monospace,monospace;color:#7D6A54">#D08A3E · accent</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:12px;background:#E3B563"></div><div style="margin-top:8px;font:600 12px 'Source Serif 4',serif;color:#34281E">Or</div><div style="font:11px ui-monospace,monospace;color:#7D6A54">#E3B563 · detall</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:12px;background:#7A2333"></div><div style="margin-top:8px;font:600 12px 'Source Serif 4',serif;color:#34281E">Burdeus</div><div style="font:11px ui-monospace,monospace;color:#7D6A54">#7A2333 · competició, únic</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:12px;background:#7D6A54"></div><div style="margin-top:8px;font:600 12px 'Source Serif 4',serif;color:#34281E">Terra suau</div><div style="font:11px ui-monospace,monospace;color:#7D6A54">#7D6A54 · text secundari</div></div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#7D6A54;margin-bottom:14px">ESCALA TIPOGRÀFICA — League Spartan + Source Serif 4</div>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;align-items:baseline;gap:20px"><div style="width:210px;font:11px ui-monospace,monospace;color:#7D6A54">Display / 56 · Wordmark</div><div style="font-family:'League Spartan',sans-serif;font-weight:800;font-size:56px;color:#34281E;letter-spacing:-1px">Torró contra torró</div></div>
+            <div style="display:flex;align-items:baseline;gap:20px"><div style="width:210px;font:11px ui-monospace,monospace;color:#7D6A54">Display / 22 · Etiqueta UI</div><div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:22px;letter-spacing:1px;color:#34281E">COMENÇA A VOTAR</div></div>
+            <div style="display:flex;align-items:baseline;gap:20px"><div style="width:210px;font:11px ui-monospace,monospace;color:#7D6A54">Serif / 20 · Subtítol</div><div style="font-family:'Source Serif 4',serif;font-size:20px;color:#34281E">Tu tries qui guanya, ronda a ronda.</div></div>
+            <div style="display:flex;align-items:baseline;gap:20px"><div style="width:210px;font:11px ui-monospace,monospace;color:#7D6A54">Serif / 16 · Cos</div><div style="font-family:'Source Serif 4',serif;font-size:16px;color:#7D6A54;max-width:640px">Cada any, els torrons d'Agramunt s'enfronten en duels d'un contra un fins que només en queda un. Vota, comparteix i defensa el teu preferit.</div></div>
+            <div style="display:flex;align-items:baseline;gap:20px"><div style="width:210px;font:11px ui-monospace,monospace;color:#7D6A54">Serif itàlica / 14 · Nota</div><div style="font-family:'Source Serif 4',serif;font-style:italic;font-size:14px;color:#7D6A54">El poble ha parlat.</div></div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#7D6A54;margin-bottom:14px">BOTONS I TARGETES</div>
+          <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+            <div style="background:#D08A3E;color:#34281E;font-family:'League Spartan',sans-serif;font-weight:700;font-size:15px;letter-spacing:.5px;padding:14px 28px;border-radius:999px">VOTAR AQUEST TORRÓ</div>
+            <div style="background:transparent;color:#34281E;border:2px solid #34281E;font-family:'League Spartan',sans-serif;font-weight:700;font-size:15px;letter-spacing:.5px;padding:12px 26px;border-radius:999px">VEURE EL QUADRE</div>
+            <div style="background:#7A2333;color:#F6EBDA;font-family:'League Spartan',sans-serif;font-weight:700;font-size:15px;letter-spacing:.5px;padding:14px 28px;border-radius:999px">COMPARTEIX EL RESULTAT</div>
+            <div style="width:190px;background:#F6EBDA;border:1px solid #E0CFAE;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px">
+              <div style="height:56px;border-radius:8px;background:repeating-linear-gradient(135deg,#ECDCC0,#ECDCC0 6px,#DEC9A0 6px,#DEC9A0 12px);display:flex;align-items:center;justify-content:center"><span style="font:600 9px ui-monospace,monospace;color:#7D6A54">foto torró</span></div>
+              <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:13px;color:#34281E">TORRÓ A</div>
+              <div style="font-family:'Source Serif 4',serif;font-size:11px;color:#7D6A54">nom del torró</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#7D6A54;margin-bottom:14px">ICONOGRAFIA — marques de torneig, geomètrica robusta</div>
+          <div style="display:flex;gap:36px;align-items:center">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:38px;height:38px;background:#34281E;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif;font-weight:800;font-size:12px;color:#F6EBDA">VS</div><div style="font:11px ui-monospace,monospace;color:#7D6A54">duel</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-bottom:22px solid #D08A3E"></div><div style="font:11px ui-monospace,monospace;color:#7D6A54">avança</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:26px;height:26px;background:#E3B563;transform:rotate(45deg);border-radius:5px"></div><div style="font:11px ui-monospace,monospace;color:#7D6A54">seed</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:34px;height:34px;border-radius:50%;border:4px solid #7A2333"></div><div style="font:11px ui-monospace,monospace;color:#7D6A54">ronda</div></div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:14px;border-top:1px solid #E0CFAE;padding-top:20px">
+          <div style="font:600 11px ui-monospace,monospace;color:#7D6A54;letter-spacing:.5px">MODE DE LES PANTALLES →</div>
+          <div style="display:flex;background:#ECDCC0;border-radius:999px;padding:3px;gap:2px">
+            <div onClick="{{ setLightB }}" style="{{ segLightB }}">Clar</div>
+            <div onClick="{{ setDarkB }}" style="{{ segDarkB }}">Fosc</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ SCREENS B ============ -->
+      <div class="dv-screenrow">
+
+        <div>
+          <div style="width:260px;height:562px;border-radius:36px;overflow:hidden;box-shadow:0 14px 34px rgba(52,40,30,.22);background:{{ pB.bg }};display:flex;flex-direction:column;font-family:'Source Serif 4',serif" data-screen-label="1b Home">
+            <div style="padding:22px 20px 0"><div style="display:inline-flex;align-items:center;gap:6px;background:#D08A3E;color:#34281E;border-radius:999px;padding:5px 12px;font-family:'League Spartan',sans-serif;font-weight:700;font-size:10px;letter-spacing:.5px"><div style="width:6px;height:6px;border-radius:50%;background:#34281E"></div>EN VIU · RONDA 2</div></div>
+            <div style="padding:20px 20px 0;display:flex;align-items:center;gap:8px">
+              <div style="font-family:'League Spartan',sans-serif;font-weight:800;font-size:27px;letter-spacing:-.5px;color:{{ pB.ink }};line-height:1">Torrorèndum</div>
+              <div style="width:22px;height:22px;background:#34281E;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif;font-weight:800;font-size:8px;color:{{ pB.card }};flex:none">VS</div>
+            </div>
+            <div style="font-style:italic;font-size:12px;color:{{ pB.inkMuted }};margin:8px 20px 0">El referèndum del torró.</div>
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:16px 20px">
+              <div style="width:78px;height:150px;border-radius:12px;background:repeating-linear-gradient(135deg,{{ pB.card }},{{ pB.card }} 6px,{{ pB.border }} 6px,{{ pB.border }} 12px);border:1px solid {{ pB.border }};display:flex;align-items:center;justify-content:center"><span style="font:600 8px ui-monospace,monospace;color:{{ pB.inkMuted }};writing-mode:vertical-rl">torró a</span></div>
+              <div style="width:34px;height:34px;background:#34281E;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif;font-weight:800;font-size:11px;color:{{ pB.card }};flex:none">VS</div>
+              <div style="width:78px;height:150px;border-radius:12px;background:repeating-linear-gradient(135deg,{{ pB.card }},{{ pB.card }} 6px,{{ pB.border }} 6px,{{ pB.border }} 12px);border:1px solid {{ pB.border }};display:flex;align-items:center;justify-content:center"><span style="font:600 8px ui-monospace,monospace;color:{{ pB.inkMuted }};writing-mode:vertical-rl">torró b</span></div>
+            </div>
+            <div style="padding:0 20px 14px;display:flex;flex-direction:column;align-items:center;gap:10px">
+              <div style="width:100%;background:#D08A3E;color:#34281E;text-align:center;font-family:'League Spartan',sans-serif;font-weight:700;font-size:14px;letter-spacing:.5px;padding:13px;border-radius:999px">COMENÇA A VOTAR</div>
+              <div style="font-size:11px;color:{{ pB.inkMuted }};text-decoration:underline">Veure el quadre</div>
+            </div>
+            <div style="padding:12px 20px;border-top:1px solid {{ pB.border }};display:flex;align-items:center;justify-content:center">
+              <div style="border:1.5px dashed {{ pB.border }};border-radius:999px;padding:5px 10px;font:600 8px ui-monospace,monospace;color:{{ pB.inkMuted }}">amb la col·laboració de — [espai]</div>
+            </div>
+          </div>
+          <div class="dv-screencap">HOME</div>
+        </div>
+
+        <div>
+          <div style="width:260px;height:562px;border-radius:36px;overflow:hidden;box-shadow:0 14px 34px rgba(52,40,30,.22);background:{{ pB.bg }};display:flex;flex-direction:column;font-family:'Source Serif 4',serif" data-screen-label="1b Voting">
+            <div style="padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between">
+              <div style="width:20px;height:20px;border-left:3px solid {{ pB.ink }};border-bottom:3px solid {{ pB.ink }};transform:rotate(45deg);margin-top:4px"></div>
+              <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:11px;letter-spacing:.5px;color:{{ pB.ink }}">RONDA 2 · DUEL 5/16</div>
+              <div style="width:20px"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:18px 20px">
+              <div style="border:2px solid {{ pB.border }};border-radius:16px;padding:14px;display:flex;gap:12px;align-items:center;background:{{ pB.card }}">
+                <div style="width:56px;height:80px;border-radius:9px;background:repeating-linear-gradient(135deg,{{ pB.bg }},{{ pB.bg }} 5px,{{ pB.border }} 5px,{{ pB.border }} 10px);flex:none"></div>
+                <div><div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:15px;color:{{ pB.ink }}">TORRÓ A</div><div style="font-size:10px;font-style:italic;color:{{ pB.inkMuted }}">nom del torró</div></div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:10px"><div style="flex:1;height:1px;background:{{ pB.border }}"></div><div style="width:30px;height:30px;background:#34281E;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif;font-weight:800;font-size:10px;color:{{ pB.card }}">VS</div><div style="flex:1;height:1px;background:{{ pB.border }}"></div></div>
+              <div style="border:2px solid {{ pB.border }};border-radius:16px;padding:14px;display:flex;gap:12px;align-items:center;background:{{ pB.card }}">
+                <div style="width:56px;height:80px;border-radius:9px;background:repeating-linear-gradient(135deg,{{ pB.bg }},{{ pB.bg }} 5px,{{ pB.border }} 5px,{{ pB.border }} 10px);flex:none"></div>
+                <div><div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:15px;color:{{ pB.ink }}">TORRÓ B</div><div style="font-size:10px;font-style:italic;color:{{ pB.inkMuted }}">nom del torró</div></div>
+              </div>
+            </div>
+            <div style="padding:0 20px 22px;text-align:center"><div style="font-size:11px;color:{{ pB.inkMuted }}">Toca la teva preferida</div></div>
+          </div>
+          <div class="dv-screencap">VOTACIÓ</div>
+        </div>
+
+        <div>
+          <div style="width:260px;height:562px;border-radius:36px;overflow:hidden;box-shadow:0 14px 34px rgba(52,40,30,.22);background:{{ pB.bg }};display:flex;flex-direction:column;font-family:'Source Serif 4',serif" data-screen-label="1b Bracket">
+            <div style="padding:20px 20px 0"><div style="font-family:'League Spartan',sans-serif;font-weight:800;font-size:19px;color:{{ pB.ink }}">Quadre</div></div>
+            <div style="padding:12px 20px 0;display:flex;gap:6px">
+              <div style="flex:1;text-align:center;background:#D08A3E;color:#34281E;border-radius:999px;padding:5px 0;font:700 9px 'League Spartan',sans-serif;letter-spacing:.3px">VUITENS</div>
+              <div style="flex:1;text-align:center;background:#D08A3E;color:#34281E;border-radius:999px;padding:5px 0;font:700 9px 'League Spartan',sans-serif;letter-spacing:.3px">QUARTS</div>
+              <div style="flex:1;text-align:center;background:#7A2333;color:{{ pB.card }};border-radius:999px;padding:5px 0;font:700 9px 'League Spartan',sans-serif;letter-spacing:.3px">SEMIS</div>
+              <div style="flex:1;text-align:center;border:1px solid {{ pB.border }};color:{{ pB.inkMuted }};border-radius:999px;padding:5px 0;font:700 9px 'League Spartan',sans-serif;letter-spacing:.3px">FINAL</div>
+            </div>
+            <div style="padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:10px;letter-spacing:1px;color:{{ pB.inkMuted }};font-family:'League Spartan',sans-serif;font-weight:700">SEMIFINALS — EN JOC</div>
+              <div style="border:2px solid {{ pB.border }};border-radius:12px;padding:10px 12px;background:{{ pB.card }};display:flex;justify-content:space-between;font-size:12px"><span style="color:{{ pB.ink }};font-weight:700">Torró A</span><span style="color:{{ pB.inkMuted }}">Torró D</span></div>
+              <div style="border:2px solid {{ pB.border }};border-radius:12px;padding:10px 12px;background:{{ pB.card }};display:flex;justify-content:space-between;font-size:12px"><span style="color:{{ pB.inkMuted }}">Torró C</span><span style="color:{{ pB.ink }};font-weight:700">Torró B</span></div>
+              <div style="width:2px;height:14px;background:{{ pB.border }};margin:0 auto"></div>
+              <div style="font-size:10px;letter-spacing:1px;color:{{ pB.inkMuted }};font-family:'League Spartan',sans-serif;font-weight:700">FINAL — BLOQUEJADA</div>
+              <div style="border:2px dashed {{ pB.border }};border-radius:12px;padding:12px;background:{{ pB.bg }};display:flex;align-items:center;justify-content:center;gap:8px"><div style="width:16px;height:16px;border:3px solid {{ pB.inkMuted }};border-radius:5px"></div><span style="font-size:11px;color:{{ pB.inkMuted }}">Es desbloqueja després de les semis</span></div>
+            </div>
+          </div>
+          <div class="dv-screencap">QUADRE</div>
+        </div>
+
+        <div>
+          <div style="width:260px;height:562px;border-radius:36px;overflow:hidden;box-shadow:0 14px 34px rgba(52,40,30,.22);background:{{ pB.bg }};display:flex;flex-direction:column;font-family:'Source Serif 4',serif" data-screen-label="1b Result">
+            <div style="padding:26px 20px 0;text-align:center"><div style="display:inline-block;background:#7A2333;color:{{ pB.card }};font-family:'League Spartan',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;padding:6px 18px;border-radius:999px">GUANYADOR</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:10px 20px">
+              <div style="width:110px;height:150px;border-radius:14px;background:repeating-linear-gradient(135deg,{{ pB.card }},{{ pB.card }} 6px,{{ pB.border }} 6px,{{ pB.border }} 12px);border:3px solid #E3B563;display:flex;align-items:center;justify-content:center"><span style="font:600 9px ui-monospace,monospace;color:{{ pB.inkMuted }}">torró</span></div>
+              <div style="font-family:'League Spartan',sans-serif;font-weight:800;font-size:22px;color:{{ pB.ink }}">TORRÓ A</div>
+              <div style="width:100%;display:flex;align-items:center;height:14px;border-radius:999px;overflow:hidden;border:1px solid {{ pB.border }}"><div style="width:64%;background:#7A2333;height:100%"></div><div style="width:36%;background:{{ pB.border }};height:100%"></div></div>
+              <div style="display:flex;justify-content:space-between;width:100%;font-family:'League Spartan',sans-serif;font-weight:700;font-size:13px"><span style="color:#7A2333">64%</span><span style="color:{{ pB.inkMuted }}">36%</span></div>
+              <div style="font-style:italic;font-size:12px;color:{{ pB.inkMuted }}">El poble ha parlat.</div>
+            </div>
+            <div style="padding:0 20px 22px"><div style="background:#7A2333;color:{{ pB.card }};text-align:center;font-family:'League Spartan',sans-serif;font-weight:700;font-size:13px;letter-spacing:.5px;padding:13px;border-radius:999px">COMPARTEIX EL RESULTAT</div></div>
+          </div>
+          <div class="dv-screencap">RESULTAT</div>
+        </div>
+
+        <div>
+          <div style="width:260px;height:562px;border-radius:36px;overflow:hidden;box-shadow:0 14px 34px rgba(52,40,30,.22);background:linear-gradient(180deg,{{ pB.bg }},{{ pB.card }});display:flex;flex-direction:column;align-items:center;font-family:'Source Serif 4',serif;position:relative" data-screen-label="1b Share Card">
+            <div style="position:absolute;top:18px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:6px"><div style="font-family:'League Spartan',sans-serif;font-weight:800;font-size:14px;color:{{ pB.ink }}">Torrorèndum</div><div style="width:16px;height:16px;background:#34281E;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif;font-weight:800;font-size:6px;color:{{ pB.card }}">VS</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+              <div style="width:44px;height:44px;border-radius:50%;border:4px solid #7A2333;display:flex;align-items:center;justify-content:center"><div style="width:34px;height:34px;background:#E3B563;border-radius:50%"></div></div>
+              <div style="width:130px;height:190px;border-radius:14px;background:repeating-linear-gradient(135deg,{{ pB.card }},{{ pB.card }} 6px,{{ pB.border }} 6px,{{ pB.border }} 12px);border:3px solid #E3B563"></div>
+              <div style="font-family:'League Spartan',sans-serif;font-weight:800;font-size:26px;color:{{ pB.ink }}">TORRÓ A GUANYA</div>
+              <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:20px;color:#7A2333">64% — 36%</div>
+            </div>
+            <div style="padding:16px 0 20px;display:flex;flex-direction:column;align-items:center;gap:8px">
+              <div style="font-size:11px;color:{{ pB.inkMuted }}">#Torrorendum</div>
+              <div style="border:1.5px dashed {{ pB.border }};border-radius:999px;padding:5px 10px;font:600 8px ui-monospace,monospace;color:{{ pB.inkMuted }}">amb la col·laboració de — [espai]</div>
+            </div>
+          </div>
+          <div class="dv-screencap">TARGETA PER COMPARTIR</div>
+        </div>
+
+      </div>
+    </div>
+    <div class="dv-opt" id="1c" data-screen-label="Direction 1c — Viral Drop">
+      <div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Viral Drop — playful, internet-native flavor-drop energy</div>
+
+      <!-- ============ GUIDE SHEET C ============ -->
+      <div style="width:1380px;background:#FFFAF1;border:1px solid #E8D6B4;border-radius:28px;padding:48px;display:flex;flex-direction:column;gap:36px;box-shadow:0 14px 40px rgba(58,42,28,.16)" data-screen-label="1c Style Guide">
+
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;border-bottom:3px solid #E0923F;padding-bottom:28px">
+          <div style="display:flex;align-items:center;gap:16px">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:52px;color:#3A2A1C;line-height:1">torrorèndum</div>
+            <div style="width:46px;height:46px;border-radius:50%;background:#8A2638;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:13px;color:#FFFAF1;transform:rotate(-8deg);flex:none">VS</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:end;gap:8px">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#8A2638">DIRECCIÓ 1C · VIRAL DROP</div>
+            <div style="border:1.5px dashed #D8C097;border-radius:14px;padding:8px 14px;font:600 10.5px ui-monospace,Menlo,monospace;color:#8A7458;letter-spacing:.3px">amb la col·laboració de — [espai reservat]</div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#8A7458;margin-bottom:14px">TOKENS DE COLOR</div>
+          <div style="display:flex;flex-wrap:wrap;gap:20px;row-gap:24px">
+            <div style="width:170px"><div style="height:84px;border-radius:20px;background:#FBF2E3;border:1px solid #E8D6B4"></div><div style="margin-top:8px;font:600 12px 'Newsreader',serif;color:#3A2A1C">Crema lluminosa</div><div style="font:11px ui-monospace,monospace;color:#8A7458">#FBF2E3 · fons</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:20px;background:#F0DFC2;border:1px solid #E8D6B4"></div><div style="margin-top:8px;font:600 12px 'Newsreader',serif;color:#3A2A1C">Crema fosca</div><div style="font:11px ui-monospace,monospace;color:#8A7458">#F0DFC2 · superfície</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:20px;background:#3A2A1C"></div><div style="margin-top:8px;font:600 12px 'Newsreader',serif;color:#3A2A1C">Cacau</div><div style="font:11px ui-monospace,monospace;color:#8A7458">#3A2A1C · text</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:20px;background:#E0923F"></div><div style="margin-top:8px;font:600 12px 'Newsreader',serif;color:#3A2A1C">Caramel glaçat</div><div style="font:11px ui-monospace,monospace;color:#8A7458">#E0923F · accent</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:20px;background:#EFC26E"></div><div style="margin-top:8px;font:600 12px 'Newsreader',serif;color:#3A2A1C">Or</div><div style="font:11px ui-monospace,monospace;color:#8A7458">#EFC26E · detall</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:20px;background:#8A2638"></div><div style="margin-top:8px;font:600 12px 'Newsreader',serif;color:#3A2A1C">Burdeus</div><div style="font:11px ui-monospace,monospace;color:#8A7458">#8A2638 · competició, únic</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:20px;background:#8A7458"></div><div style="margin-top:8px;font:600 12px 'Newsreader',serif;color:#3A2A1C">Terra suau</div><div style="font:11px ui-monospace,monospace;color:#8A7458">#8A7458 · text secundari</div></div>
+            <div style="flex-basis:100%;font:600 11px ui-monospace,Menlo,monospace;color:#8A7458;letter-spacing:.4px;margin-top:4px">↳ DERIVATS · adoptats de l'ús real; oficials a partir d'ara</div>
+            <div style="width:170px"><div style="height:84px;border-radius:20px;background:#B96F26"></div><div style="margin-top:8px;font:600 12px 'Newsreader',serif;color:#3A2A1C">Caramel fosc</div><div style="font:11px ui-monospace,monospace;color:#8A7458">#B96F26 · text AA + ombra botó</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:20px;background:#6B5A44"></div><div style="margin-top:8px;font:600 12px 'Newsreader',serif;color:#3A2A1C">Terra fosc</div><div style="font:11px ui-monospace,monospace;color:#8A7458">#6B5A44 · secundari AA</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:20px;background:#E7E0D0;border:1px solid #D8C097"></div><div style="margin-top:8px;font:600 12px 'Newsreader',serif;color:#3A2A1C">Taula</div><div style="font:11px ui-monospace,monospace;color:#8A7458">#E7E0D0 · fons escriptori</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:20px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 7px,#E3E0D6 7px,#E3E0D6 14px);border:1px solid #E8D6B4"></div><div style="margin-top:8px;font:600 12px 'Newsreader',serif;color:#3A2A1C">Placeholder</div><div style="font:11px ui-monospace,monospace;color:#8A7458">#F1EFEA / #E3E0D6 · foto</div></div>
+            <div style="width:170px"><div style="height:84px;border-radius:20px;background:#FBF2E3;border:1.5px dashed #D8C097"></div><div style="margin-top:8px;font:600 12px 'Newsreader',serif;color:#3A2A1C">Vora discontínua</div><div style="font:11px ui-monospace,monospace;color:#8A7458">#D8C097 · patrocini / buit</div></div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#8A7458;margin-bottom:14px">ESCALA TIPOGRÀFICA — Bricolage Grotesque + Newsreader</div>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;align-items:baseline;gap:20px"><div style="width:210px;font:11px ui-monospace,monospace;color:#8A7458">Display / 56 · Wordmark</div><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:56px;color:#3A2A1C">Torró contra torró</div></div>
+            <div style="display:flex;align-items:baseline;gap:20px"><div style="width:210px;font:11px ui-monospace,monospace;color:#8A7458">Display / 22 · Etiqueta UI</div><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:22px;color:#3A2A1C">COMENÇA A VOTAR</div></div>
+            <div style="display:flex;align-items:baseline;gap:20px"><div style="width:210px;font:11px ui-monospace,monospace;color:#8A7458">Serif itàlica / 22 · Subtítol</div><div style="font-family:'Newsreader',serif;font-style:italic;font-size:22px;color:#3A2A1C">Tu tries qui guanya, ronda a ronda.</div></div>
+            <div style="display:flex;align-items:baseline;gap:20px"><div style="width:210px;font:11px ui-monospace,monospace;color:#8A7458">Serif / 16 · Cos</div><div style="font-family:'Newsreader',serif;font-size:16px;color:#8A7458;max-width:640px">Cada any, els torrons d'Agramunt s'enfronten en duels d'un contra un fins que només en queda un. Vota, comparteix i defensa el teu preferit.</div></div>
+            <div style="display:flex;align-items:baseline;gap:20px"><div style="width:210px;font:11px ui-monospace,monospace;color:#8A7458">Serif itàlica / 14 · Nota</div><div style="font-family:'Newsreader',serif;font-style:italic;font-size:14px;color:#8A7458">El poble ha parlat.</div></div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#8A7458;margin-bottom:14px">BOTONS I TARGETES</div>
+          <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+            <div style="background:#E0923F;color:#3A2A1C;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;padding:14px 28px;border-radius:18px;transform:rotate(-1deg)">VOTAR AQUEST TORRÓ</div>
+            <div style="background:transparent;color:#3A2A1C;border:2px solid #3A2A1C;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;padding:12px 26px;border-radius:18px">VEURE EL QUADRE</div>
+            <div style="background:#8A2638;color:#FFFAF1;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;padding:14px 28px;border-radius:18px;transform:rotate(1deg)">COMPARTEIX EL RESULTAT</div>
+            <div style="width:190px;background:#FBF2E3;border:1px solid #E8D6B4;border-radius:20px;padding:12px;display:flex;flex-direction:column;gap:8px;box-shadow:0 6px 0 #E8D6B4">
+              <div style="height:56px;border-radius:14px;background:repeating-linear-gradient(135deg,#F0DFC2,#F0DFC2 6px,#E2CB9E 6px,#E2CB9E 12px);display:flex;align-items:center;justify-content:center"><span style="font:600 9px ui-monospace,monospace;color:#8A7458">foto torró</span></div>
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;color:#3A2A1C">TORRÓ A</div>
+              <div style="font-family:'Newsreader',serif;font-style:italic;font-size:11px;color:#8A7458">nom del torró</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#8A7458;margin-bottom:14px">ICONOGRAFIA — adhesius arrodonits, lleugerament inclinats</div>
+          <div style="display:flex;gap:36px;align-items:center">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:38px;height:38px;border-radius:50%;background:#E0923F;box-shadow:3px 4px 0 #8A2638;transform:rotate(-6deg)"></div><div style="font:11px ui-monospace,monospace;color:#8A7458">adhesiu</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:34px;height:34px;border-radius:10px;background:#EFC26E;transform:rotate(8deg)"></div><div style="font:11px ui-monospace,monospace;color:#8A7458">badge</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-bottom:22px solid #8A2638;transform:rotate(-10deg)"></div><div style="font:11px ui-monospace,monospace;color:#8A7458">tendència</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:32px;height:32px;border-radius:50%;border:4px solid #3A2A1C"></div><div style="font:11px ui-monospace,monospace;color:#8A7458">ronda</div></div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:14px;border-top:1px solid #E8D6B4;padding-top:20px">
+          <div style="font:600 11px ui-monospace,monospace;color:#8A7458;letter-spacing:.5px">MODE DE LES PANTALLES →</div>
+          <div style="display:flex;background:#F0DFC2;border-radius:999px;padding:3px;gap:2px">
+            <div onClick="{{ setLightC }}" style="{{ segLightC }}">Clar</div>
+            <div onClick="{{ setDarkC }}" style="{{ segDarkC }}">Fosc</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ SCREENS C ============ -->
+      <div class="dv-screenrow">
+
+        <div>
+          <div style="width:260px;height:562px;border-radius:40px;overflow:hidden;box-shadow:0 14px 34px rgba(58,42,28,.22);background:{{ pC.bg }};display:flex;flex-direction:column;font-family:'Newsreader',serif" data-screen-label="1c Home">
+            <div style="padding:22px 20px 0"><div style="display:inline-flex;align-items:center;gap:6px;background:#E0923F;color:#3A2A1C;border-radius:999px;padding:5px 12px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10px;transform:rotate(-1deg)"><div style="width:6px;height:6px;border-radius:50%;background:#3A2A1C"></div>EN VIU · RONDA 2</div></div>
+            <div style="padding:20px 20px 0;display:flex;align-items:center;gap:8px">
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:26px;color:{{ pC.ink }};line-height:1">torrorèndum</div>
+              <div style="width:24px;height:24px;border-radius:50%;background:#8A2638;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:8px;color:{{ pC.card }};transform:rotate(-8deg);flex:none">VS</div>
+            </div>
+            <div style="font-style:italic;font-size:12px;color:{{ pC.inkMuted }};margin:8px 20px 0">El referèndum del torró.</div>
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:16px 20px">
+              <div style="width:78px;height:150px;border-radius:16px;background:repeating-linear-gradient(135deg,{{ pC.card }},{{ pC.card }} 6px,{{ pC.border }} 6px,{{ pC.border }} 12px);border:1px solid {{ pC.border }};transform:rotate(-3deg);display:flex;align-items:center;justify-content:center"><span style="font:600 8px ui-monospace,monospace;color:{{ pC.inkMuted }};writing-mode:vertical-rl">torró a</span></div>
+              <div style="width:34px;height:34px;border-radius:50%;background:#8A2638;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:11px;color:{{ pC.card }};transform:rotate(-8deg);flex:none">VS</div>
+              <div style="width:78px;height:150px;border-radius:16px;background:repeating-linear-gradient(135deg,{{ pC.card }},{{ pC.card }} 6px,{{ pC.border }} 6px,{{ pC.border }} 12px);border:1px solid {{ pC.border }};transform:rotate(3deg);display:flex;align-items:center;justify-content:center"><span style="font:600 8px ui-monospace,monospace;color:{{ pC.inkMuted }};writing-mode:vertical-rl">torró b</span></div>
+            </div>
+            <div style="padding:0 20px 14px;display:flex;flex-direction:column;align-items:center;gap:10px">
+              <div style="width:100%;background:#E0923F;color:#3A2A1C;text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;padding:13px;border-radius:18px">COMENÇA A VOTAR</div>
+              <div style="font-size:11px;color:{{ pC.inkMuted }};text-decoration:underline">Veure el quadre</div>
+            </div>
+            <div style="padding:12px 20px;border-top:1px solid {{ pC.border }};display:flex;align-items:center;justify-content:center">
+              <div style="border:1.5px dashed {{ pC.border }};border-radius:14px;padding:5px 10px;font:600 8px ui-monospace,monospace;color:{{ pC.inkMuted }}">amb la col·laboració de — [espai]</div>
+            </div>
+          </div>
+          <div class="dv-screencap">HOME</div>
+        </div>
+
+        <div>
+          <div style="width:260px;height:562px;border-radius:40px;overflow:hidden;box-shadow:0 14px 34px rgba(58,42,28,.22);background:{{ pC.bg }};display:flex;flex-direction:column;font-family:'Newsreader',serif" data-screen-label="1c Voting">
+            <div style="padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between">
+              <div style="width:20px;height:20px;border-left:3px solid {{ pC.ink }};border-bottom:3px solid {{ pC.ink }};transform:rotate(45deg);margin-top:4px"></div>
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:11px;color:{{ pC.ink }}">RONDA 2 · DUEL 5/16</div>
+              <div style="width:20px"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:18px 20px">
+              <div style="border:1px solid {{ pC.border }};border-radius:20px;padding:14px;display:flex;gap:12px;align-items:center;background:{{ pC.card }};box-shadow:0 5px 0 {{ pC.border }};transform:rotate(-1deg)">
+                <div style="width:56px;height:80px;border-radius:12px;background:repeating-linear-gradient(135deg,{{ pC.bg }},{{ pC.bg }} 5px,{{ pC.border }} 5px,{{ pC.border }} 10px);flex:none"></div>
+                <div><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;color:{{ pC.ink }}">TORRÓ A</div><div style="font-size:10px;font-style:italic;color:{{ pC.inkMuted }}">nom del torró</div></div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:10px"><div style="flex:1;height:1px;background:{{ pC.border }}"></div><div style="width:32px;height:32px;border-radius:50%;background:#8A2638;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:11px;color:{{ pC.card }};transform:rotate(-8deg)">VS</div><div style="flex:1;height:1px;background:{{ pC.border }}"></div></div>
+              <div style="border:1px solid {{ pC.border }};border-radius:20px;padding:14px;display:flex;gap:12px;align-items:center;background:{{ pC.card }};box-shadow:0 5px 0 {{ pC.border }};transform:rotate(1deg)">
+                <div style="width:56px;height:80px;border-radius:12px;background:repeating-linear-gradient(135deg,{{ pC.bg }},{{ pC.bg }} 5px,{{ pC.border }} 5px,{{ pC.border }} 10px);flex:none"></div>
+                <div><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;color:{{ pC.ink }}">TORRÓ B</div><div style="font-size:10px;font-style:italic;color:{{ pC.inkMuted }}">nom del torró</div></div>
+              </div>
+            </div>
+            <div style="padding:0 20px 22px;text-align:center"><div style="font-size:11px;color:{{ pC.inkMuted }}">Toca la teva preferida</div></div>
+          </div>
+          <div class="dv-screencap">VOTACIÓ</div>
+        </div>
+
+        <div>
+          <div style="width:260px;height:562px;border-radius:40px;overflow:hidden;box-shadow:0 14px 34px rgba(58,42,28,.22);background:{{ pC.bg }};display:flex;flex-direction:column;font-family:'Newsreader',serif" data-screen-label="1c Bracket">
+            <div style="padding:20px 20px 0"><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:19px;color:{{ pC.ink }}">Quadre</div></div>
+            <div style="padding:12px 20px 0;display:flex;gap:6px">
+              <div style="flex:1;text-align:center;background:#E0923F;color:#3A2A1C;border-radius:12px;padding:5px 0;font:700 9px 'Bricolage Grotesque',sans-serif">VUITENS</div>
+              <div style="flex:1;text-align:center;background:#E0923F;color:#3A2A1C;border-radius:12px;padding:5px 0;font:700 9px 'Bricolage Grotesque',sans-serif">QUARTS</div>
+              <div style="flex:1;text-align:center;background:#8A2638;color:{{ pC.card }};border-radius:12px;padding:5px 0;font:700 9px 'Bricolage Grotesque',sans-serif">SEMIS</div>
+              <div style="flex:1;text-align:center;border:1px solid {{ pC.border }};color:{{ pC.inkMuted }};border-radius:12px;padding:5px 0;font:700 9px 'Bricolage Grotesque',sans-serif">FINAL</div>
+            </div>
+            <div style="padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:10px;color:{{ pC.inkMuted }};font-family:'Bricolage Grotesque',sans-serif;font-weight:700">SEMIFINALS — EN JOC</div>
+              <div style="border:1px solid {{ pC.border }};border-radius:16px;padding:10px 12px;background:{{ pC.card }};display:flex;justify-content:space-between;font-size:12px;box-shadow:0 3px 0 {{ pC.border }}"><span style="color:{{ pC.ink }};font-weight:700">Torró A</span><span style="color:{{ pC.inkMuted }}">Torró D</span></div>
+              <div style="border:1px solid {{ pC.border }};border-radius:16px;padding:10px 12px;background:{{ pC.card }};display:flex;justify-content:space-between;font-size:12px;box-shadow:0 3px 0 {{ pC.border }}"><span style="color:{{ pC.inkMuted }}">Torró C</span><span style="color:{{ pC.ink }};font-weight:700">Torró B</span></div>
+              <div style="width:2px;height:14px;background:{{ pC.border }};margin:0 auto"></div>
+              <div style="font-size:10px;color:{{ pC.inkMuted }};font-family:'Bricolage Grotesque',sans-serif;font-weight:700">FINAL — BLOQUEJADA</div>
+              <div style="border:2px dashed {{ pC.border }};border-radius:16px;padding:12px;background:{{ pC.bg }};display:flex;align-items:center;justify-content:center;gap:8px"><div style="width:16px;height:16px;border-radius:6px;border:3px solid {{ pC.inkMuted }}"></div><span style="font-size:11px;color:{{ pC.inkMuted }}">Es desbloqueja després de les semis</span></div>
+            </div>
+          </div>
+          <div class="dv-screencap">QUADRE</div>
+        </div>
+
+        <div>
+          <div style="width:260px;height:562px;border-radius:40px;overflow:hidden;box-shadow:0 14px 34px rgba(58,42,28,.22);background:{{ pC.bg }};display:flex;flex-direction:column;font-family:'Newsreader',serif" data-screen-label="1c Result">
+            <div style="padding:26px 20px 0;text-align:center"><div style="display:inline-block;background:#8A2638;color:{{ pC.card }};font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:11px;padding:6px 18px;border-radius:999px;transform:rotate(-2deg)">GUANYADOR</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:10px 20px">
+              <div style="width:110px;height:150px;border-radius:18px;background:repeating-linear-gradient(135deg,{{ pC.card }},{{ pC.card }} 6px,{{ pC.border }} 6px,{{ pC.border }} 12px);border:3px solid #EFC26E;transform:rotate(-2deg);display:flex;align-items:center;justify-content:center"><span style="font:600 9px ui-monospace,monospace;color:{{ pC.inkMuted }}">torró</span></div>
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;color:{{ pC.ink }}">TORRÓ A</div>
+              <div style="width:100%;display:flex;align-items:center;height:14px;border-radius:999px;overflow:hidden;border:1px solid {{ pC.border }}"><div style="width:64%;background:#8A2638;height:100%"></div><div style="width:36%;background:{{ pC.border }};height:100%"></div></div>
+              <div style="display:flex;justify-content:space-between;width:100%;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px"><span style="color:#8A2638">64%</span><span style="color:{{ pC.inkMuted }}">36%</span></div>
+              <div style="font-style:italic;font-size:12px;color:{{ pC.inkMuted }}">El poble ha parlat.</div>
+            </div>
+            <div style="padding:0 20px 22px"><div style="background:#8A2638;color:{{ pC.card }};text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;padding:13px;border-radius:18px">COMPARTEIX EL RESULTAT</div></div>
+          </div>
+          <div class="dv-screencap">RESULTAT</div>
+        </div>
+
+        <div>
+          <div style="width:260px;height:562px;border-radius:40px;overflow:hidden;box-shadow:0 14px 34px rgba(58,42,28,.22);background:linear-gradient(180deg,{{ pC.bg }},{{ pC.card }});display:flex;flex-direction:column;align-items:center;font-family:'Newsreader',serif;position:relative" data-screen-label="1c Share Card">
+            <div style="position:absolute;top:18px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:6px"><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:14px;color:{{ pC.ink }}">torrorèndum</div><div style="width:16px;height:16px;border-radius:50%;background:#8A2638;transform:rotate(-8deg)"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+              <div style="width:40px;height:40px;border-radius:50%;background:#E0923F;box-shadow:3px 4px 0 #8A2638;transform:rotate(-8deg)"></div>
+              <div style="width:130px;height:190px;border-radius:18px;background:repeating-linear-gradient(135deg,{{ pC.card }},{{ pC.card }} 6px,{{ pC.border }} 6px,{{ pC.border }} 12px);border:3px solid #EFC26E;transform:rotate(-2deg)"></div>
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:26px;color:{{ pC.ink }}">TORRÓ A GUANYA</div>
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:20px;color:#8A2638">64% — 36%</div>
+            </div>
+            <div style="padding:16px 0 20px;display:flex;flex-direction:column;align-items:center;gap:8px">
+              <div style="font-size:11px;color:{{ pC.inkMuted }}">#Torrorendum</div>
+              <div style="border:1.5px dashed {{ pC.border }};border-radius:14px;padding:5px 10px;font:600 8px ui-monospace,monospace;color:{{ pC.inkMuted }}">amb la col·laboració de — [espai]</div>
+            </div>
+          </div>
+          <div class="dv-screencap">TARGETA PER COMPARTIR</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+  <p class="dv-next">Try next: "more like <a class="dv-oid" href="#1a">1a</a> but pill-shaped buttons" · "make <a class="dv-oid" href="#1b">1b</a>'s burgundy punchier" · "combine the icon set from <a class="dv-oid" href="#1c">1c</a> with 1a's type"</p>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { modeA: 'light', modeB: 'light', modeC: 'light' };
+
+  renderVals() {
+    const L = {
+      a: { bg: '#F3E9D8', card: '#FBF3E6', ink: '#3B2A1E', inkMuted: '#7A6650', border: '#D9C7A8' },
+      b: { bg: '#F6EBDA', card: '#FDF6EB', ink: '#34281E', inkMuted: '#7D6A54', border: '#E0CFAE' },
+      c: { bg: '#FBF2E3', card: '#FFFAF1', ink: '#3A2A1C', inkMuted: '#8A7458', border: '#E8D6B4' },
+    };
+    const D = {
+      a: { bg: '#241812', card: '#2E2018', ink: '#EFE1CB', inkMuted: '#B8A688', border: '#4A3826' },
+      b: { bg: '#201812', card: '#2A2018', ink: '#F2E6D2', inkMuted: '#BCA98C', border: '#4C3A28' },
+      c: { bg: '#1E1712', card: '#29201A', ink: '#F7EAD3', inkMuted: '#C2AD8C', border: '#4E3C28' },
+    };
+
+    const segBase = 'font-family:\'Big Shoulders Display\',sans-serif;font-weight:700;font-size:11px;letter-spacing:.5px;padding:7px 16px;border-radius:999px;cursor:pointer';
+    const segOn = (bg, fg) => `${segBase};background:${bg};color:${fg}`;
+    const segOff = (fg) => `${segBase};background:transparent;color:${fg}`;
+
+    return {
+      pA: this.state.modeA === 'light' ? L.a : D.a,
+      pB: this.state.modeB === 'light' ? L.b : D.b,
+      pC: this.state.modeC === 'light' ? L.c : D.c,
+      setLightA: () => this.setState({ modeA: 'light' }),
+      setDarkA: () => this.setState({ modeA: 'dark' }),
+      setLightB: () => this.setState({ modeB: 'light' }),
+      setDarkB: () => this.setState({ modeB: 'dark' }),
+      setLightC: () => this.setState({ modeC: 'light' }),
+      setDarkC: () => this.setState({ modeC: 'dark' }),
+      segLightA: this.state.modeA === 'light' ? segOn('#C8823D', '#3B2A1E') : segOff('#7A6650'),
+      segDarkA: this.state.modeA === 'dark' ? segOn('#3B2A1E', '#EFE1CB') : segOff('#7A6650'),
+      segLightB: this.state.modeB === 'light' ? segOn('#D08A3E', '#34281E') : segOff('#7D6A54'),
+      segDarkB: this.state.modeB === 'dark' ? segOn('#34281E', '#F2E6D2') : segOff('#7D6A54'),
+      segLightC: this.state.modeC === 'light' ? segOn('#E0923F', '#3A2A1C') : segOff('#8A7458'),
+      segDarkC: this.state.modeC === 'dark' ? segOn('#3A2A1C', '#F7EAD3') : segOff('#8A7458'),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

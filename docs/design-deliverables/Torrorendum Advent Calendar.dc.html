@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<style>
+  body{margin:0;background:#E7E0D0;background-image:radial-gradient(1100px 560px at 50% -6%,rgba(255,250,241,.6),rgba(231,224,208,0) 68%);background-attachment:fixed;font-family:'Newsreader',serif}
+  @keyframes doorShake{0%{transform:rotate(0deg)}20%{transform:rotate(-6deg)}40%{transform:rotate(5deg)}60%{transform:rotate(-4deg)}80%{transform:rotate(3deg)}100%{transform:rotate(0deg)}}
+</style>
+</helmet>
+
+<div style="max-width:480px;margin:0 auto;background:#FBF2E3;min-height:100vh;box-shadow:0 0 60px rgba(58,42,28,.12);position:relative;overflow:hidden" data-screen-label="Advent Calendar">
+
+  <dc-import name="Torrorendum Nav Bar" active-link="vota" hint-size="100%,72px"></dc-import>
+
+  <!-- HEADER -->
+  <div style="padding:22px 28px 0">
+    <div style="display:inline-flex;align-items:center;gap:6px;background:#E0923F;color:#3A2A1C;border-radius:999px;padding:6px 14px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:11px;transform:rotate(-1deg)">
+      <div style="width:6px;height:6px;border-radius:50%;background:#3A2A1C"></div>CALENDARI D'ADVENT · DIA {{ todayNum }} DE 24
+    </div>
+  </div>
+
+  <div style="padding:16px 28px 0">
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:32px;line-height:1.06;color:#3A2A1C">24 dies, 24 duels</div>
+    <div style="font-family:'Newsreader',serif;font-style:italic;font-size:15px;line-height:1.45;color:#6B5A44;margin-top:10px">Obre una porta cada dia de l'1 al 24 de desembre i vota el duel que hi amaga.</div>
+  </div>
+
+  <div style="padding:12px 28px 0">
+    <div style="font-family:'Newsreader',serif;font-size:12.5px;color:#8A7458">{{ openedCount }} portes obertes · {{ remainingCount }} per descobrir</div>
+  </div>
+
+  <!-- LEGEND -->
+  <div style="padding:16px 28px 0;display:flex;gap:16px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:6px">
+      <div style="width:14px;height:14px;border-radius:5px;background:#FFFAF1;border:1.5px solid #E8D6B4"></div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10px;color:#8A7458">OBERTA</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <div style="width:14px;height:14px;border-radius:5px;background:linear-gradient(160deg,#3A2A1C,#4A3223);border:1.5px solid #EFC26E"></div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10px;color:#8A7458">AVUI</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <div style="width:14px;height:14px;border-radius:5px;background:repeating-linear-gradient(135deg,#F5EAD3,#F5EAD3 4px,#EFE0BF 4px,#EFE0BF 8px);border:1.5px dashed #D8C097"></div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10px;color:#8A7458">TANCADA</div>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <div style="padding:18px 20px 8px;display:grid;grid-template-columns:repeat(4,1fr);gap:9px">
+    <sc-for list="{{ days }}" as="d" hint-placeholder-count="24">
+
+      <!-- PAST / OPENED -->
+      <sc-if value="{{ d.isPast }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ d.onOpen }}" style="position:relative;background:#FFFAF1;border:1.5px solid #E8D6B4;border-radius:16px;padding:8px;min-height:132px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 3px 0 #E8D6B4;cursor:pointer">
+          <div style="position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 16px 16px 0;border-color:transparent #E9D9B8 transparent transparent"></div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between">
+            <div style="background:#EFC26E;color:#3A2A1C;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:11px;padding:2px 6px;border-radius:7px;transform:rotate(-4deg)">{{ d.day }}</div>
+            <div style="width:14px;height:14px;border-radius:50%;background:#8A2638;display:flex;align-items:center;justify-content:center;margin-top:1px">
+              <div style="width:6px;height:3px;border-left:1.5px solid #FFFAF1;border-bottom:1.5px solid #FFFAF1;transform:rotate(-45deg) translate(0,-1px)"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:4px;margin:6px 0">
+            <div style="{{ d.swatchAStyle }}"></div>
+            <div style="{{ d.swatchBStyle }}"></div>
+          </div>
+          <div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9.5px;line-height:1.25;color:#3A2A1C">{{ d.title }}</div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:8.5px;color:#8A7458;margin-top:3px">{{ d.pctAStr }}% – {{ d.pctBStr }}%</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- TODAY -->
+      <sc-if value="{{ d.isToday }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ d.onOpen }}" style="position:relative;background:linear-gradient(160deg,#3A2A1C,#4A3223);border:2px solid #EFC26E;border-radius:18px;padding:9px;min-height:132px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 0 0 4px rgba(239,194,110,.22),0 8px 0 rgba(0,0,0,.22);transform:rotate(-2deg) scale(1.06);z-index:5;cursor:pointer;margin:2px 0">
+          <div style="position:absolute;top:-9px;left:8px;background:#E0923F;color:#3A2A1C;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:9px;padding:3px 9px;border-radius:6px;transform:rotate(-4deg);box-shadow:2px 2px 0 rgba(0,0,0,.18)">AVUI</div>
+          <div style="display:flex;justify-content:flex-end">
+            <div style="background:#FFFAF1;color:#3A2A1C;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:11px;padding:2px 6px;border-radius:7px;margin-top:2px">{{ d.day }}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;margin:6px 0">
+            <div style="flex:1;height:26px;border-radius:6px;background:#E0923F;border:1.5px solid #EFC26E"></div>
+            <div style="width:16px;height:16px;border-radius:50%;background:#8A2638;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:7px;color:#FFFAF1;flex:none">VS</div>
+            <div style="flex:1;height:26px;border-radius:6px;background:#6B4A34;border:1.5px solid #EFC26E"></div>
+          </div>
+          <div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10px;line-height:1.25;color:#FFFAF1">{{ d.title }}</div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:8.5px;color:#EFC26E;margin-top:4px">Toca per obrir →</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- FUTURE / LOCKED (calm) -->
+      <sc-if value="{{ d.isFutureCalm }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ d.onShake }}" style="position:relative;background:repeating-linear-gradient(135deg,#F5EAD3,#F5EAD3 8px,#EFE0BF 8px,#EFE0BF 16px);border:1.5px dashed #D8C097;border-radius:16px;padding:8px;min-height:132px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer">
+          <div style="position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 16px 16px 0;border-color:transparent #D8C097 transparent transparent"></div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between">
+            <div style="width:16px;height:16px;border-radius:50%;border:2px solid #8A7458;flex:none"></div>
+          </div>
+          <div style="text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:27px;color:#D8AC4E;text-shadow:1px 1px 0 rgba(255,255,255,.4)">{{ d.day }}</div>
+          <div>
+            <sc-if value="{{ showTeasers }}" hint-placeholder-val="{{ true }}">
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;letter-spacing:.2px;line-height:1.25;color:#6B5A44">{{ d.title }}</div>
+            </sc-if>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:9px;color:#6B5A44;margin-top:3px">S'obre el {{ d.day }} de des.</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- FUTURE / LOCKED (shaking feedback) -->
+      <sc-if value="{{ d.isFutureShaking }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ d.onShake }}" style="position:relative;background:repeating-linear-gradient(135deg,#F5EAD3,#F5EAD3 8px,#EFE0BF 8px,#EFE0BF 16px);border:1.5px dashed #D8C097;border-radius:16px;padding:8px;min-height:132px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;animation:doorShake .5s ease">
+          <div style="position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 16px 16px 0;border-color:transparent #D8C097 transparent transparent"></div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between">
+            <div style="width:16px;height:16px;border-radius:50%;border:2px solid #8A7458;flex:none"></div>
+          </div>
+          <div style="text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:27px;color:#D8AC4E;text-shadow:1px 1px 0 rgba(255,255,255,.4)">{{ d.day }}</div>
+          <div>
+            <sc-if value="{{ showTeasers }}" hint-placeholder-val="{{ true }}">
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;letter-spacing:.2px;line-height:1.25;color:#6B5A44">{{ d.title }}</div>
+            </sc-if>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:9px;color:#6B5A44;margin-top:3px">Encara tancada</div>
+          </div>
+        </div>
+      </sc-if>
+
+    </sc-for>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="padding:28px 28px 34px;display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:8px">
+    <div style="border:1.5px dashed #D8C097;border-radius:14px;padding:10px 18px;font:600 9px ui-monospace,Menlo,monospace;color:#6B5A44;letter-spacing:.3px">amb la col·laboració de — [espai reservat]</div>
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;color:#8A7458">torrorèndum · el referèndum del torró</div>
+  </div>
+
+  <!-- DETAIL MODAL -->
+  <sc-if value="{{ hasDetail }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeDetail }}" style="position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:100vh;background:rgba(58,42,28,.55);display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;z-index:50">
+      <div onClick="{{ stopClick }}" style="position:relative;width:100%;background:#FFFAF1;border-radius:24px;padding:26px;box-shadow:0 20px 50px rgba(58,42,28,.3)">
+        <div onClick="{{ closeDetail }}" style="position:absolute;top:16px;right:16px;width:26px;height:26px;border-radius:50%;background:#FBF2E3;border:1px solid #E8D6B4;display:flex;align-items:center;justify-content:center;cursor:pointer">
+          <div style="width:10px;height:10px;position:relative">
+            <div style="position:absolute;top:4px;left:0;width:10px;height:1.5px;background:#3A2A1C;transform:rotate(45deg)"></div>
+            <div style="position:absolute;top:4px;left:0;width:10px;height:1.5px;background:#3A2A1C;transform:rotate(-45deg)"></div>
+          </div>
+        </div>
+
+        <div style="font-family:ui-monospace,Menlo,monospace;font-size:10px;color:#6B5A44;letter-spacing:.5px">DIA {{ detail.day }} DE DESEMBRE</div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:20px;color:#3A2A1C;margin-top:6px;line-height:1.15">{{ detail.title }}</div>
+
+        <!-- TODAY VARIANT -->
+        <sc-if value="{{ detail.isToday }}" hint-placeholder-val="{{ false }}">
+          <div style="display:inline-flex;align-items:center;gap:6px;background:#E0923F;color:#3A2A1C;border-radius:999px;padding:5px 12px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10px;margin-top:12px;transform:rotate(-1deg)">
+            <div style="width:6px;height:6px;border-radius:50%;background:#3A2A1C"></div>OBERT AVUI
+          </div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:18px">
+            <div style="flex:1">
+              <div style="height:96px;border-radius:14px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 6px,#E3E0D6 6px,#E3E0D6 12px);border:1px solid #E3E0D6"></div>
+              <div style="text-align:center;margin-top:8px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;color:#3A2A1C">{{ detail.a }}</div>
+            </div>
+            <div style="width:32px;height:32px;border-radius:50%;background:#8A2638;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:11px;color:#FFFAF1;transform:rotate(-6deg);flex:none;box-shadow:2px 3px 0 rgba(58,42,28,.18)">VS</div>
+            <div style="flex:1">
+              <div style="height:96px;border-radius:14px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 6px,#E3E0D6 6px,#E3E0D6 12px);border:1px solid #E3E0D6"></div>
+              <div style="text-align:center;margin-top:8px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;color:#3A2A1C">{{ detail.b }}</div>
+            </div>
+          </div>
+
+          <sc-if value="{{ votedYes }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:20px;background:#F0DFC2;color:#8A7458;text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;padding:16px;border-radius:18px">VOT REGISTRAT — GRÀCIES</div>
+          </sc-if>
+          <sc-if value="{{ votedNo }}" hint-placeholder-val="{{ true }}">
+            <div onClick="{{ castVote }}" style="margin-top:20px;background:#E0923F;color:#3A2A1C;text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;padding:16px;border-radius:18px;cursor:pointer;box-shadow:0 4px 0 #B96F26">VOTA AQUEST DUEL</div>
+          </sc-if>
+        </sc-if>
+
+        <!-- PAST VARIANT -->
+        <sc-if value="{{ detail.isPast }}" hint-placeholder-val="{{ true }}">
+          <div style="display:inline-block;background:#8A2638;color:#FFFAF1;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:1.5px;padding:5px 14px;border-radius:999px;margin-top:14px">GUANYADOR</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:14px">
+            <div style="width:100px;height:96px;border-radius:14px;background:repeating-linear-gradient(135deg,#F1EFEA,#F1EFEA 6px,#E3E0D6 6px,#E3E0D6 12px);border:2px solid #EFC26E"></div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:19px;color:#3A2A1C">{{ detail.winnerName }}</div>
+          </div>
+          <div style="width:100%;display:flex;align-items:center;height:14px;border-radius:999px;overflow:hidden;border:1px solid #E8D6B4;margin-top:16px">
+            <div style="{{ detail.barAStyle }}"></div>
+            <div style="{{ detail.barBStyle }}"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px">
+            <span style="color:#8A2638">{{ detail.pctAStr }}%</span>
+            <span style="color:#8A7458">{{ detail.pctBStr }}%</span>
+          </div>
+          <div style="text-align:center;font-family:'Newsreader',serif;font-style:italic;font-size:13px;color:#8A7458;margin-top:12px">El poble ha parlat.</div>
+        </sc-if>
+
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:480,&quot;height&quot;:1300},&quot;todayOverride&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:24,&quot;step&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;showFutureTeasers&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Preview&quot;}}">
+const DAYS_DATA = [
+  { title: "El duel dels clàssics", a: "Agramunt", b: "Torró tou", pctA: 58 },
+  { title: "Torró dur contra torró tou", a: "Torró dur", b: "Torró tou", pctA: 63 },
+  { title: "Xocolata vs torró", a: "Xocolata amb ametlles", b: "Agramunt", pctA: 46 },
+  { title: "Ametlla contra avellana", a: "Ametlla marcona", b: "Avellana", pctA: 54 },
+  { title: "El duel dels golafres", a: "Praliné", b: "Trufa", pctA: 69 },
+  { title: "Crocant contra cremós", a: "Guirlache", b: "Massapà", pctA: 41 },
+  { title: "Torró de sempre vs edició limitada", a: "Torró clàssic", b: "Taronja confitada", pctA: 72 },
+  { title: "Blanc contra negre", a: "Torró blanc", b: "Xocolata negra", pctA: 38 },
+  { title: "Fruits secs vs fruita confitada", a: "Festuc i pinyons", b: "Fruites confitades", pctA: 56 },
+  { title: "Praliné contra massapà", a: "Praliné", b: "Massapà", pctA: 61 },
+  { title: "El duel de les textures", a: "Crocant", b: "Cremós", pctA: 49 },
+  { title: "Torró d'autor vs torró de tota la vida", a: "Edició d'autor", b: "Agramunt", pctA: 52 },
+  { title: "Suau contra intens", a: "Nata i nous", b: "Cafè", pctA: 57 },
+  { title: "Torró de nata vs torró de xocolata", a: "Nata i nous", b: "Xocolata amb ametlles", pctA: 44 },
+  { title: "Cruixent contra tou", a: "Guirlache", b: "Torró tou", pctA: 65 },
+  { title: "El duel de la tradició", a: "Agramunt", b: "Torró clàssic", pctA: 51 },
+  { title: "Torró amb pistatxo vs torró amb ametlla", a: "Festuc", b: "Ametlla marcona", pctA: 47 },
+  { title: "Novetat contra clàssic", a: "Menta", b: "Agramunt", pctA: 33 },
+  { title: "El duel dels golosos", a: "Caramel salat", b: "Trufa", pctA: 59 },
+  { title: "Torró negre vs torró blanc", a: "Xocolata negra", b: "Torró blanc", pctA: 62 },
+  { title: "Vuitens de l'Advent", a: "Coco", b: "Poma i canyella", pctA: 55 },
+  { title: "Quarts de l'Advent", a: "Iemes", b: "Mel i ametlla", pctA: 48 },
+  { title: "Semifinal de l'Advent", a: "Avellana", b: "Xocolata blanca", pctA: 64 },
+  { title: "L'últim duel abans de Reis", a: "Torró d'or", b: "Torró de sempre", pctA: 50 },
+];
+
+class Component extends DCLogic {
+  state = { detailDay: null, shakingDay: null, votedYes: false };
+
+  componentWillUnmount() {
+    if (this._shakeTimer) clearTimeout(this._shakeTimer);
+  }
+
+  computeToday() {
+    const override = Number(this.props.todayOverride) || 0;
+    if (override >= 1 && override <= 24) return override;
+    const now = new Date();
+    if (now.getMonth() === 11 && now.getDate() <= 24) return now.getDate();
+    return 12;
+  }
+
+  renderVals() {
+    const todayNum = this.computeToday();
+    const showTeasers = this.props.showFutureTeasers !== false;
+
+    const days = DAYS_DATA.map((raw, i) => {
+      const day = i + 1;
+      const isPast = day < todayNum;
+      const isToday = day === todayNum;
+      const isFuture = day > todayNum;
+      const pctA = raw.pctA;
+      const pctB = 100 - pctA;
+      const aWins = pctA >= 50;
+      const winColor = '#EFC26E';
+      const dimColor = '#E8D6B4';
+      return {
+        day,
+        title: raw.title,
+        a: raw.a,
+        b: raw.b,
+        pctAStr: String(pctA),
+        pctBStr: String(pctB),
+        isPast,
+        isToday,
+        isFutureCalm: isFuture && this.state.shakingDay !== day,
+        isFutureShaking: isFuture && this.state.shakingDay === day,
+        swatchAStyle: `flex:1;height:26px;border-radius:6px;background:#E0923F;border:1.5px solid ${aWins ? winColor : dimColor};opacity:${aWins ? '1' : '.55'}`,
+        swatchBStyle: `flex:1;height:26px;border-radius:6px;background:#6B4A34;border:1.5px solid ${!aWins ? winColor : dimColor};opacity:${!aWins ? '1' : '.55'}`,
+        onOpen: () => this.setState({ detailDay: day, votedYes: false }),
+        onShake: () => {
+          if (this._shakeTimer) clearTimeout(this._shakeTimer);
+          this.setState({ shakingDay: day });
+          this._shakeTimer = setTimeout(() => this.setState({ shakingDay: null }), 500);
+        },
+      };
+    });
+
+    const detailDay = this.state.detailDay;
+    let detail = null;
+    if (detailDay) {
+      const raw = DAYS_DATA[detailDay - 1];
+      const pctA = raw.pctA;
+      const pctB = 100 - pctA;
+      const aWins = pctA >= 50;
+      detail = {
+        day: detailDay,
+        title: raw.title,
+        a: raw.a,
+        b: raw.b,
+        pctAStr: String(pctA),
+        pctBStr: String(pctB),
+        isPast: detailDay < todayNum,
+        isToday: detailDay === todayNum,
+        winnerName: aWins ? raw.a : raw.b,
+        barAStyle: `width:${pctA}%;background:#8A2638;height:100%`,
+        barBStyle: `width:${pctB}%;background:#E8D6B4;height:100%`,
+      };
+    }
+
+    return {
+      todayNum,
+      openedCount: todayNum - 1,
+      remainingCount: 24 - todayNum,
+      showTeasers,
+      days,
+      hasDetail: !!detailDay,
+      detail,
+      votedYes: this.state.votedYes,
+      votedNo: !this.state.votedYes,
+      closeDetail: () => this.setState({ detailDay: null }),
+      stopClick: (e) => e.stopPropagation(),
+      castVote: () => this.setState({ votedYes: true }),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

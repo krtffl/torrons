@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<style>
+  body{margin:0;background:#241812;font-family:'Newsreader',serif}
+  @keyframes torrRevealUp{to{opacity:1;transform:none}}
+  @keyframes torrGlowPulse{0%,100%{opacity:.55;transform:translate(-50%,-50%) scale(1)}50%{opacity:.85;transform:translate(-50%,-50%) scale(1.08)}}
+</style>
+</helmet>
+
+<div style="max-width:480px;margin:0 auto;background:linear-gradient(165deg,#241812 0%,#332119 50%,#4A2130 100%);min-height:900px;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 0 60px rgba(20,12,8,.35)" data-screen-label="Reveal Moment">
+
+  <!-- ambient glow behind the card -->
+  <div style="position:absolute;top:300px;left:50%;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(239,194,110,.26) 0%,rgba(239,194,110,0) 70%);transform:translate(-50%,-50%);animation:torrGlowPulse 4.5s ease-in-out infinite;pointer-events:none"></div>
+
+  <!-- TOP BAR -->
+  <div style="position:relative;padding:22px 20px 0;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:inline-flex;align-items:center;gap:7px;border:1.5px dashed rgba(255,250,241,.35);border-radius:14px;padding:6px 12px">
+      <div style="width:6px;height:6px;border-radius:50%;background:#EFC26E"></div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9.5px;letter-spacing:1.2px;color:rgba(255,250,241,.75)">MOMENT DESTACAT</div>
+    </div>
+    <div style="position:relative;width:26px;height:26px;flex:none">
+      <div style="position:absolute;top:50%;left:50%;width:15px;height:2px;background:rgba(255,250,241,.5);transform:translate(-50%,-50%) rotate(45deg)"></div>
+      <div style="position:absolute;top:50%;left:50%;width:15px;height:2px;background:rgba(255,250,241,.5);transform:translate(-50%,-50%) rotate(-45deg)"></div>
+    </div>
+  </div>
+
+  <!-- CAPTION -->
+  <div style="position:relative;padding:20px 28px 0;text-align:center;{{ s1 }}">
+    <div style="font-family:'Newsreader',serif;font-style:italic;font-size:14px;color:rgba(255,250,241,.62)">La teva revelació, llesta per compartir</div>
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:1.5px;color:#EFC26E;margin-top:8px">MATEIXA TARGETA QUE COMPARTIRÀS</div>
+  </div>
+
+  <!-- MOUNTED STORY CARD (reveal variant — one shared render engine) -->
+  <div style="position:relative;padding:16px 0 0;display:flex;justify-content:center;{{ cardAnim }}">
+    <div style="width:420px;height:747px;overflow:hidden;border-radius:26px;box-shadow:0 22px 54px rgba(20,12,8,.5);border:1px solid rgba(239,194,110,.28)">
+      <div style="width:1080px;height:1920px;transform:scale(0.388889);transform-origin:top left">
+        <dc-import name="Torrorendum Story Card" variant="reveal" hint-size="1080px,1920px" percentile="{{ percentile }}" persona-label="{{ personaLabel }}" persona-tagline="{{ personaTagline }}" total-votes-kicker="{{ totalVotesKicker }}" top-torro-name="{{ topTorroName }}" top-torro-tag="{{ topTorroTag }}" top-torro-votes="{{ topTorroVotes }}" head-to-head="{{ headToHead }}" tieback="{{ tieback }}" short-link="{{ shortLink }}" show-sponsor="{{ showSponsor }}" sponsor-line="{{ sponsorLine }}"></dc-import>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div style="position:relative;padding:24px 24px 0;{{ s2 }}">
+    <div style="background:#EFC26E;color:#3A2A1C;text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;letter-spacing:.6px;padding:16px;border-radius:16px;box-shadow:0 6px 0 #B96F26;cursor:pointer">COMPARTEIX EL TEU RESULTAT</div>
+    <div style="text-align:center;margin-top:16px;padding:10px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;letter-spacing:.3px;color:rgba(255,250,241,.62);text-decoration:underline;cursor:pointer">Continua votant →</div>
+  </div>
+
+  <div style="height:22px"></div>
+
+</div>
+
+<sc-if value="{{ showDemo }}" hint-placeholder-val="{{ true }}">
+  <div style="max-width:480px;margin:14px auto 0;padding:0 4px;display:flex;justify-content:center">
+    <div onClick="{{ replay }}" style="font:600 11px 'Bricolage Grotesque',sans-serif;letter-spacing:.3px;color:#8A7458;background:#FFFAF1;border:1px solid #E8D6B4;border-radius:999px;padding:8px 16px;cursor:pointer">↻ Repeteix la revelació</div>
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:480,&quot;height&quot;:1160},&quot;percentile&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:1,&quot;max&quot;:50,&quot;section&quot;:&quot;Content&quot;},&quot;personaLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;ELS ATREVITS&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;personaTagline&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;que prefereix els sabors més atrevits.&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;totalVotesKicker&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:42,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:1,&quot;max&quot;:999,&quot;section&quot;:&quot;Content&quot;},&quot;topTorroName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Torró de xocolata&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Torró&quot;},&quot;topTorroTag&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;CACAU · PER ALS GOLAFRES&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Torró&quot;},&quot;topTorroVotes&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:16,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:999,&quot;section&quot;:&quot;Torró&quot;},&quot;headToHead&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;9–1&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Torró&quot;},&quot;tieback&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Cap altre torró t’ha convençut tant.&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Torró&quot;},&quot;shortLink&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;torrorendum.cat&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;General&quot;},&quot;showSponsor&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;General&quot;},&quot;sponsorLine&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;amb la col·laboració de — [espai reservat]&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;General&quot;},&quot;autoPlayReveal&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;demoControls&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+class Component extends DCLogic {
+  state = { playKey: 0 };
+
+  replay = () => {
+    this.setState((s) => ({ playKey: s.playKey + 1 }));
+  };
+
+  renderVals() {
+    const p = this.props;
+    const autoPlay = p.autoPlayReveal !== false;
+    const showDemo = p.demoControls !== false;
+
+    // alternating duration forces the CSS animation to restart on replay
+    const dur = (this.state.playKey % 2 === 0) ? '.8s' : '.81s';
+    const rise = (delayMs) => autoPlay
+      ? `opacity:0;transform:translateY(24px);animation:torrRevealUp ${dur} cubic-bezier(.19,1,.22,1) ${delayMs}ms forwards;`
+      : 'opacity:1;transform:none;';
+
+    return {
+      // forwarded to the shared Story Card render engine
+      percentile: typeof p.percentile === 'number' ? p.percentile : 8,
+      personaLabel: p.personaLabel || 'ELS ATREVITS',
+      personaTagline: p.personaTagline || 'que prefereix els sabors més atrevits.',
+      totalVotesKicker: typeof p.totalVotesKicker === 'number' ? p.totalVotesKicker : 42,
+      topTorroName: p.topTorroName || 'Torró de xocolata',
+      topTorroTag: p.topTorroTag || 'CACAU · PER ALS GOLAFRES',
+      topTorroVotes: typeof p.topTorroVotes === 'number' ? p.topTorroVotes : 16,
+      headToHead: p.headToHead || '9–1',
+      tieback: p.tieback || 'Cap altre torró t\u2019ha convençut tant.',
+      shortLink: p.shortLink || 'torrorendum.cat',
+      showSponsor: p.showSponsor !== false,
+      sponsorLine: p.sponsorLine || 'amb la col·laboració de — [espai reservat]',
+      // in-app chrome animation
+      s1: rise(80),
+      cardAnim: rise(220),
+      s2: rise(460),
+      showDemo,
+      replay: this.replay,
+    };
+  }
+}
+</script>
+</body>
+</html>

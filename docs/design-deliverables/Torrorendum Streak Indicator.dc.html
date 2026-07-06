@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Newsreader:ital,wght@0,400;1,400&display=swap">
+<style>
+  body{margin:0;background:#E7E0D0}
+  @keyframes torrRiskPulse{0%,100%{opacity:.4}50%{opacity:1}}
+</style>
+</helmet>
+
+<div style="display:inline-flex;flex-direction:column;gap:12px;align-items:flex-start;font-family:'Bricolage Grotesque',sans-serif" data-screen-label="Streak Indicator">
+
+  <div style="{{ pillStyle }}">
+    <div style="{{ flameWrapStyle }}">
+      <div style="{{ flameOuterStyle }}"></div>
+      <div style="{{ flameInnerStyle }}"></div>
+      <sc-if value="{{ atRisk }}" hint-placeholder-val="{{ false }}">
+        <div style="{{ riskDotStyle }}"></div>
+      </sc-if>
+      <sc-if value="{{ plusOne }}" hint-placeholder-val="{{ false }}">
+        <div style="{{ plusOneStyle }}">+1</div>
+      </sc-if>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:1px">
+      <div style="{{ numberStyle }}">{{ days }}</div>
+      <div style="{{ labelStyle }}">{{ labelText }}</div>
+    </div>
+  </div>
+
+  <sc-if value="{{ showDemo }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;gap:8px">
+      <div onClick="{{ simulateVote }}" style="{{ demoBtnStyle }}">Simula un vot</div>
+      <div onClick="{{ toggleAtRisk }}" style="{{ demoBtnStyle }}">{{ atRiskToggleLabel }}</div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:230,&quot;height&quot;:150},&quot;days&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:365,&quot;section&quot;:&quot;Content&quot;},&quot;atRisk&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;demoControls&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+class Component extends DCLogic {
+  state = {
+    days: typeof this.props.days === 'number' ? this.props.days : 6,
+    atRisk: !!this.props.atRisk,
+    pop: 'idle',
+    plusOne: false,
+    plusOneAnim: false,
+  };
+
+  componentDidUpdate(prevProps) {
+    if (typeof this.props.days === 'number' && this.props.days !== prevProps.days) {
+      const increased = this.props.days > (prevProps.days ?? this.props.days);
+      this.setState({ days: this.props.days });
+      if (increased) this.playPop();
+    }
+    if (typeof this.props.atRisk === 'boolean' && this.props.atRisk !== prevProps.atRisk) {
+      this.setState({ atRisk: this.props.atRisk });
+    }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this._t1);
+    clearTimeout(this._t2);
+  }
+
+  playPop = () => {
+    clearTimeout(this._t1);
+    clearTimeout(this._t2);
+    this.setState({ pop: 'up', plusOne: true, plusOneAnim: false, atRisk: false });
+    this._t1 = setTimeout(() => this.setState({ pop: 'settle', plusOneAnim: true }), 150);
+    this._t2 = setTimeout(() => this.setState({ pop: 'idle', plusOne: false, plusOneAnim: false }), 760);
+  };
+
+  simulateVote = () => {
+    this.setState((s) => ({ days: s.days + 1 }));
+    this.playPop();
+  };
+
+  toggleAtRisk = () => this.setState((s) => ({ atRisk: !s.atRisk, pop: 'idle', plusOne: false }));
+
+  renderVals() {
+    const s = this.state;
+    const showDemo = this.props.demoControls !== false;
+
+    const popScale = s.pop === 'up' ? 1.32 : 1;
+    const popRotate = s.pop === 'up' ? -8 : 0;
+    const popTransition = s.pop === 'up'
+      ? 'transform .15s cubic-bezier(.34,1.56,.64,1), box-shadow .05s linear'
+      : 'transform .5s cubic-bezier(.34,1.56,.64,1), box-shadow .6s ease-out';
+    const glowSpread = s.pop === 'up' ? '9px' : '0px';
+    const glowShadow = `0 0 0 ${glowSpread} rgba(224,146,63,${s.pop === 'up' ? .42 : 0})`;
+
+    const pillStyle = s.atRisk
+      ? 'display:inline-flex;align-items:center;gap:9px;padding:7px 13px 7px 7px;border-radius:999px;position:relative;background:#FBEDE8;border:1.5px dashed rgba(138,38,56,.5);'
+      : 'display:inline-flex;align-items:center;gap:9px;padding:7px 13px 7px 7px;border-radius:999px;position:relative;background:#FDF0DE;border:1px solid #E8D6B4;';
+
+    const flameWrapStyle = `position:relative;width:24px;height:26px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:50%;transform:scale(${popScale}) rotate(${popRotate}deg);transition:${popTransition};box-shadow:${glowShadow};`;
+
+    const flameOuterStyle = s.atRisk
+      ? 'position:absolute;width:14px;height:14px;bottom:4px;border-radius:0 50% 50% 50%;transform:rotate(-45deg);background:transparent;border:2px solid rgba(138,38,56,.55);'
+      : 'position:absolute;width:14px;height:14px;bottom:4px;border-radius:0 50% 50% 50%;transform:rotate(-45deg);background:linear-gradient(200deg,#E0923F,#B96F26);border:none;';
+
+    const flameInnerStyle = s.atRisk
+      ? 'position:absolute;width:6px;height:6px;bottom:5px;border-radius:0 50% 50% 50%;transform:rotate(-45deg);background:rgba(138,38,56,.45);'
+      : 'position:absolute;width:6px;height:6px;bottom:5px;border-radius:0 50% 50% 50%;transform:rotate(-45deg);background:#EFC26E;';
+
+    const riskDotStyle = 'position:absolute;top:-1px;right:-1px;width:7px;height:7px;border-radius:50%;background:#8A2638;animation:torrRiskPulse 2s ease-in-out infinite;';
+
+    const plusOneStyle = `position:absolute;top:-6px;right:-10px;background:#8A2638;color:#FFFAF1;font:800 9px 'Bricolage Grotesque',sans-serif;padding:1px 5px;border-radius:999px;pointer-events:none;transition:transform .65s cubic-bezier(.2,.8,.2,1), opacity .65s ease;transform:translateY(${s.plusOneAnim ? '-16px' : '0'});opacity:${s.plusOneAnim ? 0 : 1};`;
+
+    const numberStyle = `font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:16px;line-height:1;color:#3A2A1C;`;
+
+    const labelStyle = s.atRisk
+      ? `font:700 8.5px 'Bricolage Grotesque',sans-serif;letter-spacing:.4px;color:#8A2638;text-transform:uppercase;`
+      : `font:700 8.5px 'Bricolage Grotesque',sans-serif;letter-spacing:.4px;color:#8A7458;text-transform:uppercase;`;
+
+    const demoBtnStyle = 'font:600 10px \'Bricolage Grotesque\',sans-serif;letter-spacing:.3px;color:#8A7458;background:#FFFAF1;border:1px solid #E8D6B4;border-radius:999px;padding:5px 10px;cursor:pointer;white-space:nowrap;';
+
+    return {
+      days: s.days,
+      atRisk: s.atRisk,
+      plusOne: s.plusOne,
+      labelText: s.atRisk ? 'vota avui' : 'dies',
+      pillStyle,
+      flameWrapStyle,
+      flameOuterStyle,
+      flameInnerStyle,
+      riskDotStyle,
+      plusOneStyle,
+      numberStyle,
+      labelStyle,
+      showDemo,
+      demoBtnStyle,
+      atRiskToggleLabel: s.atRisk ? 'Ja he votat' : 'Simula risc',
+      simulateVote: this.simulateVote,
+      toggleAtRisk: this.toggleAtRisk,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

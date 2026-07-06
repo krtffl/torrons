@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<style>
+  body{margin:0;background:#E7E0D0;background-image:radial-gradient(1100px 560px at 50% -6%,rgba(255,250,241,.6),rgba(231,224,208,0) 68%);background-attachment:fixed;font-family:'Newsreader',serif}
+</style>
+</helmet>
+
+<div style="max-width:480px;margin:0 auto;background:#FBF2E3;min-height:100vh;box-shadow:0 0 60px rgba(58,42,28,.12);position:relative;overflow:hidden" data-screen-label="Landing Page">
+
+  <!-- HEADER -->
+  <dc-import name="Torrorendum Nav Bar" active-link="vota" hint-size="100%,72px"></dc-import>
+
+  <!-- HERO -->
+  <div style="padding:22px 28px 0">
+    <div style="display:inline-flex;align-items:center;gap:6px;background:#E0923F;color:#3A2A1C;border-radius:999px;padding:6px 14px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:11px;transform:rotate(-1deg)">
+      <div style="width:6px;height:6px;border-radius:50%;background:#3A2A1C"></div>TEMPORADA OBERTA · SETMANA 2 DE 3
+    </div>
+  </div>
+
+  <div style="padding:16px 28px 0">
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:42px;line-height:1.04;color:#3A2A1C">Quin és el millor torró?</div>
+    <div style="font-family:'Newsreader',serif;font-style:italic;font-size:17px;line-height:1.45;color:#6B5A44;margin-top:14px">Tres setmanes de votació oberta. Després, quadre eliminatori. Un sol guanyador el dia de Reis.</div>
+  </div>
+
+  <div style="padding:26px 28px 0;display:flex;align-items:center;justify-content:center;gap:14px">
+    <div style="position:relative;transform:rotate(-3deg)">
+      <div style="width:128px;height:172px;border-radius:16px;background:#F1EFEA;border:1px solid #E3E0D6;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center">
+        <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:80px;height:14px;border-radius:50%;background:radial-gradient(ellipse,rgba(58,42,28,.14),transparent 70%)"></div>
+        <div style="width:58px;height:104px;border-radius:6px;background:#E4E1D8;border:1px solid #D8D4C6"></div>
+        <div style="position:absolute;top:8px;left:8px;font:600 7px ui-monospace,Menlo,monospace;color:#A79c8a">foto producte</div>
+      </div>
+      <div style="text-align:center;margin-top:8px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;color:#3A2A1C">TORRÓ A</div>
+    </div>
+
+    <div style="width:36px;height:36px;border-radius:50%;background:#8A2638;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:12px;color:#FFFAF1;transform:rotate(-6deg);flex:none;box-shadow:2px 3px 0 rgba(58,42,28,.18)">VS</div>
+
+    <div style="position:relative;transform:rotate(3deg)">
+      <div style="width:128px;height:172px;border-radius:16px;background:#F1EFEA;border:1px solid #E3E0D6;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center">
+        <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:80px;height:14px;border-radius:50%;background:radial-gradient(ellipse,rgba(58,42,28,.14),transparent 70%)"></div>
+        <div style="width:58px;height:104px;border-radius:6px;background:#E4E1D8;border:1px solid #D8D4C6"></div>
+        <div style="position:absolute;top:8px;left:8px;font:600 7px ui-monospace,Menlo,monospace;color:#A79c8a">foto producte</div>
+      </div>
+      <div style="text-align:center;margin-top:8px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;color:#3A2A1C">TORRÓ B</div>
+    </div>
+  </div>
+
+  <div style="padding:26px 28px 0">
+    <div style="background:#E0923F;color:#3A2A1C;text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:17px;padding:17px;border-radius:20px;transform:rotate(-1deg);box-shadow:0 5px 0 #B96F26">VOTA ARA</div>
+  </div>
+
+  <!-- COUNTDOWN -->
+  <div style="margin:34px 20px 0">
+    <dc-import name="Torrorendum Countdown Widget" hint-size="100%,230px"></dc-import>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div style="padding:38px 28px 0">
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;color:#3A2A1C">Com funciona</div>
+  </div>
+
+  <div style="padding:18px 28px 0;display:flex;flex-direction:column">
+    <div style="display:flex;gap:14px">
+      <div style="display:flex;flex-direction:column;align-items:center;flex:none">
+        <div style="width:34px;height:34px;border-radius:50%;background:#E0923F;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:14px;color:#3A2A1C;transform:rotate(-6deg);flex:none">1</div>
+        <div style="width:2px;flex:1;background:#E8D6B4;margin:4px 0;min-height:32px"></div>
+      </div>
+      <div style="padding-bottom:22px">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;color:#3A2A1C">Temporada oberta</div>
+        <div style="font-family:'Newsreader',serif;font-size:14px;color:#6B5A44;margin-top:4px;line-height:1.4">Tres setmanes de duels lliures. Vota tants cops com vulguis i defensa el teu torró.</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:14px">
+      <div style="display:flex;flex-direction:column;align-items:center;flex:none">
+        <div style="width:34px;height:34px;border-radius:50%;background:#EFC26E;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:14px;color:#3A2A1C;transform:rotate(6deg);flex:none">2</div>
+        <div style="width:2px;flex:1;background:#E8D6B4;margin:4px 0;min-height:32px"></div>
+      </div>
+      <div style="padding-bottom:22px">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;color:#3A2A1C">Quadre eliminatori</div>
+        <div style="font-family:'Newsreader',serif;font-size:14px;color:#6B5A44;margin-top:4px;line-height:1.4">Els torrons més votats entren al quadre. Cada ronda n'elimina la meitat.</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:14px">
+      <div style="display:flex;flex-direction:column;align-items:center;flex:none">
+        <div style="width:34px;height:34px;border-radius:50%;background:#8A2638;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:14px;color:#FFFAF1;transform:rotate(-4deg);flex:none">3</div>
+      </div>
+      <div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;color:#3A2A1C">Gran Final</div>
+        <div style="font-family:'Newsreader',serif;font-size:14px;color:#6B5A44;margin-top:4px;line-height:1.4">El dia de Reis, un sol torró s'endú la corona. En directe.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRACKET TEASER -->
+  <div style="margin:32px 20px 0;background:#FFFAF1;border:1px solid #E8D6B4;border-radius:22px;padding:24px">
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;color:#3A2A1C;text-align:center">Així es redueix el camp</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:18px">
+      <div style="display:flex;gap:6px">
+        <div style="width:30px;height:12px;border-radius:4px;background:#F0DFC2;border:1px solid #E0CFA0"></div>
+        <div style="width:30px;height:12px;border-radius:4px;background:#F0DFC2;border:1px solid #E0CFA0"></div>
+        <div style="width:30px;height:12px;border-radius:4px;background:#F0DFC2;border:1px solid #E0CFA0"></div>
+        <div style="width:30px;height:12px;border-radius:4px;background:#F0DFC2;border:1px solid #E0CFA0"></div>
+      </div>
+      <div style="width:1px;height:10px;background:#D8C097"></div>
+      <div style="display:flex;gap:8px">
+        <div style="width:36px;height:14px;border-radius:5px;background:#EFC26E;border:1px solid #D8AC4E"></div>
+        <div style="width:36px;height:14px;border-radius:5px;background:#EFC26E;border:1px solid #D8AC4E"></div>
+      </div>
+      <div style="width:1px;height:10px;background:#D8C097"></div>
+      <div style="width:52px;height:20px;border-radius:8px;background:#8A2638;box-shadow:2px 3px 0 rgba(58,42,28,.18)"></div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:9px;letter-spacing:1.5px;color:#8A2638;margin-top:2px">CAMPIÓ</div>
+    </div>
+    <div style="font-family:'Newsreader',serif;font-style:italic;font-size:13px;color:#8A7458;text-align:center;margin-top:16px">De desenes de torrons a un sol campió, ronda a ronda.</div>
+  </div>
+
+  <!-- FINAL CTA -->
+  <div style="padding:34px 28px 0">
+    <div style="background:#E0923F;color:#3A2A1C;text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:17px;padding:17px;border-radius:20px;transform:rotate(1deg);box-shadow:0 5px 0 #B96F26">VOTA ARA</div>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="padding:28px 28px 34px;display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:8px">
+    <div style="border:1.5px dashed #D8C097;border-radius:14px;padding:10px 18px;font:600 9px ui-monospace,Menlo,monospace;color:#6B5A44;letter-spacing:.3px">amb la col·laboració de — [espai reservat]</div>
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;color:#8A7458">torrorèndum · el referèndum del torró</div>
+  </div>
+
+</div>
+
+<dc-import name="Torrorendum Onboarding" hint-size="10px,10px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+
+</script>
+</body>
+</html>
