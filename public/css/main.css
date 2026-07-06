@@ -956,6 +956,29 @@ h1, h2, h3, h4, h5, h6 {
     animation: spin 0.6s linear infinite;
 }
 
+/* Same loading affordance for the stats-page category CTA pill (kept as its
+   own rule rather than joining the shared selector list above, since that
+   list belongs to .btn/.btn-small/.category-btn/.toggle-btn). */
+.category-progress-cta.htmx-request {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.category-progress-cta.htmx-request::after {
+    content: "";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--color-text);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
 /* Torron card loading state */
 .torron-card.htmx-request {
     opacity: 0.6;
@@ -1567,100 +1590,175 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
 }
 
-.category-progress-item {
-    background-color: var(--color-white);
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-lg);
-    margin-bottom: var(--spacing-md);
-    box-shadow: var(--shadow-sm);
-    transition: all var(--transition-normal);
-    border-left: 4px solid var(--color-border-muted);
+.category-progress-card {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
 }
 
-.category-progress-item.unlocked {
-    border-left-color: var(--color-success);
+.category-progress-item {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--color-surface);
+    transition: background-color var(--transition-fast);
+}
+
+.category-progress-item:last-child {
+    border-bottom: none;
 }
 
 .category-progress-item:hover {
-    box-shadow: var(--shadow-md);
+    background-color: var(--color-background);
 }
 
-.category-progress-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing-sm);
-}
-
-.category-info {
+.category-progress-main {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
+    gap: var(--spacing-md);
 }
 
-.category-icon {
-    font-size: 1.5rem;
+.category-progress-icon {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+}
+
+.category-progress-body {
+    flex: 1;
+    min-width: 0;
 }
 
 .category-name {
-    font-size: var(--font-size-lg);
-    font-weight: 700;
-    color: var(--color-primary);
-}
-
-.category-votes {
+    font-family: var(--font-family-display);
     font-size: var(--font-size-base);
-    color: var(--color-text-light);
-}
-
-.votes-current {
     font-weight: 700;
     color: var(--color-text);
 }
 
+.category-progress-meta {
+    flex: none;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.category-votes {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-base);
+    font-weight: 800;
+    color: var(--color-text);
+    line-height: 1;
+}
+
+.votes-current {
+    font-weight: 800;
+}
+
 .votes-separator {
-    margin: 0 var(--spacing-xs);
+    margin: 0 1px;
+    font-weight: 600;
+    color: var(--color-text-light-dark);
 }
 
 .votes-required {
-    font-weight: 500;
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light-dark);
 }
 
-.votes-label {
-    margin-left: var(--spacing-xs);
+.category-progress-pill {
+    display: inline-block;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+    background-color: transparent;
+    border: 1px solid var(--color-border-dashed);
+    color: var(--color-text-light-dark);
+}
+
+.category-progress-item.unlocked .category-progress-pill {
+    background-color: var(--color-brand-gold);
+    border-color: transparent;
+    color: var(--color-text);
 }
 
 .category-progress-bar {
-    height: 12px;
-    background-color: var(--color-neutral);
-    border-radius: var(--border-radius);
+    height: 8px;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-pill);
     overflow: hidden;
-    margin-bottom: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
 }
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(to right, var(--color-primary), var(--color-primary-light));
+    border-radius: var(--radius-pill);
+    background-color: var(--color-primary);
     transition: width 0.5s ease;
 }
 
-.category-progress-footer {
+.category-progress-item.unlocked .progress-fill {
+    background-color: var(--color-competition);
+}
+
+.category-progress-actions {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+    padding-left: calc(40px + var(--spacing-md));
+}
+
+.category-progress-cta {
+    display: inline-block;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    background-color: var(--color-brand-gold);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.category-progress-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.category-progress-cta:focus-visible {
+    outline: 2px solid var(--color-competition);
+    outline-offset: 2px;
 }
 
 .progress-status {
+    font-family: var(--font-family);
+    font-style: italic;
     font-size: var(--font-size-sm);
-    font-weight: 500;
 }
 
 .progress-status.unlocked {
-    color: var(--color-success);
+    color: var(--color-text-light-dark);
 }
 
 .progress-status.locked {
-    color: var(--color-text-light);
+    color: var(--color-text-light-dark);
 }
 
 .btn-small {
@@ -1684,49 +1782,96 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: var(--spacing-xl);
 }
 
+.achievements-card {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    padding: var(--spacing-lg) var(--spacing-md);
+}
+
 .achievements-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: var(--spacing-md);
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg) var(--spacing-xs);
 }
 
 .achievement-badge {
-    background-color: var(--color-white);
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    box-shadow: var(--shadow-sm);
-    transition: all var(--transition-normal);
-}
-
-.achievement-badge.unlocked {
-    border: 2px solid var(--color-gold);
+    gap: var(--spacing-xs);
 }
 
 .achievement-badge.locked {
-    opacity: 0.5;
-    filter: grayscale(100%);
+    opacity: 0.6;
 }
 
-.achievement-badge:hover {
-    transform: scale(1.05);
+.achievement-circle {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: var(--color-placeholder-2);
+    border: 1px solid var(--color-border);
+}
+
+.achievement-badge.unlocked .achievement-circle {
+    background: linear-gradient(135deg, var(--color-brand-gold), var(--color-primary));
+    border: 2px solid var(--color-brand-gold);
+    box-shadow: var(--shadow-sticker-badge);
 }
 
 .achievement-icon {
-    font-size: 2.5rem;
-    margin-bottom: var(--spacing-sm);
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+.achievement-badge.locked .achievement-icon {
+    filter: grayscale(60%);
+}
+
+.achievement-shine {
+    position: absolute;
+    top: -40%;
+    left: -10%;
+    width: 30%;
+    height: 180%;
+    background-color: var(--color-overlay-light);
+    filter: blur(3px);
+    animation: statsAchievementShine 3.2s ease-in-out infinite;
+}
+
+@keyframes statsAchievementShine {
+    0% { transform: translateX(-120%) rotate(20deg); }
+    100% { transform: translateX(220%) rotate(20deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .achievement-shine {
+        animation: none;
+        display: none;
+    }
 }
 
 .achievement-name {
+    font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: var(--font-size-sm);
+    font-size: 0.75rem;
     color: var(--color-text);
-    margin-bottom: var(--spacing-xs);
 }
 
 .achievement-description {
-    font-size: 0.75rem;
+    font-family: var(--font-family);
+    font-style: italic;
+    font-size: 0.7rem;
+    line-height: 1.3;
     color: var(--color-text-light);
+    max-width: 100px;
 }
 
 /* Stats footer */
@@ -1743,16 +1888,21 @@ h1, h2, h3, h4, h5, h6 {
         grid-template-columns: 1fr;
     }
 
-    .category-progress-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--spacing-xs);
+    .category-progress-main {
+        flex-wrap: wrap;
     }
 
-    .category-progress-footer {
+    .category-progress-meta {
+        flex-direction: row;
+        align-items: center;
+        gap: var(--spacing-sm);
+        margin-left: calc(40px + var(--spacing-md));
+    }
+
+    .category-progress-actions {
         flex-direction: column;
         align-items: flex-start;
-        gap: var(--spacing-sm);
+        padding-left: 0;
     }
 
     .btn-small {
@@ -1768,8 +1918,190 @@ h1, h2, h3, h4, h5, h6 {
     }
 
     .achievements-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-md) 4px;
     }
+
+    .stats-hero-top {
+        align-items: flex-start;
+    }
+}
+
+/* Stats hero header (Direction 1c "Viral Drop") — new page-specific classes,
+   kept separate from the shared .stats-header/.stats-title/.stats-summary/
+   .stats-card family above (still relied on by bracket.html, advent.html,
+   friends.html and wrapped.html) so this reskin doesn't ripple into them. */
+.stats-hero {
+    margin-bottom: var(--spacing-xl);
+}
+
+.stats-hero-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.stats-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+}
+
+.stats-eyebrow-mark {
+    width: 10px;
+    height: 10px;
+    flex: none;
+    border-left: 2px solid var(--color-text);
+    border-bottom: 2px solid var(--color-text);
+    transform: rotate(45deg);
+}
+
+.stats-season-pill {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--color-surface);
+    color: var(--color-text-light);
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    padding: 5px 11px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+}
+
+.stats-hero-title {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 4vw, var(--font-size-2xl));
+    line-height: 1.1;
+    color: var(--color-text);
+    margin: var(--spacing-md) 0 0;
+}
+
+.stats-hero-subtitle {
+    font-family: var(--font-family);
+    font-style: italic;
+    font-size: var(--font-size-base);
+    color: var(--color-text-light);
+    margin: var(--spacing-xs) 0 0;
+}
+
+/* Stats summary tiles — replaces .stats-summary/.stats-card for this page only */
+.stats-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.stats-tile {
+    background-color: var(--color-card);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-sticker);
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: transform var(--transition-normal);
+}
+
+.stats-tile:hover {
+    transform: translateY(-2px);
+}
+
+.stats-tile-value {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: var(--font-size-2xl);
+    line-height: 1;
+    color: var(--color-text);
+}
+
+.stats-tile-label {
+    font-family: var(--font-family-display);
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+}
+
+.stats-tile-rank .stats-tile-value {
+    font-size: 1.3rem;
+    line-height: 1.25;
+}
+
+.stats-tile-streak {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background-color: var(--color-competition);
+    border: 2px solid var(--color-brand-gold);
+    box-shadow: var(--shadow-sticker-badge);
+}
+
+.stats-tile-streak .stats-tile-value {
+    color: var(--color-competition-contrast);
+}
+
+.stats-tile-streak .stats-tile-label {
+    color: var(--color-brand-gold);
+}
+
+/* Streak flame icon — canonical treatment, mirrors
+   docs/design-deliverables/Torrorendum Streak Indicator.dc.html (default,
+   not-at-risk state; the app has no "at risk" signal available yet). */
+.stats-streak-flame {
+    position: relative;
+    width: 26px;
+    height: 28px;
+    flex: none;
+}
+
+.stats-streak-flame-outer,
+.stats-streak-flame-inner {
+    position: absolute;
+    left: 50%;
+    border-radius: 0 50% 50% 50%;
+}
+
+.stats-streak-flame-outer {
+    width: 16px;
+    height: 16px;
+    bottom: 3px;
+    transform: translateX(-50%) rotate(-45deg);
+    background: linear-gradient(200deg, var(--color-primary), var(--color-primary-dark));
+}
+
+.stats-streak-flame-inner {
+    width: 7px;
+    height: 7px;
+    bottom: 5px;
+    transform: translateX(-50%) rotate(-45deg);
+    background-color: var(--color-brand-gold);
+}
+
+/* Small-caps section label — distinct from the shared .section-title
+   (used by bracket.html) so that rule is left untouched. */
+.stats-section-label {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-sm);
 }
 
 /* ========================================
