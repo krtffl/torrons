@@ -55,6 +55,17 @@ func TestRenderWrappedProducesValidCanvas(t *testing.T) {
 			ChampionName:          "Torró Campió del Torrorèndum",
 			MatchedChampion:       true,
 		},
+		"unlocked - champion decided but not matched": {
+			HasEnoughVotes:        true,
+			TotalVotes:            212,
+			HasBracketVotes:       true,
+			BracketRoundsVoted:    4,
+			BracketMatchesDecided: 4,
+			BracketPicksCorrect:   1,
+			HasChampion:           true,
+			ChampionName:          "Torró Sorpresa",
+			MatchedChampion:       false,
+		},
 	}
 
 	for name, data := range tests {
@@ -74,5 +85,96 @@ func TestRenderWrappedProducesValidCanvas(t *testing.T) {
 				t.Fatalf("got %dx%d, want %dx%d", bounds.Dx(), bounds.Dy(), CanvasWidth, CanvasHeight)
 			}
 		})
+	}
+}
+
+func TestWrappedFeaturedCardPriority(t *testing.T) {
+	tests := []struct {
+		name         string
+		data         WrappedData
+		wantCard     bool
+		wantHeadline string
+	}{
+		{
+			name:     "nothing available yet",
+			data:     WrappedData{HasEnoughVotes: true},
+			wantCard: false,
+		},
+		{
+			name: "unpopular pick only",
+			data: WrappedData{
+				HasEnoughVotes:    true,
+				HasUnpopularPick:  true,
+				UnpopularPickName: "Torró Atrevit",
+			},
+			wantCard:     true,
+			wantHeadline: "Torró Atrevit",
+		},
+		{
+			name: "contested duel beats unpopular pick",
+			data: WrappedData{
+				HasEnoughVotes:      true,
+				HasUnpopularPick:    true,
+				UnpopularPickName:   "Torró Atrevit",
+				HasContestedDuel:    true,
+				ContestedTorroAName: "A",
+				ContestedTorroBName: "B",
+			},
+			wantCard:     true,
+			wantHeadline: "El teu duel més ajustat",
+		},
+		{
+			name: "champion beats everything",
+			data: WrappedData{
+				HasEnoughVotes:      true,
+				HasUnpopularPick:    true,
+				HasContestedDuel:    true,
+				HasChampion:         true,
+				ChampionName:        "Torró Campió",
+				ContestedTorroAName: "A",
+				ContestedTorroBName: "B",
+			},
+			wantCard:     true,
+			wantHeadline: "Torró Campió",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			card, ok := tt.data.featuredCard()
+			if ok != tt.wantCard {
+				t.Fatalf("featuredCard() ok = %v, want %v", ok, tt.wantCard)
+			}
+			if ok && card.headline != tt.wantHeadline {
+				t.Errorf("featuredCard() headline = %q, want %q", card.headline, tt.wantHeadline)
+			}
+		})
+	}
+}
+
+func TestBracketScore(t *testing.T) {
+	if got := bracketScore(0, 0); got != "—" {
+		t.Errorf("bracketScore(0, 0) = %q, want em dash", got)
+	}
+	if got := bracketScore(2, 3); got != "2/3" {
+		t.Errorf("bracketScore(2, 3) = %q, want \"2/3\"", got)
+	}
+}
+
+func TestDotHighlightSetSpreadsEvenly(t *testing.T) {
+	set := dotHighlightSet(100, 14)
+	if len(set) != 14 {
+		t.Fatalf("dotHighlightSet(100, 14): got %d highlighted dots, want 14", len(set))
+	}
+
+	// Edge cases: 0 total/highlight must not panic or divide by zero.
+	if s := dotHighlightSet(0, 10); len(s) != 0 {
+		t.Errorf("dotHighlightSet(0, 10) = %d entries, want 0", len(s))
+	}
+	if s := dotHighlightSet(100, 0); len(s) != 0 {
+		t.Errorf("dotHighlightSet(100, 0) = %d entries, want 0", len(s))
+	}
+	if s := dotHighlightSet(100, 150); len(s) != 100 {
+		t.Errorf("dotHighlightSet(100, 150) = %d entries, want 100 (clamped)", len(s))
 	}
 }

@@ -16,6 +16,11 @@ func TestRenderPressKitProducesValidCanvas(t *testing.T) {
 			ChampionName:  "Torró d'Ametlla i Xocolata Negra 70%",
 			ChampionVotes: 1284,
 		},
+		"champion decided, huge vote total": {
+			HasChampion:   true,
+			ChampionName:  "Torró de Xocolata",
+			ChampionVotes: 842310,
+		},
 	}
 
 	for name, data := range tests {
@@ -35,5 +40,12 @@ func TestRenderPressKitProducesValidCanvas(t *testing.T) {
 				t.Fatalf("got %dx%d, want %dx%d", bounds.Dx(), bounds.Dy(), CanvasWidth, CanvasHeight)
 			}
 		})
+	}
+}
+
+func TestPressKitEmptyState(t *testing.T) {
+	f := PressKitData{HasChampion: false}.toFrame()
+	if f.empty == nil {
+		t.Fatal("toFrame() with HasChampion=false: expected empty state")
 	}
 }
