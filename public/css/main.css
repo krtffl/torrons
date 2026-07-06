@@ -3241,6 +3241,13 @@ button.arena-card-action:focus-visible {
     transform: rotate(45deg);
 }
 
+.stats-hero-badges {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+}
+
 .stats-season-pill {
     display: inline-flex;
     align-items: center;
@@ -3252,6 +3259,28 @@ button.arena-card-action:focus-visible {
     letter-spacing: 0.6px;
     text-transform: uppercase;
     padding: 5px 11px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+}
+
+/* Voter rank/level badge — this concept has no equivalent in the Personal
+   Stats mockup (docs/design-deliverables/Torrorendum Personal Stats.dc.html
+   has no rank/level element anywhere, only the 3-card Vots/Categories/Ratxa
+   summary row), so it's relocated here as a header badge rather than
+   dropped, matching the season pill's shape with a caramel accent to mark
+   it as an earned/achievement-like value rather than a neutral fact. */
+.stats-rank-pill {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--color-primary-tint);
+    color: var(--color-primary-dark);
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    padding: 5px 11px;
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-pill);
     white-space: nowrap;
 }
@@ -3273,15 +3302,20 @@ button.arena-card-action:focus-visible {
     margin: var(--spacing-xs) 0 0;
 }
 
-/* Stats summary tiles — replaces .stats-summary/.stats-card for this page only */
+/* Stats summary tiles — replaces .stats-summary/.stats-card for this page
+   only. Always exactly 3 equal cards in one row (Vots emesos / Categories
+   obertes / Ratxa actual), per the mockup's display:flex;gap:10px summary
+   row — not a wrapping grid, so the 3rd (streak) card never drops onto its
+   own line on narrow viewports. */
 .stats-tiles {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    display: flex;
     gap: var(--spacing-md);
     margin-bottom: var(--spacing-xl);
 }
 
 .stats-tile {
+    flex: 1 1 0;
+    min-width: 0;
     background-color: var(--color-card);
     border: 1.5px solid var(--color-border);
     border-radius: var(--radius-card);
@@ -3312,11 +3346,6 @@ button.arena-card-action:focus-visible {
     letter-spacing: 0.3px;
     text-transform: uppercase;
     color: var(--color-text-light);
-}
-
-.stats-tile-rank .stats-tile-value {
-    font-size: 1.3rem;
-    line-height: 1.25;
 }
 
 .stats-tile-streak {
@@ -4606,6 +4635,15 @@ button.arena-card-action:focus-visible {
 .torron-info-link:focus-visible {
     color: var(--color-primary);
     text-decoration: underline;
+}
+
+.icon-info {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    vertical-align: -2px;
+    margin-right: 2px;
+    flex-shrink: 0;
 }
 
 .entry-details .torron-info-link {
