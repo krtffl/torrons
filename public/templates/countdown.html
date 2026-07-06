@@ -1,13 +1,15 @@
 {{ define "countdown-widget" }}
 {{ if .HasEnded }}
 <div class="countdown-ended">
+    <div class="countdown-label">Resultats</div>
     <div class="countdown-icon">🎉</div>
     <div class="countdown-text">La votació ha finalitzat!</div>
     <div class="countdown-subtext">Els resultats ja estan disponibles</div>
 </div>
 {{ else if .IsActive }}
 <div class="countdown-active">
-    <div class="countdown-label">Resultats finals en:</div>
+    <div class="countdown-label">Compte enrere</div>
+    <div class="countdown-text">Queda poc per saber quin torró guanya.</div>
     <div class="countdown-timer">
         {{ if gt .DaysRemaining 0 }}
         <div class="countdown-unit">
@@ -24,10 +26,11 @@
             <div class="countdown-unit-label">minuts</div>
         </div>
     </div>
-    <div class="countdown-date">{{ .EndDateFormatted }}</div>
+    <div class="countdown-date">Resultats finals: {{ .EndDateFormatted }}</div>
 </div>
 {{ else }}
 <div class="countdown-inactive">
+    <div class="countdown-label">Torrorèndum</div>
     <div class="countdown-text">Campanya no activa</div>
 </div>
 {{ end }}
