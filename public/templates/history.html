@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/public/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
     <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Historial de votacions - Torrorèndum 2025</title>
@@ -31,9 +31,17 @@
 
 {{ define "history" }}
 <div id="history-container">
+    <div class="history-eyebrow-row">
+        <div class="history-eyebrow">
+            <span class="history-eyebrow-chevron" aria-hidden="true"></span>
+            <span>Torrorèndum · Historial</span>
+        </div>
+        {{ if .Votes }}<div class="history-count">{{ len .Votes }} vots carregats</div>{{ end }}
+    </div>
+
     <div class="history-header">
-        <h1 class="history-title">Historial de votacions</h1>
-        <p class="history-subtitle">Les teves últimes comparacions</p>
+        <h1 class="history-title">Historial de vots</h1>
+        <p class="history-subtitle">Un registre tranquil de cada tria que has fet.</p>
     </div>
 
     {{ if .Votes }}
@@ -59,33 +67,48 @@
         {{ end }}
     </div>
 
-    <!-- Vote history list -->
+    <!-- Vote history list: a quiet log of every duel, grouped by day -->
     <div class="history-list">
+        {{ $lastDay := "" }}
         {{ range .Votes }}
+        {{ $day := .Timestamp.Format "02/01/2006" }}
+        {{ if ne $day $lastDay }}
+        <div class="history-day-header">{{ $day }}</div>
+        {{ $lastDay = $day }}
+        {{ end }}
         <div class="history-item">
-            <div class="history-timestamp">
-                {{ .TimeAgo }}
-            </div>
-            <div class="history-comparison">
-                <div class="history-torron {{ if .IsWinner1 }}winner{{ else }}loser{{ end }}">
-                    <img src="/public/images/{{ .Torron1Image }}" alt="{{ .Torron1Name }}" class="history-torron-img">
-                    <div class="history-torron-info">
-                        <div class="history-torron-name">{{ .Torron1Name }}</div>
-                        {{ if .IsWinner1 }}<div class="winner-badge">✓ Escollit</div>{{ end }}
-                    </div>
+            {{ if .IsWinner1 }}
+            <img src="/public/images/{{ .Torron1Image }}" alt="" class="history-item-icon">
+            <div class="history-item-main">
+                <div class="history-item-names">
+                    <span class="history-item-winner">{{ .Torron1Name }}</span>
+                    <span class="history-item-sep">vs</span>
+                    <span class="history-item-loser">{{ .Torron2Name }}</span>
                 </div>
-                <div class="history-vs">VS</div>
-                <div class="history-torron {{ if .IsWinner2 }}winner{{ else }}loser{{ end }}">
-                    <img src="/public/images/{{ .Torron2Image }}" alt="{{ .Torron2Name }}" class="history-torron-img">
-                    <div class="history-torron-info">
-                        <div class="history-torron-name">{{ .Torron2Name }}</div>
-                        {{ if .IsWinner2 }}<div class="winner-badge">✓ Escollit</div>{{ end }}
-                    </div>
+                <div class="history-item-meta">{{ .CategoryIcon }} {{ .CategoryName }}</div>
+            </div>
+            {{ else if .IsWinner2 }}
+            <img src="/public/images/{{ .Torron2Image }}" alt="" class="history-item-icon">
+            <div class="history-item-main">
+                <div class="history-item-names">
+                    <span class="history-item-winner">{{ .Torron2Name }}</span>
+                    <span class="history-item-sep">vs</span>
+                    <span class="history-item-loser">{{ .Torron1Name }}</span>
                 </div>
+                <div class="history-item-meta">{{ .CategoryIcon }} {{ .CategoryName }}</div>
             </div>
-            <div class="history-category">
-                <span class="category-badge">{{ .CategoryIcon }} {{ .CategoryName }}</span>
+            {{ else }}
+            <img src="/public/images/{{ .Torron1Image }}" alt="" class="history-item-icon">
+            <div class="history-item-main">
+                <div class="history-item-names">
+                    <span class="history-item-winner">{{ .Torron1Name }}</span>
+                    <span class="history-item-sep">vs</span>
+                    <span class="history-item-loser">{{ .Torron2Name }}</span>
+                </div>
+                <div class="history-item-meta">{{ .CategoryIcon }} {{ .CategoryName }}</div>
             </div>
+            {{ end }}
+            <div class="history-item-time">{{ .TimeAgo }}</div>
         </div>
         {{ end }}
     </div>

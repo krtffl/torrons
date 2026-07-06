@@ -1783,108 +1783,209 @@ h1, h2, h3, h4, h5, h6 {
     animation: fadeIn 0.5s ease-in;
 }
 
-.history-header {
-    text-align: center;
-    margin-bottom: var(--spacing-xl);
-}
-
-.history-title {
-    font-size: var(--font-size-2xl);
-    font-weight: 700;
-    color: var(--color-primary);
-    margin-bottom: var(--spacing-sm);
-}
-
-.history-subtitle {
-    font-size: var(--font-size-base);
-    color: var(--color-text-light);
-}
-
-/* Filter buttons */
-.history-filters {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-xl);
-}
-
-.filter-btn {
-    padding: var(--spacing-sm) var(--spacing-md);
-    background-color: var(--color-white);
-    color: var(--color-text);
-    border: 2px solid var(--color-primary);
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    font-family: var(--font-family-display);
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-    transition: all var(--transition-fast);
-}
-
-.filter-btn:hover {
-    background-color: var(--color-primary-light);
-    color: var(--color-white);
-}
-
-.filter-btn.active {
-    background-color: var(--color-primary);
-    color: var(--color-white);
-}
-
-/* History list */
-.history-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-lg);
-    margin-bottom: var(--spacing-xl);
-}
-
-.history-item {
-    background-color: var(--color-white);
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-sm);
-    transition: all var(--transition-normal);
-    animation: slideUp 0.3s ease-out;
-}
-
-.history-item:hover {
-    box-shadow: var(--shadow-md);
-}
-
-.history-timestamp {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-light);
-    margin-bottom: var(--spacing-sm);
-}
-
-.history-comparison {
+/* Eyebrow masthead row (small nav-style label + loaded-vote count) */
+.history-eyebrow-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
     margin-bottom: var(--spacing-sm);
 }
 
-.history-torron {
+.history-eyebrow {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    color: var(--color-text-light);
+    text-transform: uppercase;
+}
+
+.history-eyebrow-chevron {
+    width: 14px;
+    height: 14px;
+    flex: none;
+    border-left: 3px solid var(--color-text);
+    border-bottom: 3px solid var(--color-text);
+    transform: rotate(45deg);
+}
+
+.history-count {
+    font: 600 10px ui-monospace, Menlo, monospace;
+    color: var(--color-text-light-dark);
+}
+
+.history-header {
+    text-align: left;
+    margin-bottom: var(--spacing-lg);
+}
+
+.history-title {
+    font-family: var(--font-family-display);
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.08;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+}
+
+.history-subtitle {
+    font-family: var(--font-family);
+    font-style: italic;
+    font-size: 13.5px;
+    color: var(--color-text-light);
+}
+
+/* Filter chips — horizontal-scroll pill row */
+.history-filters {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 2px;
+    margin-bottom: var(--spacing-lg);
+}
+
+.history-filters::-webkit-scrollbar {
+    display: none;
+}
+
+.filter-btn {
+    flex: none;
+    padding: 7px 14px;
+    background-color: transparent;
+    color: var(--color-text-light);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    font-family: var(--font-family-display);
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.filter-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-text);
+}
+
+.filter-btn.active {
+    background-color: var(--color-text);
+    color: var(--color-card);
+    border-color: var(--color-text);
+}
+
+.filter-btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Vote log — a single card holding day-grouped duel rows */
+.history-list {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    margin-bottom: var(--spacing-lg);
+}
+
+.history-day-header {
+    padding: 13px 16px 6px;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 10.5px;
+    letter-spacing: 1px;
+    color: var(--color-text-light);
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color var(--transition-fast);
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-item:hover {
+    background-color: var(--color-surface);
+}
+
+.history-item-icon {
+    width: 28px;
+    height: 28px;
+    flex: none;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+}
+
+.history-item-main {
     flex: 1;
-    padding: var(--spacing-sm);
-    border-radius: var(--border-radius);
-    transition: all var(--transition-fast);
+    min-width: 0;
 }
 
-.history-torron.winner {
-    background-color: var(--color-success-bg);
-    border: 2px solid var(--color-success);
+.history-item-names {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
-.history-torron.loser {
-    opacity: 0.6;
+.history-item-winner {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 13.5px;
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
+.history-item-sep {
+    flex: none;
+    font-family: var(--font-family);
+    font-style: italic;
+    font-size: 11px;
+    color: var(--color-text-light);
+}
+
+.history-item-loser {
+    font-family: var(--font-family);
+    font-size: 12.5px;
+    color: var(--color-text-light-dark);
+    text-decoration: line-through;
+    text-decoration-color: var(--color-border-dashed);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-item-meta {
+    margin-top: 3px;
+    font: 600 8.5px ui-monospace, Menlo, monospace;
+    letter-spacing: 0.3px;
+    color: var(--color-text-light-dark);
+}
+
+.history-item-time {
+    flex: none;
+    font: 600 9.5px ui-monospace, Menlo, monospace;
+    color: var(--color-text-light-dark);
+}
+
+/* --- Shared "duel row" component below (still rendered by
+   public/templates/bracket.html) — kept intact, not owned by this screen. --- */
 
 .history-torron-img {
     width: 60px;
@@ -1920,10 +2021,6 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--color-text-light);
 }
 
-.history-category {
-    text-align: center;
-}
-
 .category-badge {
     display: inline-block;
     font-size: var(--font-size-sm);
@@ -1933,7 +2030,9 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--color-text);
 }
 
-/* Empty state */
+/* --- End shared "duel row" component --- */
+
+/* Empty state — shared with friends.html, bracket.html, advent.html */
 .history-empty {
     text-align: center;
     padding: var(--spacing-xl);
@@ -1972,26 +2071,18 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .history-comparison {
-        flex-direction: column;
-    }
-
+    /* .history-vs is shared with bracket.html's duel rows — keep this override. */
     .history-vs {
         transform: rotate(90deg);
         margin: var(--spacing-sm) 0;
     }
 
-    .history-torron {
-        width: 100%;
+    .history-item {
+        padding: 10px 14px;
     }
 
-    .history-filters {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .filter-btn {
-        width: 100%;
+    .history-item-time {
+        font-size: 9px;
     }
 }
 
