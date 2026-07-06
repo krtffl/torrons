@@ -147,7 +147,7 @@ func (h *Handler) handleCountdownWidget(w http.ResponseWriter, r *http.Request) 
 	buf := h.bpool.Get()
 	defer h.bpool.Put(buf)
 
-	if err := h.template.ExecuteTemplate(buf, "countdown.html", content); err != nil {
+	if err := h.template.ExecuteTemplate(buf, "countdown-widget", content); err != nil {
 		logger.Error("[Handler - CountdownWidget] Couldn't execute template. %v", err)
 		w.Write([]byte("<div class='countdown-error'>Error carregant comptador</div>"))
 		return
