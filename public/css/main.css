@@ -5507,3 +5507,388 @@ button.arena-card-action:focus-visible {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* ========================================
+   Friends — Circles, Invite, Circle Podium
+   (Viral Drop reskin: public/templates/friends.html)
+   ======================================== */
+
+.friends-eyebrow {
+    text-align: center;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Scoped, non-destructive polish for the shared empty/error card shells so
+   they match the cream/caramel surfaces on this screen — the base
+   .history-empty/.leaderboard-error rules above are untouched and still
+   apply as-is on every other screen that uses them. */
+#friends-container .history-empty,
+#friends-container .leaderboard-error {
+    background-color: var(--color-card);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-sticker);
+}
+
+/* Circle list (friends-index) */
+.friends-circle-card {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    background-color: var(--color-card);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-sticker);
+    padding: var(--spacing-lg);
+    gap: var(--spacing-sm);
+    transform: rotate(-1deg);
+    transition: transform var(--transition-normal);
+}
+
+.friends-circle-card:nth-child(even) {
+    transform: rotate(1deg);
+}
+
+.friends-circle-card:hover {
+    transform: rotate(0deg) translateY(-2px);
+}
+
+.friends-circle-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    background-color: var(--color-surface);
+    border-radius: 50%;
+}
+
+.friends-circle-meta {
+    font-family: var(--font-family);
+    font-style: italic;
+    color: var(--color-text-light);
+    font-size: var(--font-size-sm);
+    text-align: center;
+}
+
+/* Invite link box (friends-created) */
+.friends-invite-box {
+    width: 100%;
+    max-width: 420px;
+    margin: var(--spacing-lg) auto 0;
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background-color: var(--color-background);
+    border: 1.5px dashed var(--color-border-dashed);
+    border-radius: var(--radius-button);
+}
+
+.friends-invite-link-text {
+    font-family: var(--font-family);
+    font-style: italic;
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    word-break: break-all;
+    text-align: center;
+}
+
+.friends-invite-copy-btn {
+    border-radius: var(--radius-pill);
+    background-color: var(--color-text);
+}
+
+/* Bridge CTA to the circle leaderboard (friends-created) */
+.friends-bridge-card {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    width: 100%;
+    max-width: 420px;
+    margin: var(--spacing-lg) auto 0;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background-color: var(--color-background);
+    border: 1.5px dashed var(--color-border-dashed);
+    border-radius: var(--radius-button);
+    text-align: left;
+    cursor: pointer;
+    transition: transform var(--transition-fast);
+}
+
+.friends-bridge-card:hover {
+    transform: translateY(-2px);
+}
+
+.friends-bridge-card:focus-visible {
+    outline: 2px solid var(--color-primary-dark);
+    outline-offset: 3px;
+}
+
+.friends-bridge-icon {
+    flex: none;
+    font-size: 1.5rem;
+}
+
+.friends-bridge-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.friends-bridge-title {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    color: var(--color-text);
+    font-size: var(--font-size-base);
+}
+
+.friends-bridge-subtitle {
+    font-family: var(--font-family);
+    font-style: italic;
+    color: var(--color-text-light);
+    font-size: var(--font-size-sm);
+}
+
+/* Back-to-global-leaderboard link (friends-leaderboard footer) */
+.friends-global-link {
+    display: block;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    color: var(--color-primary-dark);
+    text-decoration: none;
+    margin-bottom: var(--spacing-sm);
+    cursor: pointer;
+}
+
+.friends-global-link:hover {
+    text-decoration: underline;
+}
+
+/* Circle podium — only rendered when the circle has 3+ ranked torrons (see
+   friends.html's "friends-leaderboard" define); for 1-2 entries the honest
+   flat state below is used instead so we never fabricate empty 2nd/3rd
+   place slots. */
+.friends-podium {
+    background-color: var(--color-card);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-sticker);
+    padding: var(--spacing-lg);
+    margin: var(--spacing-lg) 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.friends-podium-label {
+    text-align: center;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+    padding-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
+    border-bottom: 1px solid var(--color-surface);
+}
+
+.podium-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    border-radius: var(--radius-button);
+    padding: var(--spacing-md);
+}
+
+.podium-badge {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: 0.85rem;
+    box-shadow: var(--shadow-sticker-badge);
+}
+
+.podium-photo {
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+}
+
+.podium-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.podium-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.podium-name {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: var(--font-size-base);
+    line-height: 1.15;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.podium-meta {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    margin-top: 2px;
+}
+
+.podium-info .torron-info-link {
+    display: inline-block;
+    font-size: var(--font-size-sm);
+    margin-top: 4px;
+}
+
+.podium-score {
+    flex: none;
+    text-align: right;
+}
+
+.podium-elo {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.podium-elo-label {
+    font-size: 0.65rem;
+    letter-spacing: .5px;
+    color: var(--color-text-light);
+    margin-top: 2px;
+}
+
+/* Rank 1 — gold medal tier on the reserved competition (burgundy) surface;
+   this is the one "winner" moment on this screen. */
+.podium-rank-1 {
+    background-color: var(--color-competition);
+    border: 2px solid var(--color-brand-gold);
+}
+
+.podium-rank-1 .podium-badge {
+    background-color: var(--color-brand-gold);
+    color: var(--color-text);
+}
+
+.podium-rank-1 .podium-photo {
+    width: 64px;
+    height: 64px;
+    border-color: var(--color-competition-contrast);
+}
+
+.podium-rank-1 .podium-name,
+.podium-rank-1 .podium-elo {
+    color: var(--color-competition-contrast);
+}
+
+.podium-rank-1 .podium-meta,
+.podium-rank-1 .podium-elo-label {
+    color: var(--color-competition-contrast);
+    opacity: .7;
+}
+
+.podium-rank-1 .torron-info-link {
+    color: var(--color-brand-gold);
+}
+
+/* Rank 2 — caramel medal tier */
+.podium-rank-2 {
+    background-color: var(--color-surface);
+    border: 1.5px solid var(--color-border);
+}
+
+.podium-rank-2 .podium-badge {
+    background-color: var(--color-primary);
+    color: var(--color-text);
+}
+
+.podium-rank-2 .podium-photo {
+    width: 54px;
+    height: 54px;
+}
+
+/* Rank 3 — caramel fosc ("bronze") medal tier */
+.podium-rank-3 {
+    background-color: var(--color-card);
+    border: 1.5px solid var(--color-border);
+}
+
+.podium-rank-3 .podium-badge {
+    background-color: var(--color-primary-dark);
+    color: var(--color-competition-contrast);
+}
+
+.friends-rest-list {
+    margin-top: 0;
+}
+
+/* Honest non-podium state for circles with only 1-2 ranked torrons */
+.friends-honest-state {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.friends-honest-hint {
+    background-color: var(--color-surface);
+    border: 1.5px dashed var(--color-border-dashed);
+    border-radius: var(--radius-button);
+    padding: var(--spacing-md) var(--spacing-lg);
+    text-align: center;
+}
+
+.friends-honest-hint-title {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.friends-honest-hint-text {
+    font-family: var(--font-family);
+    font-style: italic;
+    color: var(--color-text-light);
+    font-size: var(--font-size-sm);
+    margin-top: 4px;
+}
+
+@media (max-width: 480px) {
+    .podium-name {
+        font-size: var(--font-size-sm);
+    }
+
+    .podium-elo {
+        font-size: var(--font-size-base);
+    }
+}

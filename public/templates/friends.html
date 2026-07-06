@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/public/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
     <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Cercles d'amics - Torrorèndum 2025</title>
@@ -46,6 +46,7 @@
 {{ end }}
 
 {{ define "friends-index" }}
+<div class="friends-eyebrow">Torrorèndum · Els teus cercles</div>
 <div class="stats-header">
     <h1 class="stats-title">Els meus cercles d'amics</h1>
     <p class="stats-subtitle">Crea un cercle i convida amics per comparar les vostres classificacions</p>
@@ -54,8 +55,9 @@
 {{ if .Circles }}
 <div id="classes">
     {{ range .Circles }}
-    <div class="class-card">
-        <div class="class-description">Cercle creat el {{ .CreatedAt }}</div>
+    <div class="class-card friends-circle-card">
+        <div class="friends-circle-icon">👥</div>
+        <div class="class-description friends-circle-meta">Cercle creat el {{ .CreatedAt }}</div>
         <button class="btn btn-with-icon" hx-get="/friends/{{ .Id }}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/friends/{{ .Id }}">
             <span class="btn-icon">🏆</span>
             <span class="btn-text">Veure classificació</span>
@@ -79,20 +81,28 @@
 {{ end }}
 
 {{ define "friends-created" }}
+<div class="friends-eyebrow">Torrorèndum · Cercle creat</div>
 <div class="history-empty">
     <div class="empty-icon">🎉</div>
     <div class="empty-message">Cercle creat!</div>
     <div class="empty-hint">Comparteix aquest enllaç amb els teus amics perquè s'hi uneixin:</div>
 
-    <div class="share-buttons">
-        <button class="share-btn share-btn-copy" onclick="copyFriendsLink('{{ .InviteURL }}', this)">
-            <span class="share-icon">🔗</span>
-            <span class="copy-text">{{ .InviteURL }}</span>
-        </button>
+    <div class="friends-invite-box">
+        <span class="friends-invite-link-text">{{ .InviteURL }}</span>
+        <div class="share-buttons">
+            <button class="share-btn share-btn-copy friends-invite-copy-btn" onclick="copyFriendsLink('{{ .InviteURL }}', this)">
+                <span class="share-icon">🔗</span>
+                <span class="copy-text">Copiar enllaç</span>
+            </button>
+        </div>
     </div>
 
-    <button class="btn mt-lg" hx-get="/friends/{{ .CircleId }}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/friends/{{ .CircleId }}">
-        Veure classificació del cercle
+    <button class="friends-bridge-card" hx-get="/friends/{{ .CircleId }}" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/friends/{{ .CircleId }}">
+        <span class="friends-bridge-icon">🏆</span>
+        <span class="friends-bridge-text">
+            <span class="friends-bridge-title">Veure classificació del cercle</span>
+            <span class="friends-bridge-subtitle">Descobreix qui hi va guanyant fins ara</span>
+        </span>
     </button>
 </div>
 {{ end }}
@@ -120,6 +130,7 @@
 {{ end }}
 
 {{ define "friends-leaderboard" }}
+<div class="friends-eyebrow">Torrorèndum · El teu cercle</div>
 <div class="leaderboard-header">
     <h1 class="leaderboard-title">Classificació del cercle</h1>
     <div class="category-selector">
@@ -150,14 +161,70 @@
     <div class="error-message">{{ .Error }}</div>
 </div>
 {{ else }}
-<div class="leaderboard-list">
-    {{ range .Entries }}
-    {{ template "leaderboard-entry" . }}
+    {{ if ge (len .Entries) 3 }}
+    <!-- Audit fix: a hero podium is only honest once the circle actually has
+         3+ ranked torrons — otherwise we'd be inventing 2nd/3rd place slots
+         that don't exist. -->
+    <div class="friends-podium">
+        <div class="friends-podium-label">Rànquing destacat del cercle</div>
+        {{ range $i, $e := .Entries }}
+        {{ if lt $i 3 }}
+        <div class="podium-card podium-rank-{{ $e.Rank }}">
+            <div class="podium-badge">{{ $e.Rank }}</div>
+            <div class="podium-photo">
+                <img src="/public/images/{{ $e.TorronImage }}" alt="{{ $e.TorronName }}">
+            </div>
+            <div class="podium-info">
+                <div class="podium-name">{{ $e.TorronName }}</div>
+                <div class="podium-meta">{{ $e.VoteCount }} vots</div>
+                <a class="torron-info-link"
+                   href="/torro/{{ $e.TorronId }}"
+                   hx-get="/torro/{{ $e.TorronId }}"
+                   hx-target="#main-content"
+                   hx-push-url="/torro/{{ $e.TorronId }}"
+                   aria-label="Més informació sobre {{ $e.TorronName }}">
+                    ℹ️ més info
+                </a>
+            </div>
+            <div class="podium-score">
+                <div class="podium-elo">{{ printf "%.0f" $e.Rating }}</div>
+                <div class="podium-elo-label">ELO</div>
+            </div>
+        </div>
+        {{ end }}
+        {{ end }}
+    </div>
+
+    {{ if gt (len .Entries) 3 }}
+    <div class="leaderboard-list friends-rest-list">
+        {{ range $i, $e := .Entries }}
+        {{ if ge $i 3 }}
+        {{ template "leaderboard-entry" $e }}
+        {{ end }}
+        {{ end }}
+    </div>
     {{ end }}
-</div>
+    {{ else }}
+    <!-- Honest non-podium state: 1-2 ranked torrons is real data, just not
+         enough of it for a 1st/2nd/3rd display, so show it plainly instead. -->
+    <div class="friends-honest-state">
+        <div class="leaderboard-list">
+            {{ range .Entries }}
+            {{ template "leaderboard-entry" . }}
+            {{ end }}
+        </div>
+        <div class="friends-honest-hint">
+            <div class="friends-honest-hint-title">Encara no hi ha prou rànquing per veure un podi</div>
+            <div class="friends-honest-hint-text">Quan el cercle tingui vots repartits entre almenys 3 torrons diferents, aquí apareixerà el podi amb medalles.</div>
+        </div>
+    </div>
+    {{ end }}
 {{ end }}
 
 <div class="leaderboard-footer">
+    <a class="friends-global-link" hx-get="/leaderboard" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/leaderboard" href="/leaderboard">
+        ← Veure la classificació global
+    </a>
     <button class="btn" hx-get="/friends" hx-trigger="click" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="/friends">
         Els meus cercles
     </button>
