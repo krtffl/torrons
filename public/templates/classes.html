@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/public/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
     <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Categories - Torrorèndum 2025</title>
@@ -31,21 +31,70 @@
 
 {{ define "classes" }}
 <div id="classes">
-{{ range .Classes }}
-    {{ template "class" . }}
-{{ end }}
+    <div class="arena-intro">
+        <h1 class="arena-heading">Tria la teva arena</h1>
+        <p class="arena-tagline">Cada categoria és el seu propi torneig.</p>
+    </div>
+    <div class="arena-list">
+    {{ range .Classes }}
+        {{ template "class" . }}
+    {{ end }}
+        {{ template "class-sinergia" }}
+    </div>
+    <p class="arena-footnote">Pots canviar d'arena en qualsevol moment.</p>
 </div>
 {{ end }}
 
 
 {{ define "class" }}
-<div class="class-card">
-    <div class="class-description">
-        {{ .Description }}
-    </div>
-    <button class="btn btn-with-icon" hx-get="/classes/{{ .Id }}/vote" hx-trigger="click" hx-target="#classes" hx-swap="outerHTML" hx-push-url="classes/{{ .Id }}/vote">
-        <span class="btn-icon">{{ if eq .Id "1" }}🏛️{{ else if eq .Id "2" }}✨{{ else if eq .Id "3" }}🍫{{ else if eq .Id "4" }}👨‍🍳{{ else if eq .Id "5" }}🌍{{ end }}</span>
-        <span class="btn-text">{{ .Name }}</span>
+<div class="arena-card{{ if eq .Id "5" }} arena-card--final{{ end }}">
+    <button class="arena-card-action" hx-get="/classes/{{ .Id }}/vote" hx-trigger="click" hx-target="#classes" hx-swap="outerHTML" hx-push-url="classes/{{ .Id }}/vote">
+        <span class="arena-icon arena-icon--{{ .Id }}" aria-hidden="true">
+            {{ if eq .Id "1" }}<span class="arena-icon-ring"><span class="arena-icon-dot"></span></span>
+            {{ else if eq .Id "2" }}<span class="arena-icon-diamond-lg"></span><span class="arena-icon-diamond-sm"></span>
+            {{ else if eq .Id "3" }}<span class="arena-icon-cacau-grid"></span>
+            {{ else if eq .Id "4" }}<span class="arena-icon-blend-a"></span><span class="arena-icon-blend-b"></span><span class="arena-icon-blend-c"></span>
+            {{ else if eq .Id "5" }}<span class="arena-icon-globe"></span>
+            {{ end }}
+        </span>
+        <span class="arena-card-body">
+            <span class="arena-eyebrow">ARENA 0{{ .Id }}{{ if eq .Id "5" }} · FINAL{{ end }}</span>
+            <span class="arena-heading-row">
+                <span class="arena-name">{{ .Name }}</span>
+                <span class="arena-tag">{{ if eq .Id "1" }}L'ORIGINAL{{ else if eq .Id "2" }}EN TENDÈNCIA{{ else if eq .Id "3" }}PER ALS GOLAFRES{{ else if eq .Id "4" }}EDICIÓ LIMITADA{{ else if eq .Id "5" }}EL REPTE DEFINITIU{{ end }}</span>
+            </span>
+            <span class="arena-description">{{ .Description }}</span>
+        </span>
     </button>
+</div>
+{{ end }}
+
+
+{{ define "class-sinergia" }}
+<!--
+  Visual-only placeholder. Not backed by a row in the Classes table, not
+  looped over with the other categories above, and deliberately unwired (no
+  hx-* attributes, no href): the Sinergia multi-chef line is real but its
+  products are held back pending a trademark-lawyer consult (real
+  Michelin-starred chef names are involved). This card is the reskin
+  agent's own extrapolation of the 5 delivered mockup cards — the design
+  team has not produced a mockup for it yet.
+-->
+<div class="arena-card arena-card--soon">
+    <div class="arena-card-action">
+        <span class="arena-icon arena-icon--soon" aria-hidden="true">
+            <span class="arena-icon-sinergia"><span></span><span></span><span></span></span>
+        </span>
+        <span class="arena-card-body">
+            <span class="arena-eyebrow-row">
+                <span class="arena-eyebrow">SINERGIA</span>
+                <span class="arena-soon-badge">PRÒPIMENT</span>
+            </span>
+            <span class="arena-heading-row">
+                <span class="arena-name">Sinergia</span>
+            </span>
+            <span class="arena-description">Els xefs convidats de Torrons Vicens — Jordi Roca, Ángel León, Quique Dacosta i més. Molt aviat.</span>
+        </span>
+    </div>
 </div>
 {{ end }}
