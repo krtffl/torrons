@@ -281,6 +281,23 @@ h1, h2, h3, h4, h5, h6 {
     display: none;
 }
 
+/* Mobile scroll affordance: a static edge fade hinting that .topbar-nav has
+   more pills to scroll to. Anchored on #topbar (not .topbar-nav) so it does
+   NOT scroll along with the nav's content — #topbar itself never scrolls,
+   only its .topbar-nav child does, so the fade stays pinned to the right
+   edge of the bar. Disabled at the >=640px breakpoint below, where
+   .topbar-nav stops scrolling. */
+#topbar::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 28px;
+    background: linear-gradient(to right, transparent, var(--color-card));
+    pointer-events: none;
+}
+
 .nav-link,
 .nav-item {
     flex: 0 0 auto;
@@ -443,6 +460,12 @@ h1, h2, h3, h4, h5, h6 {
         flex: 1 1 0;
         min-width: 0;
     }
+
+    /* .topbar-nav no longer scrolls at this breakpoint, so the mobile edge
+       fade from #topbar::after above would be a pointless visual artifact. */
+    #topbar::after {
+        display: none;
+    }
 }
 
 /* ========================================
@@ -456,6 +479,23 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #classes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: var(--spacing-sm);
+    min-height: 72vh;
+    padding: var(--spacing-sm);
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    animation: fadeIn 0.5s ease-in;
+}
+
+/* Friends circle list (public/templates/friends.html) — was previously id="classes",
+   which collided with the unrelated #classes wrapper on the /classes category-select
+   screen (public/templates/classes.html, an HTMX hx-target the latter still owns).
+   Renamed to its own id; properties copied verbatim from #classes above so the
+   friends-index layout is unchanged. */
+#friends-classes-list {
     display: flex;
     align-items: center;
     justify-content: center;
