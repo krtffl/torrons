@@ -1,0 +1,123 @@
+{{ if not .HX }}
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Descobreix la teva personalitat torronaire - Torrorèndum 2025">
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+    <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <title>La teva revelació - Torrorèndum 2025</title>
+  </head>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
+      {{ template "header" . }}
+      {{ template "topbar" . }}
+      <div id="main-content">
+          {{ template "reveal" . }}
+      </div>
+  </body>
+</html>
+{{ else }}
+      {{ template "reveal" . }}
+{{ end }}
+
+<!--
+  Design prompt 14 - "torró personality" reveal. The mockup
+  (docs/design-deliverables/Torrorendum Reveal Moment.dc.html) frames this
+  as a full-screen dark-overlay "ceremony" with entrance animations and a
+  100-dot visual grid; that polish is deliberately deferred here (same
+  "front-load the plumbing first" precedent as the original Wrapped/
+  press-kit build - see fb98a70/57c52fc in git history). This template
+  instead presents the unlocked state as a normal page, reusing the same
+  .stats-tile/.stats-hero visual language already used on stats.html - the
+  PNG card (GET /reveal/card.png, internal/sharecard/reveal.go) is where
+  the dot-grid percentile visualization actually lives.
+-->
+{{ define "reveal" }}
+<div id="reveal-container">
+    <div class="stats-hero">
+        <div class="stats-hero-top">
+            <div class="stats-eyebrow">
+                <span class="stats-eyebrow-mark" aria-hidden="true"></span>
+                Torrorèndum · revelació personal
+            </div>
+            <span class="stats-season-pill">Torrorèndum 2025</span>
+        </div>
+        <h1 class="stats-hero-title">La teva revelació</h1>
+        <p class="stats-hero-subtitle">Descobreix quin tipus de votant ets, i quin torró t'ha convençut més.</p>
+    </div>
+
+    {{ if not .HasEnoughVotes }}
+    <div class="wrapped-card">
+        <p class="wrapped-empty">Encara no has desbloquejat la teva revelació. Et falten {{ .VotesRemaining }} vots.</p>
+    </div>
+
+    <div class="stats-footer">
+        <a href="/classes" class="btn" hx-get="/classes" hx-boost="true" hx-target="#main-content" hx-push-url="/classes">
+            Continua votant
+        </a>
+    </div>
+    {{ else }}
+    <div class="stats-tiles">
+        <div class="stats-tile">
+            <div class="stats-tile-value">{{ .TotalVotes }}</div>
+            <div class="stats-tile-label">Vots emesos</div>
+        </div>
+        {{ if .HasClearFavorite }}
+        <div class="stats-tile stats-tile-rank">
+            <div class="stats-tile-value">{{ .Percentile }}%</div>
+            <div class="stats-tile-label">Comparteixen la teva arena</div>
+        </div>
+        {{ end }}
+    </div>
+
+    <div class="reveal-persona">
+        <span class="reveal-persona-badge">{{ .PersonaBadge }}</span>
+        <p class="reveal-persona-tagline">
+            {{ if .HasClearFavorite }}Ets del {{ .Percentile }}% {{ .PersonaTagline }}{{ else }}{{ .PersonaTagline }}{{ end }}
+        </p>
+    </div>
+
+    {{ if .TopTorroName }}
+    <div class="reveal-torro-card">
+        <h2 class="wrapped-card-eyebrow">El teu torró</h2>
+        <div class="reveal-torro-name">{{ .TopTorroName }}</div>
+        {{ if .TopTorroTag }}<div class="reveal-torro-tag">{{ .TopTorroTag }}</div>{{ end }}
+
+        <div class="reveal-torro-stats">
+            <div class="reveal-torro-stat">
+                <span class="reveal-torro-stat-value">{{ .TopTorroVotesCast }}</span>
+                <span class="reveal-torro-stat-label">Vots emesos</span>
+            </div>
+            <div class="reveal-torro-stat">
+                <span class="reveal-torro-stat-value reveal-torro-stat-value--accent">{{ .TopTorroWins }}–{{ .TopTorroLosses }}</span>
+                <span class="reveal-torro-stat-label">En duels</span>
+            </div>
+        </div>
+
+        <p class="reveal-torro-footnote">Cap altre torró t'ha convençut tant.</p>
+    </div>
+    {{ end }}
+
+    <div class="stats-footer">
+        <a href="/classes" class="btn" hx-get="/classes" hx-boost="true" hx-target="#main-content" hx-push-url="/classes">
+            Continua votant
+        </a>
+        <!-- Plain link on purpose: this serves a PNG, not an HTML fragment,
+             so it must not be HTMX-boosted/swapped like the button above
+             (see stats.html's /share/card.png link for the same convention). -->
+        <a href="/reveal/card.png" class="btn" download="torrorendum-revelacio.png">
+            Descarrega la teva revelació
+        </a>
+    </div>
+    {{ end }}
+</div>
+{{ end }}

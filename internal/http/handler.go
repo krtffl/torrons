@@ -56,6 +56,7 @@ type Handler struct {
 	friendCircleRepo domain.FriendCircleRepo
 	pressStatsRepo   domain.PressStatsRepo
 	wrappedStatsRepo domain.WrappedStatsRepo
+	personaRepo      domain.PersonaRepo
 	adminToken       string
 }
 
@@ -74,6 +75,7 @@ func NewHandler(
 	friendCircleRepo domain.FriendCircleRepo,
 	pressStatsRepo domain.PressStatsRepo,
 	wrappedStatsRepo domain.WrappedStatsRepo,
+	personaRepo domain.PersonaRepo,
 	adminToken string,
 ) *Handler {
 	tmpls, err := template.New("").ParseFS(torrons.Public, "public/templates/*.html")
@@ -97,6 +99,7 @@ func NewHandler(
 		friendCircleRepo: friendCircleRepo,
 		pressStatsRepo:   pressStatsRepo,
 		wrappedStatsRepo: wrappedStatsRepo,
+		personaRepo:      personaRepo,
 		adminToken:       adminToken,
 	}
 }
