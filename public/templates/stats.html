@@ -144,6 +144,16 @@
         <a href="/leaderboard" class="btn" hx-get="/leaderboard" hx-boost="true" hx-target="#main-content" hx-push-url="/leaderboard">
             Veure classificació
         </a>
+        <!--
+          /reveal (design prompt 14) has no other entry point in the app
+          (neither does /wrapped, which this page also doesn't link to) -
+          added here, next to the other personal-recap actions, as the
+          most natural discoverability spot rather than inventing a new
+          top-level nav item.
+        -->
+        <a href="/reveal" class="btn" hx-get="/reveal" hx-boost="true" hx-target="#main-content" hx-push-url="/reveal">
+            La teva revelació
+        </a>
         <!-- Plain link on purpose: this serves a PNG, not an HTML fragment,
              so it must not be HTMX-boosted/swapped like the buttons above. -->
         <a href="/share/card.png" class="btn" download="torrorendum-targeta.png">

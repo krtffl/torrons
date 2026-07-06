@@ -225,6 +225,15 @@ func (srv *Server) Run() error {
 		// Press-kit aggregate one-pager PNG (the Gran Final's champion),
 		// same ".png"-suffix-stripping caveat as above.
 		r.Get("/press-kit/card", srv.handler.pressKitCard)
+
+		// Personal "torró personality reveal" (design prompt 14): page +
+		// PNG story card, gated behind the same minimum-vote threshold as
+		// Wrapped/the Global leaderboard. Registered without the ".png"
+		// suffix for the same reason as /share/card above. No
+		// admin/rate-limit middleware needed - it's a read-only per-user
+		// GET, same as /wrapped.
+		r.Get("/reveal", srv.handler.reveal)
+		r.Get("/reveal/card", srv.handler.revealCard)
 	})
 	// **********        **********
 
