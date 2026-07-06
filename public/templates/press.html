@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/public/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
     <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Torrorèndum · Premsa i dades</title>
@@ -31,86 +31,111 @@
 
 {{ define "press" }}
 <div id="press-container">
-    <div class="press-header">
+    <div class="press-masthead">
+        <span class="press-eyebrow">Dades públiques</span>
         <h1 class="press-title">Torrorèndum · Premsa i dades</h1>
-        <p class="press-subtitle">Dades públiques en directe, actualitzades a cada visita.</p>
+        <p class="press-subtitle">Dades públiques en directe, actualitzades a cada visita. Es poden reproduir lliurement en articles i publicacions, amb atribució a torro.cat.</p>
     </div>
 
-    <div class="press-grid">
-        <div class="press-card">
-            <h2 class="press-card-title">El torró més votat</h2>
+    <div class="press-stack">
+
+        <!-- Headline stat -->
+        <div class="press-data-card press-headline-card">
+            <h2 class="press-eyebrow">El torró més votat · classificació global</h2>
             {{ if .HasMostVoted }}
-            <div class="press-stat">
-                <img class="press-stat-image" src="/public/images/{{ .MostVotedImage }}" alt="{{ .MostVotedName }}">
-                <div class="press-stat-body">
-                    <div class="press-stat-name">{{ .MostVotedName }}</div>
-                    <div class="press-stat-value">{{ .MostVotedVotes }} vots a favor</div>
+            <div class="press-headline-row">
+                <img class="press-headline-image" src="/public/images/{{ .MostVotedImage }}" alt="{{ .MostVotedName }}">
+                <div class="press-headline-body">
+                    <div class="press-headline-name">{{ .MostVotedName }}</div>
+                    <div class="press-headline-value">{{ .MostVotedVotes }} <span class="press-headline-unit">vots a favor</span></div>
                 </div>
             </div>
+            <p class="press-note">Líder actual de la classificació global, per davant de la resta de torrons en joc.</p>
             {{ else }}
-            <p class="press-empty">Encara no s'ha comptabilitzat cap vot.</p>
+            <p class="press-card-empty">Encara no s'ha comptabilitzat cap vot.</p>
             {{ end }}
+            <div class="press-credit"><span class="press-credit-dot"></span>torrorèndum.cat · dades en directe</div>
         </div>
 
-        <div class="press-card">
-            <h2 class="press-card-title">El que més puja</h2>
-            {{ if .HasBiggestRiser }}
-            <div class="press-stat">
-                <img class="press-stat-image" src="/public/images/{{ .RiserImage }}" alt="{{ .RiserName }}">
-                <div class="press-stat-body">
-                    <div class="press-stat-name">{{ .RiserName }}</div>
-                    <div class="press-stat-value">{{ if ge .RiserPoints 0 }}+{{ end }}{{ .RiserPoints }} punts aquesta setmana</div>
+        <!-- Sub-stats -->
+        <div class="press-substats">
+            <div class="press-data-card">
+                <h2 class="press-eyebrow">El que més puja · últims 7 dies</h2>
+                {{ if .HasBiggestRiser }}
+                <div class="press-substat-row">
+                    <img class="press-substat-image" src="/public/images/{{ .RiserImage }}" alt="{{ .RiserName }}">
+                    <div class="press-substat-body">
+                        <div class="press-substat-name">{{ .RiserName }}</div>
+                        <div class="press-riser-chip">
+                            <span class="press-riser-arrow" aria-hidden="true"></span>
+                            {{ if ge .RiserPoints 0 }}+{{ end }}{{ .RiserPoints }} punts
+                        </div>
+                    </div>
                 </div>
+                <p class="press-note">Torró amb la pujada més gran de puntuació ELO en els últims 7 dies.</p>
+                {{ else }}
+                <p class="press-card-empty">Encara no hi ha prou dades aquesta setmana.</p>
+                {{ end }}
+                <div class="press-credit"><span class="press-credit-dot"></span>torrorèndum.cat · dades en directe</div>
             </div>
-            {{ else }}
-            <p class="press-empty">Encara no hi ha prou dades aquesta setmana.</p>
-            {{ end }}
-        </div>
 
-        <div class="press-card">
-            <h2 class="press-card-title">El duel més igualat</h2>
-            {{ if .HasClosestDuel }}
-            <div class="press-duel">
-                <div class="press-duel-side">
-                    <img class="press-stat-image" src="/public/images/{{ .DuelAImage }}" alt="{{ .DuelAName }}">
-                    <div class="press-stat-name">{{ .DuelAName }}</div>
+            <div class="press-data-card">
+                <h2 class="press-eyebrow">El duel més igualat</h2>
+                {{ if .HasClosestDuel }}
+                <div class="press-duel-names">
+                    <img class="press-substat-image" src="/public/images/{{ .DuelAImage }}" alt="{{ .DuelAName }}">
+                    <span>{{ .DuelAName }}</span>
+                    <span class="press-duel-vs">contra</span>
+                    <span>{{ .DuelBName }}</span>
+                    <img class="press-substat-image" src="/public/images/{{ .DuelBImage }}" alt="{{ .DuelBName }}">
                 </div>
-                <div class="press-duel-score">{{ .DuelAPercentage }}% – {{ .DuelBPercentage }}%</div>
-                <div class="press-duel-side">
-                    <img class="press-stat-image" src="/public/images/{{ .DuelBImage }}" alt="{{ .DuelBName }}">
-                    <div class="press-stat-name">{{ .DuelBName }}</div>
+                <div class="press-duel-bar">
+                    <div class="press-duel-bar-a" style="width: {{ .DuelAPercentage }}%"></div>
+                    <div class="press-duel-bar-b" style="width: {{ .DuelBPercentage }}%"></div>
                 </div>
+                <div class="press-duel-percentages">
+                    <span class="press-duel-percentage-a">{{ .DuelAPercentage }}%</span>
+                    <span class="press-duel-percentage-b">{{ .DuelBPercentage }}%</span>
+                </div>
+                <p class="press-note press-duel-total">{{ .DuelTotalVotes }} vots emesos en aquest duel.</p>
+                {{ else }}
+                <p class="press-card-empty">Encara no hi ha prou vots per determinar el duel més igualat.</p>
+                {{ end }}
+                <div class="press-credit"><span class="press-credit-dot"></span>torrorèndum.cat · dades en directe</div>
             </div>
-            <div class="press-stat-value press-duel-total">({{ .DuelTotalVotes }} vots)</div>
-            {{ else }}
-            <p class="press-empty">Encara no hi ha prou vots per determinar el duel més igualat.</p>
-            {{ end }}
         </div>
 
-        <div class="press-card">
-            <h2 class="press-card-title">La Gran Final</h2>
+        <!-- Champion / Gran Final - the one burgundy moment on this page -->
+        <div class="press-data-card press-champion-card">
             {{ if .HasChampion }}
-            <div class="press-stat">
-                <img class="press-stat-image" src="/public/images/{{ .ChampionImage }}" alt="{{ .ChampionName }}">
-                <div class="press-stat-body">
-                    <div class="press-stat-name">{{ .ChampionName }}</div>
-                    <div class="press-stat-value">Campió del Torrorèndum</div>
+            <div class="press-champion-top">
+                <span class="press-champion-eyebrow">Gran Final</span>
+                <span class="press-champion-pill">Campió</span>
+            </div>
+            <div class="press-champion-row">
+                <img class="press-champion-image" src="/public/images/{{ .ChampionImage }}" alt="{{ .ChampionName }}">
+                <div class="press-champion-body">
+                    <div class="press-champion-name">{{ .ChampionName }}</div>
+                    <div class="press-champion-tag">Campió del Torrorèndum</div>
                 </div>
             </div>
             <!-- Plain link on purpose: this serves a PNG, not an HTML
                  fragment, so it must not be HTMX-boosted/swapped (same
                  convention as stats.html's /share/card.png link). -->
-            <a href="/press-kit/card.png" class="btn btn-small" download="torrorendum-press-kit.png">
+            <a href="/press-kit/card.png" class="btn btn-small press-champion-btn" download="torrorendum-press-kit.png">
                 Descarrega el press kit
             </a>
             {{ else }}
-            <p class="press-empty">La Gran Final encara no s'ha disputat.</p>
+            <p class="press-champion-empty">La Gran Final encara no s'ha disputat.</p>
             {{ end }}
         </div>
+
     </div>
 
+    <p class="press-methodology">Metodologia: els recomptes es calculen en temps real sobre els vots registrats fins al moment de la consulta. El "torró més votat" i "el que més puja" es determinen sobre els duels de temporada oberta; el "duel més igualat" es filtra a partir d'un mínim de vots per evitar falsos empats; la Gran Final correspon al quadre eliminatori de la categoria global.</p>
+
     <div class="press-embed-section">
-        <h2 class="press-card-title">Incrusta el rànquing en directe</h2>
+        <h2 class="press-section-title">Incrusta el rànquing en directe</h2>
         <p class="press-embed-description">
             Copia aquest codi per incrustar el rànquing en directe d'una categoria a la teva pàgina web.
             S'actualitza sol, no requereix manteniment.
