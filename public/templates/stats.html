@@ -37,7 +37,10 @@
                 <span class="stats-eyebrow-mark" aria-hidden="true"></span>
                 Torrorèndum · el meu palmarès
             </div>
-            <span class="stats-season-pill">Torrorèndum 2025</span>
+            <div class="stats-hero-badges">
+                <span class="stats-season-pill">Torrorèndum 2025</span>
+                <span class="stats-rank-pill">{{ .UserRank }}</span>
+            </div>
         </div>
         <h1 class="stats-hero-title">El teu palmarès</h1>
         <p class="stats-hero-subtitle">Cada vot suma. Segueix votant per desbloquejar els resultats de cada categoria.</p>
@@ -53,11 +56,6 @@
             <div class="stats-tile-value">{{ .UnlockedCategories }}</div>
             <div class="stats-tile-label">Categories obertes</div>
         </div>
-        <div class="stats-tile stats-tile-rank">
-            <div class="stats-tile-value">{{ .UserRank }}</div>
-            <div class="stats-tile-label">Nivell de votant</div>
-        </div>
-        {{ if gt .CurrentStreak 0 }}
         <div class="stats-tile stats-tile-streak">
             <div class="stats-streak-flame" aria-hidden="true">
                 <span class="stats-streak-flame-outer"></span>
@@ -68,7 +66,6 @@
                 <div class="stats-tile-label">{{ if eq .CurrentStreak 1 }}Dia seguit votant{{ else }}Dies seguits votant{{ end }}</div>
             </div>
         </div>
-        {{ end }}
     </div>
 
     <!-- Category progress -->
@@ -83,6 +80,7 @@
 
                     <div class="category-progress-body">
                         <span class="category-name">{{ .Name }}</span>
+                        <span class="category-tag">{{ .Tag }}</span>
                         <div class="category-progress-bar">
                             <div class="progress-fill" style="width: {{ .ProgressPercentage }}%"></div>
                         </div>
