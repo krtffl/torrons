@@ -4305,65 +4305,426 @@ button.arena-card-action:focus-visible {
 }
 
 /* ========================================
-   Torró Detail Page
+   Torró Detail Page (/torro/{id})
+   "Fitxa del producte" — Viral Drop Product Page mockup.
+
+   Notes on data availability vs the mockup:
+   - No class-name (category) lookup is available in this page's template
+     context (only the raw class id is, and resolving it to a display name
+     would require new handler code), so the mockup's "CLÀSSICS" category
+     pill/caption is intentionally omitted rather than showing a raw id.
+   - The mockup's ELO trend sparkline and "+1 avui" delta assume a
+     time-series history this app doesn't collect/pass to the template, so
+     they're omitted rather than fabricated. Likewise "EN VIU" (live)
+     wording is dropped from copy since campaign-active state isn't part of
+     this page's data — the rank/ELO card keeps a purely decorative
+     competition-accent dot instead of a textual live claim.
+   - Dietary badges keep the existing HasDietInfo gate and only render
+     flags that are actually true (no "No vegà"-style negative claims),
+     since most torrons still have unbackfilled (default-false) dietary
+     columns — asserting a negative here would misrepresent unknown data.
    ======================================== */
 
-.torro-back-link {
-    display: inline-block;
+.torro-detail-page {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+.torro-detail-topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
     margin-bottom: var(--spacing-md);
 }
 
+.torro-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    color: var(--color-primary);
+    text-decoration: none;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    margin: calc(-1 * var(--spacing-xs)) calc(-1 * var(--spacing-sm));
+    border-radius: var(--radius-pill);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.torro-back-link:hover {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.torro-detail-kicker {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-text-light-dark);
+}
+
 .torro-detail-card {
-    max-width: 500px;
-    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.torro-photo-wrap {
+    position: relative;
+    width: fit-content;
+    margin: 0 auto var(--spacing-xs);
+}
+
+.torro-photo {
+    width: 100%;
+    max-width: 220px;
+    height: 260px;
+    object-fit: cover;
+    background-color: var(--color-placeholder-1);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-sticker);
+    transform: rotate(-1deg);
+}
+
+.torro-rank-chip {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--color-card);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: .3px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-sticker-badge);
+}
+
+.torro-detail-heading {
     text-align: center;
 }
 
-.torro-description {
+.torro-detail-title {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: clamp(1.5rem, 4vw, 1.9rem);
+    line-height: 1.1;
     color: var(--color-text);
-    text-align: left;
-    margin: var(--spacing-md) 0;
-    line-height: 1.6;
+    margin: 0;
 }
 
-.torro-meta {
+.torro-description {
+    font-family: var(--font-family);
+    color: var(--color-text-light-dark);
+    font-size: 0.95rem;
+    line-height: 1.55;
+    margin: var(--spacing-sm) 0 0;
+}
+
+.torro-eyebrow {
+    display: block;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 10.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-text-light-dark);
+    margin-bottom: var(--spacing-sm);
+}
+
+.torro-info-card-spaced {
+    margin-top: var(--spacing-md);
+}
+
+.torro-spec-row,
+.torro-intensity-card,
+.torro-info-card,
+.torro-rank-card {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+}
+
+.torro-spec-row {
+    display: flex;
+    align-items: stretch;
+}
+
+.torro-spec-item {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-xs);
+    text-align: center;
+}
+
+.torro-spec-value,
+.torro-rank-stat-value {
+    display: block;
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    color: var(--color-text);
+}
+
+.torro-spec-value {
+    font-size: 17px;
+}
+
+.torro-spec-label {
+    display: block;
+    font-family: var(--font-family-display);
+    font-weight: 600;
+    font-size: 9px;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    color: var(--color-text-light-dark);
+    margin-top: 3px;
+}
+
+.torro-spec-divider {
+    width: 1px;
+    align-self: stretch;
+    margin: var(--spacing-sm) 0;
+    background-color: var(--color-surface);
+}
+
+.torro-intensity-card,
+.torro-info-card,
+.torro-rank-card {
+    padding: var(--spacing-md);
+}
+
+.torro-intensity-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+}
+
+.torro-intensity-head .torro-eyebrow {
+    margin-bottom: 0;
+}
+
+.torro-intensity-descriptor {
+    font-family: var(--font-family);
+    font-style: italic;
+    font-size: 12.5px;
+    color: var(--color-primary-dark);
+    white-space: nowrap;
+}
+
+.torro-intensity-bar {
+    display: flex;
+    gap: 6px;
+    margin-top: var(--spacing-sm);
+}
+
+.torro-intensity-seg {
+    flex: 1;
+    height: 11px;
+    border-radius: 3px;
+    background-color: transparent;
+    border: 1.5px solid var(--color-border);
+}
+
+.torro-intensity-seg.is-filled {
+    background-color: var(--color-competition);
+    border-color: var(--color-competition);
+}
+
+.torro-diet-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: var(--spacing-md);
-    margin: var(--spacing-md) 0;
+    gap: var(--spacing-sm) var(--spacing-md);
 }
 
-.intensity-meter {
+.torro-diet-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    flex: 0 1 76px;
+    text-align: center;
+}
+
+.torro-diet-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-xs);
-    margin: var(--spacing-md) 0;
+    flex: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: var(--color-surface);
+    border: 1.5px solid var(--color-border);
+    position: relative;
 }
 
-.intensity-dots {
-    font-size: var(--font-size-lg);
-    letter-spacing: 2px;
-    color: var(--color-primary);
+.torro-diet-icon.is-active.torro-diet-icon-leaf::before {
+    content: "";
+    width: 16px;
+    height: 16px;
+    border-radius: 0 100% 0 100%;
+    background-color: var(--color-primary-dark);
+    transform: rotate(-45deg);
 }
 
-.diet-badges,
-.ingredients-list {
+.torro-diet-icon.is-active.torro-diet-icon-crossed {
+    border-color: var(--color-primary-dark);
+}
+
+.torro-diet-icon.is-active.torro-diet-icon-crossed::before {
+    content: "";
+    position: absolute;
+    left: -1.5px;
+    right: -1.5px;
+    top: 50%;
+    height: 0;
+    border-top: 2.5px solid var(--color-primary-dark);
+    transform: rotate(-45deg);
+}
+
+.torro-diet-icon.is-active.torro-diet-icon-stamp {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 8px;
+    letter-spacing: .3px;
+    color: var(--color-primary-dark);
+}
+
+.torro-diet-label {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 9.5px;
+    line-height: 1.2;
+    color: var(--color-text);
+    max-width: 74px;
+}
+
+.torro-chip-list {
     display: flex;
     flex-wrap: wrap;
+    gap: var(--spacing-xs);
+}
+
+.torro-chip {
+    font-family: var(--font-family-display);
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--color-text);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    padding: 5px 12px;
+}
+
+.torro-chip-allergen {
+    color: var(--color-text);
+    background-color: var(--color-warning-bg);
+    border-color: var(--color-warning);
+}
+
+.torro-rank-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.torro-rank-head .torro-eyebrow {
+    margin-bottom: 0;
+}
+
+.torro-rank-dot {
+    width: 6px;
+    height: 6px;
+    flex: none;
+    border-radius: 50%;
+    background-color: var(--color-competition);
+}
+
+.torro-rank-stats {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--spacing-md);
+}
+
+.torro-rank-stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.torro-rank-stat-value {
+    font-size: 26px;
+    line-height: 1;
+}
+
+.torro-cta-wrap {
+    margin-top: var(--spacing-xs);
+    text-align: center;
+}
+
+.torro-cta {
+    display: flex;
+    align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
-    margin: var(--spacing-sm) 0 var(--spacing-md);
+    background-color: var(--color-card);
+    color: var(--color-text);
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 15px;
+    padding: var(--spacing-md);
+    border: 1.5px solid var(--color-text);
+    border-radius: 16px;
+    text-decoration: none;
+    transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
 }
 
-.torro-ingredients,
-.torro-allergens {
-    margin: var(--spacing-md) 0;
+.torro-cta:hover {
+    background-color: var(--color-text);
+    color: var(--color-card);
+    transform: translateY(-2px);
 }
 
-.torro-product-link {
-    margin-top: var(--spacing-lg);
+.torro-cta-arrow {
+    font-size: 15px;
+    line-height: 1;
+    transition: transform var(--transition-fast);
+}
+
+.torro-cta:hover .torro-cta-arrow {
+    transform: translateX(3px);
+}
+
+.torro-cta-note {
+    font-family: var(--font-family);
+    font-style: italic;
+    font-size: 11.5px;
+    color: var(--color-text-light-dark);
+    margin: var(--spacing-sm) 0 0;
+}
+
+@media (max-width: 480px) {
+    .torro-photo {
+        max-width: 180px;
+        height: 220px;
+    }
+
+    .torro-rank-stat-value {
+        font-size: 22px;
+    }
 }
 
 /* ========================================
