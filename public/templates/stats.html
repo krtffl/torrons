@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/public/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
     <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Les meves estadístiques - Torrorèndum 2025</title>
@@ -31,89 +31,107 @@
 
 {{ define "stats" }}
 <div id="stats-container">
-    <div class="stats-header">
-        <h1 class="stats-title">Les meves estadístiques</h1>
-        <p class="stats-subtitle">Segueix votant per desbloquejar els resultats de cada categoria</p>
+    <div class="stats-hero">
+        <div class="stats-hero-top">
+            <div class="stats-eyebrow">
+                <span class="stats-eyebrow-mark" aria-hidden="true"></span>
+                Torrorèndum · el meu palmarès
+            </div>
+            <span class="stats-season-pill">Torrorèndum 2025</span>
+        </div>
+        <h1 class="stats-hero-title">El teu palmarès</h1>
+        <p class="stats-hero-subtitle">Cada vot suma. Segueix votant per desbloquejar els resultats de cada categoria.</p>
     </div>
 
     <!-- Total votes summary -->
-    <div class="stats-summary">
-        <div class="stats-card stats-total">
-            <div class="stats-icon">🗳️</div>
-            <div class="stats-value">{{ .TotalVotes }}</div>
-            <div class="stats-label">Vots totals</div>
+    <div class="stats-tiles">
+        <div class="stats-tile">
+            <div class="stats-tile-value">{{ .TotalVotes }}</div>
+            <div class="stats-tile-label">Vots emesos</div>
         </div>
-        <div class="stats-card stats-unlocked">
-            <div class="stats-icon">🔓</div>
-            <div class="stats-value">{{ .UnlockedCategories }}</div>
-            <div class="stats-label">Categories desbloquejades</div>
+        <div class="stats-tile">
+            <div class="stats-tile-value">{{ .UnlockedCategories }}</div>
+            <div class="stats-tile-label">Categories obertes</div>
         </div>
-        <div class="stats-card stats-rank">
-            <div class="stats-icon">⭐</div>
-            <div class="stats-value">{{ .UserRank }}</div>
-            <div class="stats-label">Nivell de votant</div>
+        <div class="stats-tile stats-tile-rank">
+            <div class="stats-tile-value">{{ .UserRank }}</div>
+            <div class="stats-tile-label">Nivell de votant</div>
         </div>
         {{ if gt .CurrentStreak 0 }}
-        <div class="stats-card stats-streak">
-            <div class="stats-icon">🔥</div>
-            <div class="stats-value">{{ .CurrentStreak }}</div>
-            <div class="stats-label">{{ if eq .CurrentStreak 1 }}Dia seguit votant{{ else }}Dies seguits votant{{ end }}</div>
+        <div class="stats-tile stats-tile-streak">
+            <div class="stats-streak-flame" aria-hidden="true">
+                <span class="stats-streak-flame-outer"></span>
+                <span class="stats-streak-flame-inner"></span>
+            </div>
+            <div class="stats-streak-text">
+                <div class="stats-tile-value">{{ .CurrentStreak }}</div>
+                <div class="stats-tile-label">{{ if eq .CurrentStreak 1 }}Dia seguit votant{{ else }}Dies seguits votant{{ end }}</div>
+            </div>
         </div>
         {{ end }}
     </div>
 
     <!-- Category progress -->
     <div class="category-progress-list">
-        <h2 class="section-title">Progrés per categoria</h2>
+        <div class="stats-section-label">Progrés per categoria</div>
 
-        {{ range .CategoryProgress }}
-        <div class="category-progress-item {{ if .Unlocked }}unlocked{{ end }}">
-            <div class="category-progress-header">
-                <div class="category-info">
-                    <span class="category-icon">{{ .Icon }}</span>
-                    <span class="category-name">{{ .Name }}</span>
+        <div class="category-progress-card">
+            {{ range .CategoryProgress }}
+            <div class="category-progress-item {{ if .Unlocked }}unlocked{{ end }}">
+                <div class="category-progress-main">
+                    <div class="category-progress-icon" aria-hidden="true">{{ .Icon }}</div>
+
+                    <div class="category-progress-body">
+                        <span class="category-name">{{ .Name }}</span>
+                        <div class="category-progress-bar">
+                            <div class="progress-fill" style="width: {{ .ProgressPercentage }}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="category-progress-meta">
+                        <div class="category-votes">
+                            <span class="votes-current">{{ .VoteCount }}</span><span class="votes-separator">/</span><span class="votes-required">{{ .MinVotes }}</span>
+                        </div>
+                        <span class="category-progress-pill">{{ if .Unlocked }}Obert{{ else }}Blocat{{ end }}</span>
+                    </div>
                 </div>
-                <div class="category-votes">
-                    <span class="votes-current">{{ .VoteCount }}</span>
-                    <span class="votes-separator">/</span>
-                    <span class="votes-required">{{ .MinVotes }}</span>
-                    <span class="votes-label">vots</span>
+
+                <div class="category-progress-actions">
+                    {{ if .Unlocked }}
+                    <span class="progress-status unlocked">Resultats desbloquejats</span>
+                    <a href="/leaderboard?view=personal&category={{ .Id }}" class="category-progress-cta" hx-get="/leaderboard?view=personal&category={{ .Id }}" hx-boost="true" hx-target="#main-content" hx-push-url="/leaderboard?view=personal&category={{ .Id }}">
+                        Veure resultats
+                    </a>
+                    {{ else }}
+                    <span class="progress-status locked">Falten {{ .VotesRemaining }} vots per desbloquejar</span>
+                    <a href="/classes/{{ .Id }}/vote" class="category-progress-cta" hx-get="/classes/{{ .Id }}/vote" hx-boost="true" hx-target="#main-content" hx-push-url="/classes/{{ .Id }}/vote">
+                        Continua votant
+                    </a>
+                    {{ end }}
                 </div>
             </div>
-
-            <div class="category-progress-bar">
-                <div class="progress-fill" style="width: {{ .ProgressPercentage }}%"></div>
-            </div>
-
-            <div class="category-progress-footer">
-                {{ if .Unlocked }}
-                <span class="progress-status unlocked">✓ Resultats desbloquejats</span>
-                <a href="/leaderboard?view=personal&category={{ .Id }}" class="btn-small" hx-get="/leaderboard?view=personal&category={{ .Id }}" hx-boost="true" hx-target="#main-content" hx-push-url="/leaderboard?view=personal&category={{ .Id }}">
-                    Veure resultats
-                </a>
-                {{ else }}
-                <span class="progress-status locked">🔒 Necessites {{ .VotesRemaining }} vots més</span>
-                <a href="/classes/{{ .Id }}/vote" class="btn-small" hx-get="/classes/{{ .Id }}/vote" hx-boost="true" hx-target="#main-content" hx-push-url="/classes/{{ .Id }}/vote">
-                    Continua votant
-                </a>
-                {{ end }}
-            </div>
+            {{ end }}
         </div>
-        {{ end }}
     </div>
 
     <!-- Achievements -->
     {{ if .Achievements }}
     <div class="achievements-section">
-        <h2 class="section-title">Assoliments</h2>
-        <div class="achievements-grid">
-            {{ range .Achievements }}
-            <div class="achievement-badge {{ if .Unlocked }}unlocked{{ else }}locked{{ end }}">
-                <div class="achievement-icon">{{ .Icon }}</div>
-                <div class="achievement-name">{{ .Name }}</div>
-                <div class="achievement-description">{{ .Description }}</div>
+        <div class="stats-section-label">Insígnies</div>
+
+        <div class="achievements-card">
+            <div class="achievements-grid">
+                {{ range .Achievements }}
+                <div class="achievement-badge {{ if .Unlocked }}unlocked{{ else }}locked{{ end }}">
+                    <div class="achievement-circle">
+                        <span class="achievement-icon" aria-hidden="true">{{ .Icon }}</span>
+                        {{ if .Unlocked }}<span class="achievement-shine" aria-hidden="true"></span>{{ end }}
+                    </div>
+                    <div class="achievement-name">{{ .Name }}</div>
+                    <div class="achievement-description">{{ .Description }}</div>
+                </div>
+                {{ end }}
             </div>
-            {{ end }}
         </div>
     </div>
     {{ end }}
