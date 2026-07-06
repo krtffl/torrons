@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -30,6 +31,13 @@ type Content struct {
 	Pairings []*domain.Pairing
 	Classes  []*domain.Class
 	HX       bool
+
+	// CurrentStreak/StreakAtRisk feed the small streak-indicator pill shown
+	// near the top of the vote screen (design prompt 13). Both are zero
+	// values for anonymous sessions or if the user lookup fails, which just
+	// hides the pill -- it's decorative and never blocks voting.
+	CurrentStreak int
+	StreakAtRisk  bool
 }
 
 type Handler struct {
@@ -170,13 +178,36 @@ func (h *Handler) vote(w http.ResponseWriter, r *http.Request) {
 	t1.Pairing = p.Id
 	t2.Pairing = p.Id
 
+	// Look up the current user's voting streak for the small streak-indicator
+	// pill (design prompt 13). This is purely decorative engagement UI, so an
+	// anonymous session or a lookup failure just leaves it hidden rather than
+	// failing the vote screen.
+	var currentStreak int
+	var streakAtRisk bool
+	if userId := GetUserIDFromContext(r.Context()); userId != "" {
+		if user, err := h.userRepo.Get(r.Context(), userId); err != nil {
+			logger.Warn("[Handler - Vote] Couldn't get user for streak indicator. %v", err)
+		} else {
+			currentStreak = user.CurrentStreak
+			today := time.Now().UTC().Format("2006-01-02")
+			// LastVoteDate comes back from the DATE column via database/sql's
+			// time.Time->string conversion, which yields an RFC3339 timestamp
+			// (e.g. "2026-07-06T00:00:00Z"), not a bare "2006-01-02" date --
+			// so compare by prefix rather than exact equality.
+			streakAtRisk = currentStreak > 0 &&
+				(user.LastVoteDate == nil || !strings.HasPrefix(*user.LastVoteDate, today))
+		}
+	}
+
 	buf := h.bpool.Get()
 	defer h.bpool.Put(buf)
 
 	if err := h.template.ExecuteTemplate(buf, "vote.html", Content{
-		Pairing: p,
-		Torrons: []*domain.Torro{t1, t2},
-		HX:      isHX(r),
+		Pairing:       p,
+		Torrons:       []*domain.Torro{t1, t2},
+		HX:            isHX(r),
+		CurrentStreak: currentStreak,
+		StreakAtRisk:  streakAtRisk,
 	}); err != nil {
 		logger.Error("[Handler - Vote] Couldn't execute template. %v", err)
 		w.WriteHeader(http.StatusInternalServerError)

@@ -1093,24 +1093,28 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ========================================
    Progress Bar
+   (exclusively used on the vote screen — see the Vote / Duel Screen
+   section below for the round header + streak pill that sit above it)
    ======================================== */
 
 #progress {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: var(--spacing-md) 0;
+    gap: 10px;
+    padding: var(--spacing-md) 0 var(--spacing-sm);
 }
 
 .progress-container {
-    height: 15px;
-    margin: var(--spacing-md);
+    height: 8px;
+    margin: 0 var(--spacing-md);
     overflow: hidden;
-    background-color: var(--color-neutral-light);
-    border-radius: var(--border-radius);
-    box-shadow: inset 0 1px 2px var(--color-shadow);
-    width: 75%;
-    max-width: 600px;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-pill);
+    box-shadow: none;
+    width: 90%;
+    max-width: 480px;
 }
 
 #progress-bar {
@@ -1121,8 +1125,291 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 20px;
     text-align: center;
     background-color: var(--color-primary);
-    box-shadow: inset 0 -1px 0 var(--color-shadow-soft);
+    border-radius: var(--radius-pill);
+    box-shadow: none;
     transition: width 0.6s ease;
+}
+
+/* ========================================
+   Vote / Duel Screen
+   See docs/design-deliverables/Torrorendum Voting Screen.dc.html and
+   docs/design-deliverables/Torrorendum Streak Indicator.dc.html.
+   Scoped, additive classes only — .torron-comparison/.torron-card/
+   .torron-image/.torron-name/.torron-info-link/#progress/#progress-bar
+   above are shared with advent.html, bracket.html, torro.html and
+   leaderboard.html and are left untouched; everything below only ever
+   applies alongside the extra classes vote.html adds.
+   ======================================== */
+
+.vote-round-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    width: 90%;
+    max-width: 480px;
+}
+
+.vote-round-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    color: var(--color-text-light-dark);
+}
+
+.vote-round-icon {
+    width: 11px;
+    height: 11px;
+    flex: none;
+    border-left: 3px solid var(--color-text);
+    border-bottom: 3px solid var(--color-text);
+    transform: rotate(45deg);
+}
+
+/* Streak indicator pill */
+.streak-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 12px 6px 6px;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    flex: none;
+}
+
+.streak-pill--risk {
+    background-color: var(--color-competition-tint);
+    border: 1.5px dashed var(--color-competition);
+}
+
+.streak-flame {
+    position: relative;
+    width: 20px;
+    height: 22px;
+    flex: none;
+}
+
+.streak-flame::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 0 50% 50% 50%;
+    transform: translateX(-50%) rotate(-45deg);
+    background: linear-gradient(200deg, var(--color-primary), var(--color-primary-dark));
+}
+
+.streak-pill--risk .streak-flame::before {
+    background: transparent;
+    border: 2px solid var(--color-competition);
+}
+
+.streak-flame::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 4px;
+    width: 5px;
+    height: 5px;
+    border-radius: 0 50% 50% 50%;
+    transform: translateX(-50%) rotate(-45deg);
+    background: var(--color-brand-gold);
+}
+
+.streak-pill--risk .streak-flame::after {
+    background: var(--color-competition-tint);
+}
+
+.streak-risk-dot {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-competition);
+    animation: streakRiskPulse 2s ease-in-out infinite;
+}
+
+@keyframes streakRiskPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
+
+.streak-count {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.streak-number {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: 16px;
+    line-height: 1;
+    color: var(--color-text);
+}
+
+.streak-label {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 8.5px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: var(--color-text-light-dark);
+}
+
+.streak-pill--risk .streak-label {
+    color: var(--color-competition);
+}
+
+/* Duel layout */
+.torron-comparison.vote-duel {
+    align-items: stretch;
+    gap: 10px;
+    max-width: 480px;
+    margin: var(--spacing-md) auto;
+    position: relative;
+}
+
+.torron-card.vote-card {
+    position: relative;
+    align-items: stretch;
+    justify-content: flex-start;
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-sm);
+    padding: var(--spacing-sm);
+    max-width: none;
+    min-height: 0;
+}
+
+.torron-card.vote-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.vote-card-media {
+    position: relative;
+    width: 100%;
+}
+
+.vote-card .torron-image {
+    width: 100%;
+    max-width: 100%;
+    height: 170px;
+    border-radius: 14px;
+    background-color: var(--color-placeholder-1);
+    border: 1px solid var(--color-border);
+    margin-bottom: 0;
+}
+
+.vote-badge-new {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    background-color: var(--color-competition);
+    color: var(--color-competition-contrast);
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    transform: rotate(-8deg);
+    box-shadow: var(--shadow-sticker-badge);
+}
+
+.vote-card .torron-name {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-lg);
+    text-align: left;
+    color: var(--color-text);
+    margin: var(--spacing-sm) 0 0;
+}
+
+.vote-diet-badges {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.vote-diet-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    font-size: 11px;
+    background-color: var(--color-card);
+}
+
+.vote-card .torron-info-link {
+    display: inline-block;
+    margin-top: var(--spacing-sm);
+}
+
+.vote-vs-badge {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(-6deg);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--color-competition);
+    color: var(--color-competition-contrast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: 15px;
+    z-index: 3;
+    box-shadow: var(--shadow-sticker-badge);
+    pointer-events: none;
+    animation: voteVsPulse 2.2s ease-out infinite;
+}
+
+@keyframes voteVsPulse {
+    0% { box-shadow: 0 0 0 0 var(--color-competition-tint); }
+    100% { box-shadow: 0 0 0 14px rgba(138, 38, 56, 0); }
+}
+
+@media (max-width: 768px) {
+    .torron-comparison.vote-duel {
+        flex-direction: row;
+        gap: 8px;
+        max-width: 100%;
+        padding: 0 var(--spacing-sm);
+    }
+
+    .torron-card.vote-card {
+        max-width: none;
+        min-height: 0;
+        padding: 8px;
+    }
+
+    .vote-card .torron-image {
+        height: 130px;
+    }
+
+    .vote-round-header,
+    .progress-container {
+        width: 100%;
+        max-width: none;
+        padding: 0 var(--spacing-sm);
+        box-sizing: border-box;
+    }
 }
 
 /* ========================================
