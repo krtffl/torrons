@@ -4,12 +4,32 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rànquing Torrorèndum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
 <style>
+  /* Self-contained by design: this document is loaded cross-origin inside a
+     third party's <iframe>, so it carries its own copy of the canonical
+     "Viral Drop" tokens (see public/css/main.css :root) instead of linking
+     the shared stylesheet. Values below are kept in sync with that palette
+     by hand. Light-mode only — this widget has no existing dark-mode path,
+     so none is introduced here (see redesign audit note on Embed Card /
+     Embed Strip: "Foscos alineats al canònic" applies to widgets that
+     already have a dark variant). */
   :root {
-    --embed-accent: #5B1220;
-    --embed-cream: #FBF3E7;
-    --embed-text: #2B1A12;
-    --embed-text-light: #6B5347;
+    --embed-accent: #E0923F;        /* caramel glaçat — generic action color */
+    --embed-accent-dark: #B96F26;   /* caramel fosc — AA-contrast / pressed */
+    --embed-gold: #EFC26E;          /* or — decorative accent */
+    --embed-competition: #8A2638;   /* burdeus — reserved for the #1 spot only */
+    --embed-competition-contrast: #FFFAF1;
+    --embed-card: #FFFAF1;
+    --embed-bg: #FBF2E3;
+    --embed-ink: #3A2A1C;
+    --embed-ink-muted: #8A7458;
+    --embed-border: #E8D6B4;
+    --embed-row-border: #F0E4C8;
+    --embed-font: 'Newsreader', Georgia, serif;
+    --embed-font-display: 'Bricolage Grotesque', sans-serif;
   }
   * {
     box-sizing: border-box;
@@ -17,108 +37,217 @@
   html, body {
     margin: 0;
     padding: 0;
-    background: var(--embed-cream);
-    color: var(--embed-text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: transparent;
+    color: var(--embed-ink);
+    font-family: var(--embed-font);
   }
   .widget {
-    padding: 10px 12px 8px;
+    width: 100%;
+    max-width: 420px;
+    background: var(--embed-card);
+    border: 1.5px solid var(--embed-border);
+    border-radius: 20px;
+    box-shadow: 0 6px 20px rgba(58, 42, 28, .16), 0 2px 0 var(--embed-border);
+    overflow: hidden;
+  }
+  .widget-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--embed-border);
+  }
+  .widget-mark {
+    flex: none;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: var(--embed-competition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .widget-mark span {
+    width: 5.5px;
+    height: 5.5px;
+    border-radius: 50%;
+    background: var(--embed-gold);
+  }
+  .widget-brand {
+    font-family: var(--embed-font-display);
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--embed-ink);
+    white-space: nowrap;
+  }
+  .widget-intro {
+    padding: 10px 16px 2px;
   }
   .widget-title {
-    margin: 0 0 8px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--embed-accent);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    margin: 0;
+    font-family: var(--embed-font-display);
+    font-weight: 800;
+    font-size: 17px;
+    color: var(--embed-ink);
+    line-height: 1.15;
+  }
+  .widget-tagline {
+    margin: 3px 0 0;
+    font-family: var(--embed-font);
+    font-style: italic;
+    font-size: 11.5px;
+    color: var(--embed-ink-muted);
+  }
+  .list {
+    padding: 10px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
   .entry {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 5px 0;
-    border-bottom: 1px solid rgba(91, 18, 32, 0.12);
+    gap: 9px;
+    min-width: 0;
+    padding: 7px 9px;
+    border-radius: 13px;
+    border: 1px solid var(--embed-border);
+    background: var(--embed-bg);
   }
-  .entry:last-of-type {
-    border-bottom: none;
+  .entry.is-winner {
+    background: var(--embed-competition);
+    border: 1.5px solid var(--embed-gold);
   }
   .rank {
-    flex: 0 0 16px;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--embed-accent);
-    text-align: center;
+    flex: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--embed-font-display);
+    font-weight: 800;
+    font-size: 10.5px;
+    background: var(--embed-accent-dark);
+    color: var(--embed-competition-contrast);
+  }
+  .entry.is-winner .rank {
+    background: var(--embed-gold);
+    color: var(--embed-ink);
   }
   .thumb {
-    flex: 0 0 30px;
-    width: 30px;
-    height: 30px;
-    border-radius: 6px;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
     object-fit: cover;
-    background: #fff;
+    background: var(--embed-card);
+    border: 1px solid var(--embed-border);
+  }
+  .entry.is-winner .thumb {
+    border-color: rgba(239, 194, 110, .5);
   }
   .info {
     flex: 1 1 auto;
     min-width: 0;
   }
   .name {
-    font-size: 12px;
-    font-weight: 600;
+    font-family: var(--embed-font-display);
+    font-weight: 700;
+    font-size: 12.5px;
+    color: var(--embed-ink);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .entry.is-winner .name {
+    color: var(--embed-competition-contrast);
+  }
   .bar-track {
-    margin-top: 3px;
+    margin-top: 4px;
     height: 5px;
-    border-radius: 3px;
-    background: rgba(91, 18, 32, 0.12);
+    border-radius: 999px;
+    background: rgba(58, 42, 28, .1);
     overflow: hidden;
+  }
+  .entry.is-winner .bar-track {
+    background: rgba(255, 250, 241, .25);
   }
   .bar-fill {
     height: 100%;
+    border-radius: 999px;
     background: var(--embed-accent);
-    border-radius: 3px;
+  }
+  .entry.is-winner .bar-fill {
+    background: var(--embed-gold);
   }
   .empty {
-    font-size: 12px;
-    color: var(--embed-text-light);
-    padding: 8px 0;
+    margin: 0;
+    padding: 12px 16px 16px;
+    font-family: var(--embed-font);
+    font-style: italic;
+    font-size: 12.5px;
+    color: var(--embed-ink-muted);
   }
   .attribution {
-    margin: 8px 0 0;
-    font-size: 10px;
-    text-align: right;
-    color: var(--embed-text-light);
-  }
-  .attribution a {
-    color: var(--embed-accent);
-    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin: 0;
+    padding: 11px 16px;
+    border-top: 1px solid var(--embed-border);
     text-decoration: none;
+    opacity: .85;
   }
-  .attribution a:hover {
-    text-decoration: underline;
+  .attribution:hover {
+    opacity: 1;
+  }
+  .attribution-lead {
+    font-family: var(--embed-font);
+    font-style: italic;
+    font-size: 11.5px;
+    color: var(--embed-ink-muted);
+  }
+  .attribution-brand {
+    font-family: var(--embed-font-display);
+    font-weight: 800;
+    font-size: 11.5px;
+    color: var(--embed-ink);
   }
 </style>
 </head>
 <body>
   <div class="widget">
-    <p class="widget-title">Rànquing Torrorèndum</p>
-    {{ if .Entries }}
-    {{ range .Entries }}
-    <div class="entry">
-      <span class="rank">{{ .Rank }}</span>
-      <img class="thumb" src="/public/images/{{ .TorronImage }}" alt="{{ .TorronName }}" loading="lazy">
-      <div class="info">
-        <div class="name">{{ .TorronName }}</div>
-        <div class="bar-track"><div class="bar-fill" style="width: {{ .RatingPercentage }}%"></div></div>
-      </div>
+    <div class="widget-header">
+      <div class="widget-mark"><span></span></div>
+      <div class="widget-brand">torrorèndum</div>
     </div>
-    {{ end }}
+    <div class="widget-intro">
+      <p class="widget-title">Classificació</p>
+      <p class="widget-tagline">Rànquing de torrons, en directe</p>
+    </div>
+    {{ if .Entries }}
+    <div class="list">
+      {{ range .Entries }}
+      <div class="entry{{ if eq .Rank 1 }} is-winner{{ end }}">
+        <span class="rank">{{ .Rank }}</span>
+        <img class="thumb" src="/public/images/{{ .TorronImage }}" alt="{{ .TorronName }}" loading="lazy">
+        <div class="info">
+          <div class="name">{{ .TorronName }}</div>
+          <div class="bar-track"><div class="bar-fill" style="width: {{ .RatingPercentage }}%"></div></div>
+        </div>
+      </div>
+      {{ end }}
+    </div>
     {{ else }}
     <p class="empty">Encara no hi ha dades disponibles.</p>
     {{ end }}
-    <p class="attribution"><a href="/" target="_top">Torrorèndum</a> · torro.cat</p>
+    <a class="attribution" href="/" target="_top">
+      <span class="attribution-lead">Veure el rànquing complet a</span>
+      <span class="attribution-brand">torro.cat →</span>
+    </a>
   </div>
 </body>
 </html>
