@@ -91,7 +91,7 @@
         <div class="torro-info-card">
             {{ if .Torro.HasDietInfo }}
             <span class="torro-eyebrow">Al·lèrgens i dieta</span>
-            <div class="torro-diet-grid">
+            <div class="torro-diet-grid" role="group" aria-label="Informació dietètica">
                 {{ if .Torro.IsVegan }}
                 <div class="torro-diet-item">
                     <span class="torro-diet-icon is-active torro-diet-icon-leaf" aria-hidden="true"></span>
