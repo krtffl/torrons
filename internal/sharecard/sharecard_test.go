@@ -25,6 +25,13 @@ func TestRenderProducesValidCanvas(t *testing.T) {
 			TopTorroRank:     1,
 			RatedTorronCount: 1,
 		},
+		"long catalan name with diacritics": {
+			HasVotes:         true,
+			TotalVotes:       9999,
+			TopTorroName:     "Torró de Xocolata amb Ametlles i Praliné, l'Especialitat més Atrevida",
+			TopTorroRank:     3,
+			RatedTorronCount: 87,
+		},
 	}
 
 	for name, data := range tests {
@@ -47,24 +54,39 @@ func TestRenderProducesValidCanvas(t *testing.T) {
 	}
 }
 
-func TestWrapTextFitsWithinMaxWidth(t *testing.T) {
-	const maxWidth = 900
-	const scale = 5
-
-	lines := wrapText("Torró d'Ametlla i Xocolata Negra amb un nom llarguíssim de veritat", maxWidth, scale)
-	if len(lines) < 2 {
-		t.Fatalf("expected the long name to wrap into multiple lines, got %d: %v", len(lines), lines)
+// TestRenderEmptyStateOmitsResult checks that the "no votes" fallback
+// really takes the empty-message path (no hero/card content computed from
+// zero-value fields) rather than happening to render harmlessly.
+func TestRenderEmptyStateOmitsResult(t *testing.T) {
+	f := Data{HasVotes: false}.toFrame()
+	if f.empty == nil {
+		t.Fatal("toFrame() with HasVotes=false: expected empty state, got nil")
 	}
-
-	for _, line := range lines {
-		if w := measureWidth(line, scale); w > maxWidth {
-			t.Errorf("line %q measures %dpx, exceeds maxWidth %dpx", line, w, maxWidth)
-		}
+	if len(f.cards) != 0 {
+		t.Errorf("toFrame() with HasVotes=false: expected no cards, got %d", len(f.cards))
 	}
 }
 
-func TestWrapTextEmptyString(t *testing.T) {
-	if lines := wrapText("", 900, 5); lines != nil {
-		t.Errorf("wrapText(\"\") = %v, want nil", lines)
+func TestDataToFrameResultCard(t *testing.T) {
+	data := Data{
+		HasVotes:         true,
+		TotalVotes:       50,
+		TopTorroName:     "Torró de Xocolata",
+		TopTorroRank:     2,
+		RatedTorronCount: 10,
+	}
+	f := data.toFrame()
+
+	if f.empty != nil {
+		t.Fatal("toFrame() with HasVotes=true: expected no empty state")
+	}
+	if len(f.cards) != 1 {
+		t.Fatalf("toFrame(): expected exactly 1 card, got %d", len(f.cards))
+	}
+	if f.cards[0].headline != data.TopTorroName {
+		t.Errorf("card headline = %q, want %q", f.cards[0].headline, data.TopTorroName)
+	}
+	if len(f.cards[0].columns) != 2 {
+		t.Fatalf("card columns = %d, want 2", len(f.cards[0].columns))
 	}
 }

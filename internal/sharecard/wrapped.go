@@ -1,26 +1,21 @@
 package sharecard
 
 import (
-	"bytes"
 	"fmt"
-	"image"
-	"image/color"
-	"image/draw"
-	"image/png"
+	"time"
 )
 
-// WrappedData is the plain input for the "Torrorèndum Wrapped" personal
-// recap card. Unlike Data (the v1 share card), this reuses the same
-// rendering pipeline with richer, cross-source data: total votes, the
-// user's most contested duel and most unpopular pick (both derived from
+// WrappedData is the input for the "Torrorèndum Wrapped" personal recap
+// card (GET /wrapped/card.png). Unlike Data (the plain v1 share card),
+// this carries cross-source data: total votes, the user's most contested
+// duel and most unpopular pick (both from
 // domain.WrappedStatsRepo.DuelStats), and their Phase 2 knockout bracket
-// participation (domain.WrappedStatsRepo.BracketPath). See the TODO in
-// sharecard.go's package doc, which this struct fulfills.
+// participation (domain.WrappedStatsRepo.BracketPath).
 type WrappedData struct {
 	// HasEnoughVotes is false when the user hasn't cleared the Wrapped
 	// unlock threshold yet (see getMinVotesForClass("5") in
-	// internal/http/user_api.go). RenderWrapped then renders a "not
-	// unlocked yet" empty state instead of any stat.
+	// internal/http/user_api.go). toFrame then builds a "not unlocked yet"
+	// empty state instead of any stat.
 	HasEnoughVotes bool
 	// VotesRemaining is meaningful only when !HasEnoughVotes: how many
 	// more votes the user needs to unlock their Wrapped.
@@ -30,8 +25,8 @@ type WrappedData struct {
 	TotalVotes int
 
 	// HasContestedDuel is false if the user never voted on a pairing that
-	// met the minimum-total-votes threshold (a legitimate empty state,
-	// not an error - see domain.WrappedStatsRepo.DuelStats).
+	// met the minimum-total-votes threshold (a legitimate empty state, not
+	// an error - see domain.WrappedStatsRepo.DuelStats).
 	HasContestedDuel    bool
 	ContestedTorroAName string
 	ContestedTorroBName string
@@ -55,151 +50,146 @@ type WrappedData struct {
 	// HasChampion is whether the bracket itself is fully decided yet.
 	HasChampion  bool
 	ChampionName string
-	// MatchedChampion is meaningful only if HasChampion: did the user
-	// ever pick the champion in one of their voted matches.
+	// MatchedChampion is meaningful only if HasChampion: did the user ever
+	// pick the champion in one of their voted matches.
 	MatchedChampion bool
 }
 
-// RenderWrapped draws WrappedData onto a CanvasWidth x CanvasHeight canvas
-// and returns it PNG-encoded, following Render's exact shape. It never
-// errors on the drawing itself; the returned error only reflects PNG
-// encoding failures.
+// RenderWrapped draws data onto a CanvasWidth x CanvasHeight canvas and
+// returns it PNG-encoded. It never errors on the drawing itself; the
+// returned error only reflects PNG encoding failures.
 func RenderWrapped(data WrappedData) ([]byte, error) {
-	img := image.NewRGBA(image.Rect(0, 0, CanvasWidth, CanvasHeight))
-
-	draw.Draw(img, img.Bounds(), image.NewUniform(colorBackground), image.Point{}, draw.Src)
-
-	drawHeader(img)
-	drawFooter(img)
-
-	if data.HasEnoughVotes {
-		drawWrappedResult(img, data)
-	} else {
-		drawWrappedLocked(img, data)
-	}
-
-	var buf bytes.Buffer
-	if err := png.Encode(&buf, img); err != nil {
-		return nil, fmt.Errorf("sharecard: encode wrapped png: %w", err)
-	}
-
-	return buf.Bytes(), nil
+	return renderFrame(data.toFrame())
 }
 
-// drawWrappedLocked renders the fallback card for users who haven't
-// cleared the Wrapped unlock threshold yet, mirroring drawEmptyState's
-// "vota per generar la teva targeta" treatment in sharecard.go.
-func drawWrappedLocked(img *image.RGBA, data WrappedData) {
-	maxTextWidth := CanvasWidth - 2*contentPaddingX
-	y := contentTop + 200
-
-	y = drawCenteredWrappedLines(img, "Encara no has desbloquejat el teu Wrapped", maxTextWidth, y, colorText, scaleName, 3)
-	y += blockGap
-	line := fmt.Sprintf("Et falten %d vots", data.VotesRemaining)
-	drawCenteredLine(img, line, y, colorTextLight, scaleBody)
-}
-
-// drawWrappedResult renders the unlocked Wrapped stat blocks, stacked
-// top-to-bottom starting at contentTop. This is deliberately capped at
-// four blocks (total votes, contested duel, unpopular pick, bracket
-// path) rather than trying to fit every conceivable stat - see the
-// "plumbing pass, not final design" note in sharecard.go's package doc.
-// Each sub-stat that has its own legitimate empty state (not enough
-// data yet) renders an honest sub-line instead of a fabricated number.
-func drawWrappedResult(img *image.RGBA, data WrappedData) {
-	maxTextWidth := CanvasWidth - 2*contentPaddingX
-	y := contentTop
-
-	// -- Total votes --
-	y = drawLine(img, "Vots totals", contentPaddingX, y, colorTextLight, scaleLabel)
-	y += lineGapLabel
-	y = drawLine(img, fmt.Sprintf("%d", data.TotalVotes), contentPaddingX, y, colorPrimary, scaleName)
-	y += blockGap
-
-	// -- Contested duel --
-	y = drawLine(img, "El duel més disputat", contentPaddingX, y, colorTextLight, scaleLabel)
-	y += lineGapLabel
-	if data.HasContestedDuel {
-		line := fmt.Sprintf("%s (%d%%) vs %s (%d%%)",
-			data.ContestedTorroAName, data.ContestedPercentA,
-			data.ContestedTorroBName, data.ContestedPercentB)
-		// Capped at 3 lines (rather than the other blocks' 2): with two
-		// full torró names plus both percentages, this is the one line
-		// most likely to run long, and there's headroom left in the
-		// canvas for it - see drawWrappedResult's package-level budget
-		// note.
-		y = drawWrappedLines(img, line, maxTextWidth, y, colorText, scaleBody, 3)
-	} else {
-		y = drawWrappedLines(img, "Encara no hi ha prou dades per calcular el teu duel més disputat", maxTextWidth, y, colorTextLight, scaleBody, 2)
+func (d WrappedData) toFrame() frame {
+	f := frame{
+		// The mockup's Wrapped variant kicker is "RESUM {year}"; this
+		// package has no campaign-year field to draw from (WrappedData
+		// doesn't carry one), so it uses the wall-clock year at render
+		// time - correct for "this year's recap" without needing a new
+		// field, and harmless since this is a display label, not data used
+		// in any calculation.
+		kicker: fmt.Sprintf("RESUM %d", time.Now().Year()),
+		footer: footerContent{
+			shortLink:   "torrorendum.cat",
+			showSponsor: true,
+			sponsorLine: sponsorPlaceholder,
+		},
 	}
-	y += blockGap
 
-	// -- Unpopular pick --
-	y = drawLine(img, "La teva tria més atrevida", contentPaddingX, y, colorTextLight, scaleLabel)
-	y += lineGapLabel
-	if data.HasUnpopularPick {
-		y = drawWrappedLines(img, data.UnpopularPickName, maxTextWidth, y, colorPrimary, scaleBody, 2)
-		y += lineGapName
-		line := fmt.Sprintf("Només el %d%% del públic hi va coincidir amb tu", data.UnpopularPercent)
-		y = drawWrappedLines(img, line, maxTextWidth, y, colorText, scaleBody, 2)
-	} else {
-		y = drawWrappedLines(img, "Encara no hi ha prou dades per triar la teva tria més atrevida", maxTextWidth, y, colorTextLight, scaleBody, 2)
-	}
-	y += blockGap
-
-	// -- Bracket path --
-	y = drawLine(img, "El teu camí a la Gran Final", contentPaddingX, y, colorTextLight, scaleLabel)
-	y += lineGapLabel
-	switch {
-	case !data.HasBracketVotes:
-		drawWrappedLines(img, "Encara no has votat a la fase de knockout", maxTextWidth, y, colorTextLight, scaleBody, 2)
-	case !data.HasChampion:
-		line := fmt.Sprintf("%d rondes votades, %d encerts de %d", data.BracketRoundsVoted, data.BracketPicksCorrect, data.BracketMatchesDecided)
-		y = drawWrappedLines(img, line, maxTextWidth, y, colorText, scaleBody, 2)
-		y += lineGapName
-		drawWrappedLines(img, "La Gran Final encara no s'ha decidit", maxTextWidth, y, colorTextLight, scaleBody, 2)
-	default:
-		line := fmt.Sprintf("%d rondes votades, %d encerts de %d", data.BracketRoundsVoted, data.BracketPicksCorrect, data.BracketMatchesDecided)
-		y = drawWrappedLines(img, line, maxTextWidth, y, colorText, scaleBody, 2)
-		y += lineGapName
-		var champLine string
-		if data.MatchedChampion {
-			champLine = fmt.Sprintf("Vas encertar el campió: %s", data.ChampionName)
-		} else {
-			champLine = fmt.Sprintf("El campió va ser %s", data.ChampionName)
+	if !d.HasEnoughVotes {
+		f.empty = &emptyMessage{
+			heading: "Encara no has desbloquejat el teu Wrapped",
+			sub:     fmt.Sprintf("Et falten %d vots", d.VotesRemaining),
 		}
-		drawWrappedLines(img, champLine, maxTextWidth, y, colorText, scaleBody, 2)
+		return f
+	}
+
+	f.hero = heroContent{
+		intro:      "Un any sencer de duels. Això és el que has votat.",
+		labelAbove: "EL TEU",
+		big:        fmt.Sprintf("%d", d.TotalVotes),
+		unitBelow:  "VOTS EMESOS",
+		tagline:    d.wrappedTagline(),
+		pill:       d.wrappedPill(),
+	}
+
+	f.tiles = &tileGrid{
+		cols: 2,
+		tiles: []tile{
+			{value: fmt.Sprintf("%d", d.BracketRoundsVoted), label: "RONDES VOTADES A LA FASE FINAL"},
+			{value: bracketScore(d.BracketPicksCorrect, d.BracketMatchesDecided), label: "ENCERTS A LA FASE FINAL"},
+		},
+	}
+
+	if card, ok := d.featuredCard(); ok {
+		f.dividerLabel = "UN MOMENT DESTACAT"
+		f.cards = []infoCard{card}
+	}
+
+	return f
+}
+
+// wrappedTagline picks the hero's italic sub-line from whatever bracket
+// data is actually available, honestly reflecting "not decided/voted yet"
+// rather than fabricating a persona-style tagline this data model doesn't
+// have (see Data.RatedTorronCount's doc comment on that TODO).
+func (d WrappedData) wrappedTagline() string {
+	switch {
+	case d.HasChampion && d.MatchedChampion:
+		return "Vas encertar el campió de la Gran Final."
+	case d.HasChampion:
+		return fmt.Sprintf("El campió va ser %s.", d.ChampionName)
+	case d.HasBracketVotes:
+		return "La Gran Final encara no s'ha decidit."
+	default:
+		return "Encara no has votat a la fase de knockout."
 	}
 }
 
-// drawWrappedLines wraps text to fit maxWidthPx at the given scale, draws
-// up to maxLines of it left-aligned at contentPaddingX (dropping any
-// remainder rather than overflowing past the canvas edge or clipping
-// mid-sentence), and returns the y coordinate below the last drawn line.
-// Shared by wrapped.go and presskit.go.
-func drawWrappedLines(img *image.RGBA, text string, maxWidthPx int, y int, col color.Color, scale int, maxLines int) int {
-	lines := wrapText(text, maxWidthPx, scale)
-	if len(lines) > maxLines {
-		lines = lines[:maxLines]
+// wrappedPill picks the hero's badge label, or "" to omit it when there's
+// no bracket participation yet to badge.
+func (d WrappedData) wrappedPill() string {
+	if !d.HasBracketVotes {
+		return ""
 	}
-	for _, line := range lines {
-		y = drawLine(img, line, contentPaddingX, y, col, scale)
-		y += lineGapName
-	}
-	return y
+	return fmt.Sprintf("%d RONDES VOTADES", d.BracketRoundsVoted)
 }
 
-// drawCenteredWrappedLines behaves like drawWrappedLines but horizontally
-// centers each wrapped line, for empty-state messaging. Shared by
-// wrapped.go and presskit.go.
-func drawCenteredWrappedLines(img *image.RGBA, text string, maxWidthPx int, y int, col color.Color, scale int, maxLines int) int {
-	lines := wrapText(text, maxWidthPx, scale)
-	if len(lines) > maxLines {
-		lines = lines[:maxLines]
+// featuredCard picks the single richest available stat (champion result,
+// then the closest duel, then the boldest pick) to feature in the card
+// below the divider, in that priority order. Showing all three that could
+// be present, each as its own card, would overflow a single 1080x1920
+// canvas (each card needs real room for a torró name, a photo placeholder
+// and a stat row) - see canvas.go's package doc on this engine choosing
+// depth of content over cramming in every fact at once. ok is false when
+// none of the three are available yet, in which case the caller skips the
+// divider and card entirely.
+func (d WrappedData) featuredCard() (infoCard, bool) {
+	switch {
+	case d.HasChampion:
+		footnote := "El campió et va sorprendre."
+		matched := "NO"
+		if d.MatchedChampion {
+			footnote = "Vas endevinar el campió a les teves votacions."
+			matched = "SÍ"
+		}
+		return infoCard{
+			headline: d.ChampionName,
+			sub:      "CAMPIÓ DE LA GRAN FINAL",
+			photo:    true,
+			columns:  []statColumn{{value: matched, label: "EL VAS ENCERTAR"}},
+			footnote: footnote,
+		}, true
+
+	case d.HasContestedDuel:
+		return infoCard{
+			headline: "El teu duel més ajustat",
+			columns: []statColumn{
+				{value: fmt.Sprintf("%d%%", d.ContestedPercentA), label: d.ContestedTorroAName},
+				{value: fmt.Sprintf("%d%%", d.ContestedPercentB), label: d.ContestedTorroBName, accent: true},
+			},
+		}, true
+
+	case d.HasUnpopularPick:
+		return infoCard{
+			headline: d.UnpopularPickName,
+			sub:      "LA TEVA TRIA MÉS ATREVIDA",
+			photo:    true,
+			columns:  []statColumn{{value: fmt.Sprintf("%d%%", d.UnpopularPercent), label: "DEL PÚBLIC HI COINCIDEIX"}},
+		}, true
+
+	default:
+		return infoCard{}, false
 	}
-	for _, line := range lines {
-		y = drawCenteredLine(img, line, y, col, scale)
-		y += lineGapName
+}
+
+// bracketScore formats a "correct/decided" fraction, or an em dash when no
+// matches have been decided yet (avoiding a misleading "0/0").
+func bracketScore(correct, decided int) string {
+	if decided <= 0 {
+		return "—"
 	}
-	return y
+	return fmt.Sprintf("%d/%d", correct, decided)
 }
