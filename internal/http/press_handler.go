@@ -33,25 +33,30 @@ type PressContent struct {
 	HX bool
 
 	HasMostVoted   bool
+	MostVotedId    string
 	MostVotedName  string
 	MostVotedImage string
 	MostVotedVotes int
 
 	HasBiggestRiser bool
+	RiserId         string
 	RiserName       string
 	RiserImage      string
 	RiserPoints     int // net rating change over the window, rounded; can be negative
 
 	HasClosestDuel  bool
+	DuelAId         string
 	DuelAName       string
 	DuelAImage      string
 	DuelAPercentage int
+	DuelBId         string
 	DuelBName       string
 	DuelBImage      string
 	DuelBPercentage int
 	DuelTotalVotes  int
 
 	HasChampion   bool
+	ChampionId    string
 	ChampionName  string
 	ChampionImage string
 
@@ -84,6 +89,7 @@ func (h *Handler) press(w http.ResponseWriter, r *http.Request) {
 	}
 	if mostVoted != nil {
 		content.HasMostVoted = true
+		content.MostVotedId = mostVoted.TorroId
 		content.MostVotedName = mostVoted.Name
 		content.MostVotedImage = mostVoted.Image
 		content.MostVotedVotes = int(math.Round(mostVoted.Value))
@@ -97,6 +103,7 @@ func (h *Handler) press(w http.ResponseWriter, r *http.Request) {
 	}
 	if riser != nil {
 		content.HasBiggestRiser = true
+		content.RiserId = riser.TorroId
 		content.RiserName = riser.Name
 		content.RiserImage = riser.Image
 		content.RiserPoints = int(math.Round(riser.Value))
@@ -110,9 +117,11 @@ func (h *Handler) press(w http.ResponseWriter, r *http.Request) {
 	}
 	if duel != nil {
 		content.HasClosestDuel = true
+		content.DuelAId = duel.TorroA.TorroId
 		content.DuelAName = duel.TorroA.Name
 		content.DuelAImage = duel.TorroA.Image
 		content.DuelAPercentage = votePercentage(duel.TorroA.Value, duel.TotalVotes)
+		content.DuelBId = duel.TorroB.TorroId
 		content.DuelBName = duel.TorroB.Name
 		content.DuelBImage = duel.TorroB.Image
 		content.DuelBPercentage = votePercentage(duel.TorroB.Value, duel.TotalVotes)
@@ -133,6 +142,7 @@ func (h *Handler) press(w http.ResponseWriter, r *http.Request) {
 	}
 	if champion != nil {
 		content.HasChampion = true
+		content.ChampionId = champion.Id
 		content.ChampionName = champion.Name
 		content.ChampionImage = champion.Image
 	}

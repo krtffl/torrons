@@ -199,5 +199,24 @@
         </div>
         {{ end }}
     </div>
+
+    {{ if .Torro.RelatedTorros }}
+    <div class="torro-related">
+        <h2 class="torro-related-title">{{ if .Torro.HasClassName }}Més torrons de {{ .Torro.ClassName }}{{ else }}Torrons relacionats{{ end }}</h2>
+        <div class="torro-related-list">
+            {{ range .Torro.RelatedTorros }}
+            <a class="torro-related-item"
+               href="/torro/{{ .Id }}"
+               hx-get="/torro/{{ .Id }}"
+               hx-boost="true"
+               hx-target="#main-content"
+               hx-push-url="/torro/{{ .Id }}">
+                <img class="torro-related-image" src="/public/images/{{ .Image }}" alt="{{ .Name }}" loading="lazy">
+                <span class="torro-related-name">{{ .Name }}</span>
+            </a>
+            {{ end }}
+        </div>
+    </div>
+    {{ end }}
 </div>
 {{ end }}

@@ -60,6 +60,20 @@ func (h *Handler) sitemapXML(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(&b, "  <url><loc>%s/torro/%s</loc><priority>0.7</priority></url>\n", siteBaseURL, t.Id)
 	}
 
+	classes, err := h.classRepo.List(r.Context())
+	if err != nil {
+		logger.Error("[Handler - SitemapXML] Couldn't list classes. %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	for _, c := range classes {
+		bracket, err := h.bracketRepo.GetLatestByClass(r.Context(), c.Id)
+		if err != nil || bracket == nil {
+			continue
+		}
+		fmt.Fprintf(&b, "  <url><loc>%s/bracket/%s</loc><priority>0.6</priority></url>\n", siteBaseURL, c.Id)
+	}
+
 	b.WriteString(`</urlset>`)
 
 	w.Header().Set("Content-Type", "application/xml; charset=utf-8")

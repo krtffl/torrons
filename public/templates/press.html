@@ -91,13 +91,13 @@
         <div class="press-data-card press-headline-card">
             <h2 class="press-eyebrow">El torró més votat · classificació global</h2>
             {{ if .HasMostVoted }}
-            <div class="press-headline-row">
+            <a class="press-headline-row" href="/torro/{{ .MostVotedId }}" hx-get="/torro/{{ .MostVotedId }}" hx-boost="true" hx-target="#main-content" hx-push-url="/torro/{{ .MostVotedId }}">
                 <img class="press-headline-image" src="/public/images/{{ .MostVotedImage }}" alt="{{ .MostVotedName }}">
                 <div class="press-headline-body">
                     <div class="press-headline-name">{{ .MostVotedName }}</div>
                     <div class="press-headline-value">{{ .MostVotedVotes }} <span class="press-headline-unit">vots a favor</span></div>
                 </div>
-            </div>
+            </a>
             <p class="press-note">Líder actual de la classificació global, per davant de la resta de torrons en joc.</p>
             {{ else }}
             <p class="press-card-empty">Encara no s'ha comptabilitzat cap vot.</p>
@@ -110,8 +110,8 @@
             <div class="press-data-card">
                 <h2 class="press-eyebrow">El que més puja · últims 7 dies</h2>
                 {{ if .HasBiggestRiser }}
-                <div class="press-substat-row">
-                    <img class="press-substat-image" src="/public/images/{{ .RiserImage }}" alt="{{ .RiserName }}">
+                <a class="press-substat-row" href="/torro/{{ .RiserId }}" hx-get="/torro/{{ .RiserId }}" hx-boost="true" hx-target="#main-content" hx-push-url="/torro/{{ .RiserId }}">
+                    <img class="press-substat-image" src="/public/images/{{ .RiserImage }}" alt="{{ .RiserName }}" loading="lazy">
                     <div class="press-substat-body">
                         <div class="press-substat-name">{{ .RiserName }}</div>
                         <div class="press-riser-chip">
@@ -119,7 +119,7 @@
                             {{ if ge .RiserPoints 0 }}+{{ end }}{{ .RiserPoints }} punts
                         </div>
                     </div>
-                </div>
+                </a>
                 <p class="press-note">Torró amb la pujada més gran de puntuació ELO en els últims 7 dies.</p>
                 {{ else }}
                 <p class="press-card-empty">Encara no hi ha prou dades aquesta setmana.</p>
@@ -131,11 +131,15 @@
                 <h2 class="press-eyebrow">El duel més igualat</h2>
                 {{ if .HasClosestDuel }}
                 <div class="press-duel-names">
-                    <img class="press-substat-image" src="/public/images/{{ .DuelAImage }}" alt="{{ .DuelAName }}">
-                    <span>{{ .DuelAName }}</span>
+                    <a class="press-duel-side" href="/torro/{{ .DuelAId }}" hx-get="/torro/{{ .DuelAId }}" hx-boost="true" hx-target="#main-content" hx-push-url="/torro/{{ .DuelAId }}">
+                        <img class="press-substat-image" src="/public/images/{{ .DuelAImage }}" alt="{{ .DuelAName }}" loading="lazy">
+                        <span>{{ .DuelAName }}</span>
+                    </a>
                     <span class="press-duel-vs">contra</span>
-                    <span>{{ .DuelBName }}</span>
-                    <img class="press-substat-image" src="/public/images/{{ .DuelBImage }}" alt="{{ .DuelBName }}">
+                    <a class="press-duel-side" href="/torro/{{ .DuelBId }}" hx-get="/torro/{{ .DuelBId }}" hx-boost="true" hx-target="#main-content" hx-push-url="/torro/{{ .DuelBId }}">
+                        <span>{{ .DuelBName }}</span>
+                        <img class="press-substat-image" src="/public/images/{{ .DuelBImage }}" alt="{{ .DuelBName }}" loading="lazy">
+                    </a>
                 </div>
                 <div class="press-duel-bar">
                     <div class="press-duel-bar-a" style="width: {{ .DuelAPercentage }}%"></div>
@@ -160,13 +164,13 @@
                 <span class="press-champion-eyebrow">Gran Final</span>
                 <span class="press-champion-pill">Campió</span>
             </div>
-            <div class="press-champion-row">
-                <img class="press-champion-image" src="/public/images/{{ .ChampionImage }}" alt="{{ .ChampionName }}">
+            <a class="press-champion-row" href="/torro/{{ .ChampionId }}" hx-get="/torro/{{ .ChampionId }}" hx-boost="true" hx-target="#main-content" hx-push-url="/torro/{{ .ChampionId }}">
+                <img class="press-champion-image" src="/public/images/{{ .ChampionImage }}" alt="{{ .ChampionName }}" loading="lazy">
                 <div class="press-champion-body">
                     <div class="press-champion-name">{{ .ChampionName }}</div>
                     <div class="press-champion-tag">Campió del Torrorèndum</div>
                 </div>
-            </div>
+            </a>
             <!-- Plain link on purpose: this serves a PNG, not an HTML
                  fragment, so it must not be HTMX-boosted/swapped (same
                  convention as stats.html's /share/card.png link). -->

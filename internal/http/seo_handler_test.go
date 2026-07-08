@@ -46,6 +46,20 @@ func (f *fakeTorroRepo) UpdateTx(tx *sql.Tx, ctx context.Context, id string, rat
 	return nil, nil
 }
 
+// fakeBracketRepo is a minimal stand-in for domain.BracketRepo, used only by
+// sitemapXML's use of GetLatestByClass. The embedded nil interface satisfies
+// every other method the real interface requires - safe here because
+// sitemapXML never calls them, unlike the full-DB integration tests that
+// exercise the rest of BracketRepo.
+type fakeBracketRepo struct {
+	domain.BracketRepo
+	brackets map[string]*domain.Bracket // classId -> latest bracket, absent = none
+}
+
+func (f *fakeBracketRepo) GetLatestByClass(ctx context.Context, classId string) (*domain.Bracket, error) {
+	return f.brackets[classId], nil
+}
+
 func TestRobotsTxt(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/robots.txt", nil)
 	rec := httptest.NewRecorder()
@@ -77,6 +91,15 @@ func TestSitemapXML(t *testing.T) {
 			{Id: "torro-1", Name: "Torró de Xocolata"},
 			{Id: "torro-2", Name: "Torró d'Ametlla"},
 		}},
+		classRepo: &fakeClassRepo{classes: []*domain.Class{
+			{Id: "1", Name: "Clàssics"},
+			{Id: "5", Name: "Global"},
+		}},
+		bracketRepo: &fakeBracketRepo{brackets: map[string]*domain.Bracket{
+			// Only class "5" has a bracket - class "1" deliberately absent
+			// to exercise the "no bracket yet" skip path.
+			"5": {Id: "bracket-1", ClassId: "5"},
+		}},
 	}
 
 	req := httptest.NewRequest(http.MethodGet, "/sitemap.xml", nil)
@@ -95,9 +118,13 @@ func TestSitemapXML(t *testing.T) {
 		"<loc>https://torro.cat/</loc>",
 		"<loc>https://torro.cat/torro/torro-1</loc>",
 		"<loc>https://torro.cat/torro/torro-2</loc>",
+		"<loc>https://torro.cat/bracket/5</loc>",
 	} {
 		if !strings.Contains(body, want) {
 			t.Errorf("sitemap missing expected URL %q, got: %s", want, body)
 		}
+	}
+	if strings.Contains(body, "<loc>https://torro.cat/bracket/1</loc>") {
+		t.Errorf("sitemap should omit /bracket/1 - class 1 has no bracket yet, got: %s", body)
 	}
 }
