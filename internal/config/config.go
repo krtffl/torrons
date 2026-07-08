@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
@@ -112,7 +113,7 @@ func overrideWithEnvVars(config *Config) {
 			config.Port = uint(p)
 		}
 	}
-	if token := os.Getenv("ADMIN_TOKEN"); token != "" {
+	if token := secretEnv("ADMIN_TOKEN"); token != "" {
 		config.AdminToken = token
 	}
 
@@ -128,7 +129,7 @@ func overrideWithEnvVars(config *Config) {
 	if user := os.Getenv("DB_USER"); user != "" {
 		config.Database.User = user
 	}
-	if password := os.Getenv("DB_PASSWORD"); password != "" {
+	if password := secretEnv("DB_PASSWORD"); password != "" {
 		config.Database.Password = password
 	}
 	if dbName := os.Getenv("DB_NAME"); dbName != "" {
@@ -148,6 +149,21 @@ func overrideWithEnvVars(config *Config) {
 	if path := os.Getenv("LOGGER_PATH"); path != "" {
 		config.Logger.Path = path
 	}
+}
+
+// secretEnv reads a secret from <key>_FILE if set (Docker/Swarm secrets
+// convention: value lives in a mounted file, never in the process
+// environment), falling back to the plain <key> env var otherwise.
+func secretEnv(key string) string {
+	if path := os.Getenv(key + "_FILE"); path != "" {
+		data, err := os.ReadFile(path)
+		if err != nil {
+			log.Printf("[Config - Load] - Could not read %s_FILE at %q: %v", key, path, err)
+			return ""
+		}
+		return strings.TrimSpace(string(data))
+	}
+	return os.Getenv(key)
 }
 
 func initializeLogger(cfg Logger) {
