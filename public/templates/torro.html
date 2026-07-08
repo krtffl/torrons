@@ -65,7 +65,7 @@
 
     <div class="torro-detail-card">
         <div class="torro-photo-wrap">
-            <img class="torro-photo" src="/public/images/{{ .Torro.Image }}" alt="{{ .Torro.Name }} - Torrons Vicens">
+            <img class="torro-photo" src="/public/images/{{ .Torro.Image }}" alt="{{ .Torro.Name }}">
             {{ if .Torro.HasRank }}
             <span class="torro-rank-chip" aria-label="Posició número {{ .Torro.Rank }} al rànquing de la categoria">#{{ .Torro.Rank }}</span>
             {{ end }}
