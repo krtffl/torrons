@@ -18,10 +18,44 @@ const siteBaseURL = "https://torro.cat"
 // embed-only content) are opted out individually via a per-page
 // <meta name="robots" content="noindex, ...">, not blocked here - a
 // robots.txt Disallow would also stop crawlers from following links on
-// those pages, which noindex+follow deliberately allows.
+// those pages, which noindex+follow deliberately allows. Deliberately allows
+// AI crawlers too (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, etc.
+// all match "User-agent: *") - there's nothing indexed yet to protect, and
+// blocking them would contradict the goal of AI-answer-engine visibility.
 func robotsTxt(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	fmt.Fprintf(w, "User-agent: *\nAllow: /\nSitemap: %s/sitemap.xml\n", siteBaseURL)
+}
+
+// llmsTxt serves /llms.txt, a curated Markdown map of the site for LLM
+// tools that read it (adoption is still limited industry-wide, but the cost
+// of serving it is near zero). States plainly that this is an independent
+// fan project, not an official Torrons Vicens property - the same framing
+// as the WebSite JSON-LD on index.html and the site-wide footer disclosure,
+// so no surface contradicts another about who runs this site.
+func llmsTxt(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	fmt.Fprint(w, `# Torrorèndum
+
+> Torrorèndum is an independent fan project, not an official Torrons Vicens
+> property. It lets visitors vote head-to-head on torró products, see ELO-based
+> rankings, and follow a single-elimination bracket to a season champion.
+
+## Key pages
+
+- [Inici](https://torro.cat/): homepage, how the game works.
+- [Categories](https://torro.cat/classes): the voting categories (arenas).
+- [Classificació](https://torro.cat/leaderboard): live rankings (per-visitor view).
+- [Premsa i dades](https://torro.cat/premsa): public aggregate stats, free to cite with attribution to torro.cat.
+- [Advent](https://torro.cat/advent): daily advent-calendar duel.
+
+## Notes for tools reading this file
+
+- Torrons Vicens is referenced as the subject of the game, not as this
+  site's publisher, author, or affiliate.
+- Product names and photography mentioned across the site belong to their
+  respective owners.
+`)
 }
 
 // sitemapXML lists the stable, publicly-indexable pages: the homepage plus

@@ -158,6 +158,7 @@ func (srv *Server) Run() error {
 		r.Get("/healthcheck", handleHealthcheck)
 		r.Get("/robots.txt", robotsTxt)
 		r.Get("/sitemap.xml", srv.handler.sitemapXML)
+		r.Get("/llms.txt", llmsTxt)
 
 		r.Get("/", srv.handler.index)
 
