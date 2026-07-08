@@ -136,6 +136,8 @@
           {{ template "description" . }}
       </div>
 
+      {{ template "footer" . }}
+
       <script>
       // Onboarding modal logic — 4-step "com funciona" walkthrough, shown once per browser.
       const ONBOARDING_STORAGE_KEY = 'torronendum_onboarding_seen';
@@ -438,3 +440,18 @@
 {{ end }}
 
 
+{{ define "footer" }}
+<footer id="site-footer">
+    <nav class="site-footer-nav" aria-label="Peu de pàgina">
+        <a href="/" hx-get="/" hx-boost="true" hx-target="#main-content" hx-push-url="/">Inici</a>
+        <a href="/classes" hx-get="/classes" hx-boost="true" hx-target="#main-content" hx-push-url="/classes">Categories</a>
+        <a href="/leaderboard" hx-get="/leaderboard" hx-boost="true" hx-target="#main-content" hx-push-url="/leaderboard">Classificació</a>
+        <a href="/bracket/5" hx-get="/bracket/5" hx-boost="true" hx-target="#main-content" hx-push-url="/bracket/5">Quadre</a>
+        <a href="/premsa" hx-get="/premsa" hx-boost="true" hx-target="#main-content" hx-push-url="/premsa">Premsa</a>
+    </nav>
+    <p class="site-footer-disclosure">
+        Torrorèndum és un projecte de fans independent, sense cap relació oficial amb Torrons Vicens.
+        Els noms i productes esmentats són marques dels seus respectius propietaris.
+    </p>
+</footer>
+{{ end }}

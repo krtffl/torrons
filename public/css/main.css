@@ -6737,3 +6737,45 @@ button.arena-card-action:focus-visible {
     color: var(--color-text-light);
     margin: var(--spacing-md) 0 0;
 }
+
+/* ========================================
+   Site-wide footer (shared "footer" template define)
+   ======================================== */
+
+#site-footer {
+    max-width: 640px;
+    margin: var(--spacing-lg) auto 0;
+    padding: var(--spacing-lg) var(--spacing-md);
+    border-top: 1.5px solid var(--color-border);
+    text-align: center;
+}
+
+.site-footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.site-footer-nav a {
+    font-family: var(--font-family-display);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.site-footer-nav a:hover,
+.site-footer-nav a:focus-visible {
+    text-decoration: underline;
+}
+
+.site-footer-disclosure {
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    font-style: italic;
+    color: var(--color-text-light);
+    max-width: 480px;
+    margin: 0 auto;
+}
