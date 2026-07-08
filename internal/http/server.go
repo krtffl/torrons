@@ -237,6 +237,14 @@ func (srv *Server) Run() error {
 		// GET, same as /wrapped.
 		r.Get("/reveal", srv.handler.reveal)
 		r.Get("/reveal/card", srv.handler.revealCard)
+
+		// Evergreen static content pages (SEO/AEO cluster): About/FAQ, an
+		// IGP explainer, a regional-varieties comparison, and a torró
+		// glossary. All zero-DB, same static-page pattern as index().
+		r.Get("/sobre", srv.handler.about)
+		r.Get("/torro-agramunt-igp", srv.handler.igpExplainer)
+		r.Get("/torro-agramunt-vs-xixona", srv.handler.agramuntVsXixona)
+		r.Get("/tipus-de-torrons", srv.handler.torroGlossary)
 	})
 	// **********        **********
 

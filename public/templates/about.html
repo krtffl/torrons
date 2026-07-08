@@ -1,0 +1,186 @@
+{{ if not .HX }}
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Què és Torrorèndum, com funciona la votació i el rànquing ELO, i per què no és un projecte oficial de Torrons Vicens.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://torro.cat/sobre">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Inici", "item": "https://torro.cat/"},
+        {"@type": "ListItem", "position": 2, "name": "Sobre Torrorèndum", "item": "https://torro.cat/sobre"}
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Què és Torrorèndum?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Torrorèndum és un joc de votació i classificació de torrons, organitzat per temporades: primer una fase de vots oberts, després un quadre eliminatori fins a un sol campió."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Com funciona la votació?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Cada ronda et presenta un duel entre dos torrons; tries el que prefereixes amb un sol clic. A la fase de vots oberts pots votar tants duels com vulguis; quan es tanca, comença el quadre eliminatori que decideix un sol guanyador."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Com funciona el rànquing ELO?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Cada duel entre dos torrons actualitza la puntuació ELO de tots dos segons qui guanya i la diferència de puntuació prèvia, igual que en escacs: guanyar contra un torró millor classificat puja més punts que guanyar contra un de pitjor classificat."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Què és el quadre eliminatori?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Un cop tancada la fase de vots oberts, els torrons millor classificats de cada categoria entren en un quadre d'eliminatòria directa: cada duel n'elimina un fins que en queda un de sol, el campió de la temporada."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Es guarden les meves dades?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Torrorèndum fa servir cookies tècniques per recordar les teves votacions i el teu progrés d'una visita a l'altra. No es fan servir amb finalitats publicitàries ni es venen ni comparteixen amb tercers."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Puc compartir el meu resultat?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. Un cop has votat prou duels, pots desbloquejar el teu Torrorèndum Wrapped -un resum personal de la temporada- i la teva revelació de personalitat torronaire, totes dues descarregables com a imatge per compartir."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Per què Torrorèndum no és un projecte oficial de Torrons Vicens?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Torrorèndum és un projecte de fans independent, creat per afició, sense cap relació ni patrocini oficial de Torrons Vicens. Els noms i productes esmentats són marques dels seus respectius propietaris."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Puc reproduir o citar les dades del Torrorèndum?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. La pàgina de premsa i dades publica estadístiques públiques actualitzades en directe, de reproducció lliure amb atribució a torro.cat."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://torro.cat/sobre">
+    <meta property="og:title" content="Torrorèndum · Sobre el projecte i preguntes freqüents">
+    <meta property="og:description" content="Què és Torrorèndum, com funciona la votació i el rànquing ELO, i per què no és un projecte oficial de Torrons Vicens.">
+    <meta property="og:image" content="https://torro.cat/public/assets/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="ca_ES">
+    <meta property="og:site_name" content="Torrorèndum 2025">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://torro.cat/sobre">
+    <meta property="twitter:title" content="Torrorèndum · Sobre el projecte i preguntes freqüents">
+    <meta property="twitter:description" content="Què és Torrorèndum, com funciona la votació i el rànquing ELO, i per què no és un projecte oficial de Torrons Vicens.">
+    <meta property="twitter:image" content="https://torro.cat/public/assets/og-image.jpg">
+
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+    <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.9/dist/ext/json-enc.js" integrity="sha384-nRnAvEUI7N/XvvowiMiq7oEI04gOXMCqD3Bidvedw+YNbj7zTQACPlRI3Jt3vYM4" crossorigin="anonymous"></script>
+    <title>Torrorèndum · Sobre el projecte i preguntes freqüents</title>
+  </head>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
+      {{ template "header" . }}
+      {{ template "topbar" . }}
+      <div id="main-content">
+          {{ template "about" . }}
+      </div>
+      {{ template "footer" . }}
+  </body>
+</html>
+{{ else }}
+      {{ template "about" . }}
+{{ end }}
+
+{{ define "about" }}
+<div id="content-page-container">
+    <div class="content-masthead">
+        <span class="content-eyebrow">Sobre el projecte</span>
+        <h1 class="content-title">Sobre Torrorèndum</h1>
+        <p class="content-subtitle">El referèndum del torró: com funciona la votació, el rànquing i per què no és un projecte oficial de cap marca.</p>
+    </div>
+
+    <div class="content-body">
+        <details class="content-faq-item" open>
+            <summary class="content-faq-question">Què és Torrorèndum?</summary>
+            <p class="content-faq-answer">Torrorèndum és un joc de votació i classificació de torrons, organitzat per temporades: primer una fase de vots oberts, després un quadre eliminatori fins a un sol campió.</p>
+        </details>
+        <details class="content-faq-item">
+            <summary class="content-faq-question">Com funciona la votació?</summary>
+            <p class="content-faq-answer">Cada ronda et presenta un duel entre dos torrons; tries el que prefereixes amb un sol clic. A la fase de vots oberts pots votar tants duels com vulguis; quan es tanca, comença el quadre eliminatori que decideix un sol guanyador.</p>
+        </details>
+        <details class="content-faq-item">
+            <summary class="content-faq-question">Com funciona el rànquing ELO?</summary>
+            <p class="content-faq-answer">Cada duel entre dos torrons actualitza la puntuació ELO de tots dos segons qui guanya i la diferència de puntuació prèvia, igual que en escacs: guanyar contra un torró millor classificat puja més punts que guanyar contra un de pitjor classificat.</p>
+        </details>
+        <details class="content-faq-item">
+            <summary class="content-faq-question">Què és el quadre eliminatori?</summary>
+            <p class="content-faq-answer">Un cop tancada la fase de vots oberts, els torrons millor classificats de cada categoria entren en un quadre d'eliminatòria directa: cada duel n'elimina un fins que en queda un de sol, el campió de la temporada.</p>
+        </details>
+        <details class="content-faq-item">
+            <summary class="content-faq-question">Es guarden les meves dades?</summary>
+            <p class="content-faq-answer">Torrorèndum fa servir cookies tècniques per recordar les teves votacions i el teu progrés d'una visita a l'altra. No es fan servir amb finalitats publicitàries ni es venen ni comparteixen amb tercers.</p>
+        </details>
+        <details class="content-faq-item">
+            <summary class="content-faq-question">Puc compartir el meu resultat?</summary>
+            <p class="content-faq-answer">Sí. Un cop has votat prou duels, pots desbloquejar el teu Torrorèndum Wrapped -un resum personal de la temporada- i la teva revelació de personalitat torronaire, totes dues descarregables com a imatge per compartir.</p>
+        </details>
+        <details class="content-faq-item">
+            <summary class="content-faq-question">Per què Torrorèndum no és un projecte oficial de Torrons Vicens?</summary>
+            <p class="content-faq-answer">Torrorèndum és un projecte de fans independent, creat per afició, sense cap relació ni patrocini oficial de Torrons Vicens. Els noms i productes esmentats són marques dels seus respectius propietaris.</p>
+        </details>
+        <details class="content-faq-item">
+            <summary class="content-faq-question">Puc reproduir o citar les dades del Torrorèndum?</summary>
+            <p class="content-faq-answer">Sí. La <a href="/premsa" hx-get="/premsa" hx-boost="true" hx-target="#main-content" hx-push-url="/premsa">pàgina de premsa i dades</a> publica estadístiques públiques actualitzades en directe, de reproducció lliure amb atribució a torro.cat.</p>
+        </details>
+    </div>
+
+    <nav class="content-cross-links" aria-label="Més pàgines">
+        <a class="content-cross-link" href="/classes" hx-get="/classes" hx-boost="true" hx-target="#main-content" hx-push-url="/classes">Comença a votar</a>
+        <a class="content-cross-link" href="/torro-agramunt-igp" hx-get="/torro-agramunt-igp" hx-boost="true" hx-target="#main-content" hx-push-url="/torro-agramunt-igp">Què és la IGP?</a>
+        <a class="content-cross-link" href="/tipus-de-torrons" hx-get="/tipus-de-torrons" hx-boost="true" hx-target="#main-content" hx-push-url="/tipus-de-torrons">Tipus de torrons</a>
+    </nav>
+</div>
+{{ end }}

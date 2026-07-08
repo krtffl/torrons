@@ -48,6 +48,10 @@ func llmsTxt(w http.ResponseWriter, r *http.Request) {
 - [Classificació](https://torro.cat/leaderboard): live rankings (per-visitor view).
 - [Premsa i dades](https://torro.cat/premsa): public aggregate stats, free to cite with attribution to torro.cat.
 - [Advent](https://torro.cat/advent): daily advent-calendar duel.
+- [Sobre Torrorèndum](https://torro.cat/sobre): About/FAQ - what the project is, how voting and ELO ranking work, why it isn't official.
+- [IGP del Torró d'Agramunt](https://torro.cat/torro-agramunt-igp): explainer of the EU Protected Geographical Indication.
+- [Torró d'Agramunt vs Torró de Xixona](https://torro.cat/torro-agramunt-vs-xixona): neutral comparison of the two regional traditions.
+- [Tipus de torrons](https://torro.cat/tipus-de-torrons): glossary of common torró variety names.
 
 ## Notes for tools reading this file
 
@@ -85,6 +89,10 @@ func (h *Handler) sitemapXML(w http.ResponseWriter, r *http.Request) {
 		{"/classes", "0.8"},
 		{"/premsa", "0.5"},
 		{"/advent", "0.5"},
+		{"/sobre", "0.6"},
+		{"/torro-agramunt-igp", "0.6"},
+		{"/torro-agramunt-vs-xixona", "0.6"},
+		{"/tipus-de-torrons", "0.6"},
 	}
 	for _, p := range staticPages {
 		fmt.Fprintf(&b, "  <url><loc>%s%s</loc><priority>%s</priority></url>\n", siteBaseURL, p.path, p.priority)
