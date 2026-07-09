@@ -453,12 +453,13 @@ h1, h2, h3, h4, h5, h6 {
 @media (min-width: 640px) {
     .topbar-nav {
         overflow-x: visible;
+        justify-content: center;
     }
 
     .nav-link,
     .nav-item {
-        flex: 1 1 0;
-        min-width: 0;
+        flex: 0 0 auto;
+        max-width: 140px;
     }
 
     /* .topbar-nav no longer scrolls at this breakpoint, so the mobile edge
@@ -2209,7 +2210,7 @@ button.arena-card-action:focus-visible {
    ======================================== */
 
 #leaderboard-container {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: var(--spacing-md);
     animation: fadeIn 0.5s ease-in;
@@ -2831,7 +2832,7 @@ button.arena-card-action:focus-visible {
    ======================================== */
 
 #stats-container {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: var(--spacing-lg);
     animation: fadeIn 0.5s ease-in;
@@ -3455,7 +3456,7 @@ button.arena-card-action:focus-visible {
    ======================================== */
 
 #history-container {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: var(--spacing-lg);
     animation: fadeIn 0.5s ease-in;
@@ -5246,7 +5247,7 @@ button.arena-card-action:focus-visible {
 #press-container {
     --press-radius: 14px;
     --press-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: var(--spacing-lg) var(--spacing-md) var(--spacing-xl);
 }
