@@ -1,9 +1,9 @@
 # Design prompts
 
-20 copy-paste prompts for redesigning Torrorèndum: 19 extracted from the [Growth & Redesign
+21 copy-paste prompts for redesigning Torrorèndum: 19 extracted from the [Growth & Redesign
 Dossier](https://claude.ai/code/artifact/06054553-5090-4ad7-8df6-7c5d94ffa8d7) (§04), grounded
-against what's actually shipped in this repo as of 2026-07-05, plus one final audit prompt added
-after the fact (§ below). Each screen prompt is self-contained — brand grounding (palette, type
+against what's actually shipped in this repo as of 2026-07-05, plus two prompts added after the
+fact (§ below). Each screen prompt is self-contained — brand grounding (palette, type
 pairing, tone) is repeated inside every one — so any single file here can be pasted into Claude
 Design or handed to a designer on its own, with no other context required.
 
@@ -41,11 +41,12 @@ to catch any drift or inconsistency before calling the redesign done.
 | [18](18-press-ready-numbers-page.md) | Press-ready "the numbers" page | Live — `GET /premsa` |
 | [19](19-insights-dashboard-vicens.md) | Insights dashboard (Vicens-facing) | **Not built** — event-triggered, no auth system exists yet |
 
-## Set C — final audit
+## Set C — final audit and cross-cutting follow-ups
 
 | # | Screen | Status |
 |---|---|---|
 | [20](20-design-system-audit.md) | Design system consistency & UX audit | Not built — a QA/critique pass over 01–19's output, commission last |
+| [21](21-desktop-wide-viewport-treatment.md) | Desktop / wide-viewport treatment | Cross-cutting addendum — 01 was explicitly scoped mobile-first, site is now live and desktop was never designed. Priority: [04](04-the-duel-vote-screen.md) (vote screen, critical) then [08](08-product-detail-page.md) (product detail, major) |
 
 ## Notes for whoever commissions these
 
