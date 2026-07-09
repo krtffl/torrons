@@ -1,3 +1,4 @@
+{{ if not .HX }}
 <!DOCTYPE html>
 <html lang="ca">
   <head>
@@ -252,6 +253,9 @@
 
   </body>
 </html>
+{{ else }}
+      {{ template "description" . }}
+{{ end }}
 
 {{ define "header" }}
 <div id="header">

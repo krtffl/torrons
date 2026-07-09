@@ -110,7 +110,9 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 	buf := h.bpool.Get()
 	defer h.bpool.Put(buf)
 
-	if err := h.template.ExecuteTemplate(buf, "index.html", Content{}); err != nil {
+	if err := h.template.ExecuteTemplate(buf, "index.html", Content{
+		HX: isHX(r),
+	}); err != nil {
 		logger.Error("[Handler - Index] Couldn't execute template. %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		if execErr := h.template.ExecuteTemplate(w, "error.html", Content{}); execErr != nil {
