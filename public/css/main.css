@@ -2151,6 +2151,13 @@ button.arena-card-action:focus-visible {
     margin-top: var(--spacing-sm);
 }
 
+/* Desktop-only context rail (streak + progress ring, ≥1280px) — see the
+   @media (min-width: 1280px) block near the end of this file. Hidden here
+   so it doesn't render as an unstyled block below that breakpoint. */
+.vote-context-rail {
+    display: none;
+}
+
 .vote-vs-badge {
     position: absolute;
     left: 50%;
@@ -4762,6 +4769,22 @@ button.arena-card-action:focus-visible {
 .torro-detail-card {
     display: flex;
     flex-direction: column;
+}
+
+/* Wraps photo-col + content-col. Below 1280px this is a plain vertical
+   stack (photo, then the content-col's own children) reproducing the
+   original single-column gap; ≥1280px it becomes the two-column desktop
+   layout (see the @media (min-width: 1280px) block near the end of this
+   file). */
+.torro-detail-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.torro-detail-content-col {
+    display: flex;
+    flex-direction: column;
     gap: var(--spacing-md);
 }
 
@@ -6988,4 +7011,280 @@ button.arena-card-action:focus-visible {
     font-size: var(--font-size-sm);
     color: var(--color-text-light);
     margin: var(--spacing-lg) 0 0;
+}
+
+/* ========================================
+   Desktop / wide-viewport treatment (vote + product detail only)
+   See docs/design-prompts/21-desktop-wide-viewport-treatment.md and the
+   Claude Design deliverable it produced, "Torrorendum Desktop Treatment".
+   Scoped to #vote-page and #torro-detail-container specifically — every
+   other page's layout (topbar, footer, other containers) is untouched.
+   Nothing below 1280px is touched; below that both pages keep the exact
+   mobile layout defined above.
+   ======================================== */
+
+@media (min-width: 1280px) {
+    :root {
+        --desktop-column-width: 1150px;
+        --desktop-vote-card-width: 280px;
+        --desktop-vote-photo-height: 336px;
+        --desktop-vs-size: 76px;
+        --desktop-rail-width: 280px;
+        --desktop-photo-col-width: 420px;
+        --desktop-photo-col-height: 520px;
+    }
+}
+
+@media (min-width: 1920px) {
+    :root {
+        --desktop-column-width: 1400px;
+        --desktop-vote-card-width: 340px;
+        --desktop-vote-photo-height: 420px;
+        --desktop-vs-size: 96px;
+        --desktop-rail-width: 340px;
+        --desktop-photo-col-width: 560px;
+        --desktop-photo-col-height: 680px;
+    }
+}
+
+@media (min-width: 1280px) {
+    /* Two-tone canvas: --color-desktop-background revived as the wide-viewport
+       backdrop, with a centered cream column (existing --color-background)
+       holding the actual content — a deliberate desktop canvas instead of
+       empty background on either side. Topbar/header/footer stay full-bleed
+       as on every other page; only these two pages' own content area adopts
+       the two-tone canvas. */
+    #main-content:has(> #vote-page),
+    #main-content:has(> #torro-detail-container) {
+        background-color: var(--color-desktop-background);
+    }
+
+    #vote-page {
+        width: var(--desktop-column-width);
+        margin: 0 auto;
+        background-color: var(--color-background);
+        box-shadow: 0 0 80px rgba(58, 42, 28, 0.14);
+        min-height: calc(100vh - 84px - 200px); /* viewport minus topbar+footer, approx */
+        display: flex;
+        flex-direction: column;
+    }
+
+    #vote-page .vote-round-header,
+    #vote-page .progress-container {
+        width: auto;
+        max-width: none;
+        margin-left: var(--spacing-xl);
+        margin-right: var(--spacing-xl);
+    }
+
+    #vote-page .vote-duel-row {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 64px;
+        padding: var(--spacing-xl);
+    }
+
+    .torron-comparison.vote-duel {
+        max-width: none;
+        margin: 0;
+        gap: 24px;
+    }
+
+    .torron-comparison.vote-duel .torron-card.vote-card {
+        width: var(--desktop-vote-card-width);
+        flex: none;
+    }
+
+    .vote-card .torron-image {
+        width: 100%;
+        height: var(--desktop-vote-photo-height);
+        object-fit: cover;
+        border-radius: var(--border-radius-lg);
+    }
+
+    .vote-card .torron-name {
+        font-size: 26px;
+        text-align: left;
+        color: var(--color-text);
+    }
+
+    .vote-vs-badge {
+        width: var(--desktop-vs-size);
+        height: var(--desktop-vs-size);
+        font-size: calc(var(--desktop-vs-size) * 0.31);
+    }
+
+    /* Context rail: same streak + progress data as the header above, shown
+       again at a larger scale beside the duel. Hidden below 1280px — the
+       existing .vote-round-header/.streak-pill/#progress-bar combo (defined
+       earlier in this file) remains the only progress UI on mobile. */
+    .vote-context-rail {
+        display: flex;
+        flex-direction: column;
+        width: var(--desktop-rail-width);
+        flex: none;
+        background-color: var(--color-card);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-card);
+        padding: var(--spacing-lg);
+        box-shadow: var(--shadow-sticker);
+    }
+
+    .vote-context-rail-eyebrow {
+        font-family: var(--font-family-display);
+        font-weight: 700;
+        font-size: 13px;
+        letter-spacing: 1px;
+        color: var(--color-text-light-dark);
+    }
+
+    .vote-context-rail-streak {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: var(--spacing-md);
+    }
+
+    .streak-flame--lg {
+        position: relative;
+        width: 44px;
+        height: 48px;
+        flex: none;
+    }
+
+    .streak-flame--lg::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 6px;
+        width: 26px;
+        height: 26px;
+        border-radius: 0 50% 50% 50%;
+        transform: translateX(-50%) rotate(-45deg);
+        background: linear-gradient(200deg, var(--color-primary), var(--color-primary-dark));
+    }
+
+    .streak-flame--lg::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 9px;
+        width: 11px;
+        height: 11px;
+        border-radius: 0 50% 50% 50%;
+        transform: translateX(-50%) rotate(-45deg);
+        background: var(--color-brand-gold);
+    }
+
+    .vote-context-rail-streak-number {
+        font-family: var(--font-family-display);
+        font-weight: 800;
+        font-size: 32px;
+        line-height: 1;
+        color: var(--color-text);
+    }
+
+    .vote-context-rail-streak-label {
+        font-family: var(--font-family-display);
+        font-weight: 700;
+        font-size: 9.5px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: var(--color-text-light-dark);
+        margin-top: 3px;
+    }
+
+    .vote-context-rail-divider {
+        height: 1px;
+        background-color: var(--color-surface);
+        margin: var(--spacing-md) 0;
+    }
+
+    .vote-context-rail-progress {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    #progress-ring {
+        position: relative;
+        width: 84px;
+        height: 84px;
+        flex: none;
+        border-radius: 50%;
+        background: conic-gradient(var(--color-primary) 0deg, var(--color-surface) 0deg);
+        transition: background 0.6s ease;
+    }
+
+    #progress-ring::after {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        border-radius: 50%;
+        background-color: var(--color-card);
+    }
+
+    .vote-context-rail-progress-text {
+        font-family: var(--font-family);
+        font-size: 12.5px;
+        line-height: 1.4;
+        color: var(--color-text-light-dark);
+    }
+
+    .vote-context-rail-tip {
+        font-family: var(--font-family);
+        font-style: italic;
+        font-size: 11.5px;
+        color: var(--color-text-light-dark);
+        margin-top: var(--spacing-md);
+    }
+
+    /* Product detail: two columns, photo left / spec-sheet right. Ranking
+       card stays a block within the right column, not a third column. */
+    #torro-detail-container {
+        max-width: var(--desktop-column-width);
+        margin: 0 auto;
+        padding: var(--spacing-xl) var(--spacing-xl) calc(var(--spacing-xl) * 1.5);
+        background-color: var(--color-background);
+        box-shadow: 0 0 80px rgba(58, 42, 28, 0.14);
+    }
+
+    .torro-detail-layout {
+        display: flex;
+        flex-direction: row;
+        gap: 64px;
+        align-items: flex-start;
+    }
+
+    .torro-detail-photo-col {
+        flex: 0 0 var(--desktop-photo-col-width);
+    }
+
+    .torro-detail-photo-col .torro-photo-wrap {
+        width: 100%;
+        margin: 0;
+    }
+
+    .torro-detail-photo-col .torro-photo {
+        width: 100%;
+        max-width: none;
+        height: var(--desktop-photo-col-height);
+    }
+
+    .torro-detail-content-col {
+        flex: 1;
+        min-width: 0;
+        max-width: 560px;
+    }
+
+    .torro-detail-content-col .torro-detail-title {
+        font-size: 48px;
+        line-height: 1.05;
+    }
+
+    .torro-detail-content-col .torro-cta-wrap {
+        max-width: none;
+    }
 }

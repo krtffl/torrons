@@ -42,15 +42,25 @@
       {{ template "header" . }}
       {{ template "topbar" . }}
       <div id="main-content">
-          {{ template "progress" . }}
-          {{ template "vote" . }}
+          <div id="vote-page">
+              {{ template "progress" . }}
+              <div class="vote-duel-row">
+                  {{ template "vote" . }}
+                  {{ template "vote-context-rail" . }}
+              </div>
+          </div>
       </div>
       {{ template "footer" . }}
   </body>
 </html>
 {{ else }}
-    {{ template "progress" . }}
-    {{ template "vote" . }}
+    <div id="vote-page">
+        {{ template "progress" . }}
+        <div class="vote-duel-row">
+            {{ template "vote" . }}
+            {{ template "vote-context-rail" . }}
+        </div>
+    </div>
 {{ end }}
 
 {{ define "vote" }}
@@ -63,6 +73,34 @@
         {{ template "torro" . }}
     {{ end }}
     <div class="vote-vs-badge" aria-hidden="true">VS</div>
+</div>
+{{ end }}
+
+{{ define "vote-context-rail" }}
+<!-- Desktop-only (≥1280px): same streak/progress data as "progress" above,
+     shown again at a larger scale beside the duel. See
+     docs/design-prompts/21-desktop-wide-viewport-treatment.md. Hidden below
+     1280px via CSS (.vote-context-rail { display: none }) — the header
+     above remains the only progress UI on mobile. -->
+<div class="vote-context-rail">
+    <div class="vote-context-rail-eyebrow">AQUESTA RONDA</div>
+    {{ if gt .CurrentStreak 0 }}
+    <div class="vote-context-rail-streak">
+        <span class="streak-flame--lg" aria-hidden="true">
+            {{ if .StreakAtRisk }}<span class="streak-risk-dot"></span>{{ end }}
+        </span>
+        <div>
+            <div class="vote-context-rail-streak-number">{{ .CurrentStreak }}</div>
+            <div class="vote-context-rail-streak-label">{{ if .StreakAtRisk }}vota avui{{ else }}dies de ratxa{{ end }}</div>
+        </div>
+    </div>
+    <div class="vote-context-rail-divider"></div>
+    {{ end }}
+    <div class="vote-context-rail-progress">
+        <div id="progress-ring" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="vote-context-rail-progress-text">vots per desbloquejar el resultat</div>
+    </div>
+    <div class="vote-context-rail-tip">Vota cada dia per mantenir la ratxa.</div>
 </div>
 {{ end }}
 
@@ -144,6 +182,15 @@
             var newWidth = Math.min(currentWidth + 5, 100);
             progressBar.style.width = newWidth + "%";
             progressBar.setAttribute('aria-valuenow', newWidth);
+
+            // Desktop-only ring (≥1280px) mirrors the same value — element
+            // isn't in the DOM outside the vote-context-rail, hence the guard.
+            var progressRing = document.getElementById("progress-ring");
+            if (progressRing) {
+                var deg = (newWidth / 100) * 360;
+                progressRing.style.background = "conic-gradient(var(--color-primary) " + deg + "deg, var(--color-surface) " + deg + "deg)";
+                progressRing.setAttribute('aria-valuenow', newWidth);
+            }
         }
     }
 </script>

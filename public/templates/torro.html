@@ -77,12 +77,16 @@
     </div>
 
     <div class="torro-detail-card">
+      <div class="torro-detail-layout">
+        <div class="torro-detail-photo-col">
         <div class="torro-photo-wrap">
             <img class="torro-photo" src="/public/images/{{ .Torro.Image }}" alt="{{ .Torro.Name }}">
             {{ if .Torro.HasRank }}
             <span class="torro-rank-chip" aria-label="Posició número {{ .Torro.Rank }} al rànquing de la categoria">#{{ .Torro.Rank }}</span>
             {{ end }}
         </div>
+        </div>
+        <div class="torro-detail-content-col">
 
         <div class="torro-detail-heading">
             <h1 class="torro-detail-title">{{ .Torro.Name }}</h1>
@@ -198,6 +202,8 @@
             <p class="torro-cta-note">Surts de Torrorèndum cap a la botiga oficial.</p>
         </div>
         {{ end }}
+        </div>
+      </div>
     </div>
 
     {{ if .Torro.RelatedTorros }}
