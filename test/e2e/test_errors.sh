@@ -46,3 +46,10 @@ assert_body_contains E11b "wrapped locked state message" "desbloq" GET /wrapped 
 # --- bracket admin input validation ---
 assert_status E12 "bracket create size=-5 -> 400"       400 POST "/bracket/1/create?size=-5" -H "Authorization: Bearer ${ADMIN_TOKEN}"
 assert_status E13 "bracket create size=7 (not pow2) -> 400" 400 POST "/bracket/1/create?size=7" -H "Authorization: Bearer ${ADMIN_TOKEN}"
+# FIXED (B3): huge power-of-two used to reach standardSeedOrder's doubling
+# allocation before the "not enough torrons" check ever ran; now rejected
+# immediately by a MaxBracketSize bound. size=1 (technically 2^0, a valid
+# power of two) is rejected too - a single-slot bracket has no matches.
+assert_status E14 "bracket create size=huge pow2 -> 400 (fast, no OOM)" \
+	400 POST "/bracket/1/create?size=1073741824" -H "Authorization: Bearer ${ADMIN_TOKEN}"
+assert_status E15 "bracket create size=1 -> 400"        400 POST "/bracket/1/create?size=1" -H "Authorization: Bearer ${ADMIN_TOKEN}"

@@ -29,6 +29,15 @@ const (
 // size. Must be a power of two.
 const DefaultBracketSize = 8
 
+// MaxBracketSize bounds an admin-supplied ?size on POST /bracket/{classId}/create.
+// The seed-order construction (standardSeedOrder) allocates a slice that
+// doubles until it reaches the requested size, so an unbounded power-of-two
+// (e.g. 2^30) drives a multi-GB allocation before the "not enough active
+// torrons" check ever has a chance to reject it (that check only bounds how
+// many torrons are FETCHED, not the size value itself). 128 comfortably
+// exceeds any realistic torró category.
+const MaxBracketSize = 128
+
 // Bracket represents a single-elimination knockout tournament for one class
 // within one campaign, seeded from Phase 1 ELO ratings.
 type Bracket struct {

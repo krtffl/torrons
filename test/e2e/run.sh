@@ -154,6 +154,10 @@ seed_fixtures() {
 		SELECT 'e2e-res-'||g, p."Id", 1500,1500, p."Torro1", 1510,1490, 'e2e-user-unlocked'
 		FROM (SELECT "Id","Torro1" FROM "Pairings" WHERE "Class"='1' LIMIT 1) p, generate_series(1,5) g
 		ON CONFLICT ("Id") DO NOTHING;
+		-- an active campaign, needed by POST /bracket/{classId}/create
+		INSERT INTO "Campaigns"("Id","Year","Name","Status","StartDate","EndDate")
+		VALUES ('e2e-campaign', 2026, 'e2e test campaign', 'active', now() - interval '1 day', now() + interval '30 days')
+		ON CONFLICT ("Id") DO UPDATE SET "Status"='active', "StartDate"=now() - interval '1 day', "EndDate"=now() + interval '30 days';
 	SQL
 
 	# Export handles the test files read.

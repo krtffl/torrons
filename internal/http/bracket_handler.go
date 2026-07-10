@@ -611,6 +611,16 @@ func (h *Handler) seedAndCreateBracket(ctx context.Context, classId string, size
 	if !isPowerOfTwo(size) {
 		return nil, fmt.Errorf("%s: bracket size must be a power of two (got %d)", domain.ValidationError, size)
 	}
+	// isPowerOfTwo(1) is true (2^0), but a single-slot bracket has no matches
+	// to play - reject it with its own clear message rather than letting it
+	// fall through to the generic "needs at least 2 active torrons" error a
+	// few lines down, which is misleading here (the class may well have 2+).
+	// The upper bound guards standardSeedOrder against allocating a slice
+	// proportional to an attacker-chosen power of two (see MaxBracketSize).
+	if size < 2 || size > domain.MaxBracketSize {
+		return nil, fmt.Errorf("%s: bracket size must be between 2 and %d (got %d)",
+			domain.ValidationError, domain.MaxBracketSize, size)
+	}
 
 	campaign, err := h.campaignRepo.GetActive(ctx)
 	if err != nil {

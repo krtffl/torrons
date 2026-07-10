@@ -52,7 +52,9 @@ assert_status  R38 "campaign countdown json"    200 GET /api/campaign/countdown
 assert_status  R39 "campaign countdown widget"  200 GET /api/campaign/countdown/widget
 # /api/campaign/info returns 404 "No active campaign" when none is active — the
 # suite seeds no campaign, so 404 is the correct behavior here (not an error).
-assert_status  R40 "campaign info (no active campaign)" 404 GET /api/campaign/info
+# run.sh seeds an active "e2e-campaign" fixture (needed for the bracket-create
+# tests), so /api/campaign/info correctly returns the campaign, not a 404.
+assert_status  R40 "campaign info (active campaign seeded)" 200 GET /api/campaign/info
 assert_status  R19 "advent"                     200 GET /advent
 assert_status  R25 "premsa (press) page"        200 GET /premsa
 assert_status  R24 "embed leaderboard"          200 GET /embed/leaderboard
