@@ -39,13 +39,81 @@ package sharecard
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"image"
 	"image/color"
 	"image/png"
+	"runtime"
+	"time"
 
 	"golang.org/x/image/font"
 )
+
+// ---------------------------------------------------------------------
+// Render concurrency gate
+// ---------------------------------------------------------------------
+//
+// Every card render allocates a full CanvasWidth x CanvasHeight RGBA
+// (~8.3MB for the 1080x1920 cards) and pegs a CPU core for the duration of
+// the paint+encode. With no bound, a burst of concurrent PNG requests can
+// allocate dozens of these at once and OOM/saturate the (small) VPS. This
+// package-level counting semaphore caps how many renders run at a time; the
+// four PNG HTTP handlers acquire a slot before rendering and release it
+// after, shedding load with HTTP 503 rather than piling up when the cap is
+// hit (see TryAcquireRenderSlot).
+
+// RenderSlotWait bounds how long a caller waits for a render slot before
+// giving up and shedding load. Kept short so a burst sheds fast instead of
+// queueing requests that would themselves time out; a client that gets 503
+// is told (via Retry-After) to come back shortly.
+const RenderSlotWait = 250 * time.Millisecond
+
+// renderSlots is the counting semaphore: a buffered channel with one slot
+// per allowed concurrent render. A send acquires a slot, a receive releases
+// it. Sized to GOMAXPROCS (the renders are CPU-bound) with a floor of 2 so
+// even a single-core box still serves two callers rather than fully
+// serializing.
+var renderSlots = make(chan struct{}, maxRenderConcurrency())
+
+func maxRenderConcurrency() int {
+	if n := runtime.GOMAXPROCS(0); n > 2 {
+		return n
+	}
+	return 2
+}
+
+// TryAcquireRenderSlot waits up to RenderSlotWait (deriving its deadline
+// from parent, so a cancelled request gives up immediately) for a render
+// slot. It returns true if a slot was acquired - in which case the caller
+// MUST pair it with exactly one ReleaseRenderSlot(), typically deferred -
+// or false if the cap is saturated, in which case the caller should shed
+// load (HTTP 503) and NOT call ReleaseRenderSlot.
+func TryAcquireRenderSlot(parent context.Context) bool {
+	ctx, cancel := context.WithTimeout(parent, RenderSlotWait)
+	defer cancel()
+	select {
+	case renderSlots <- struct{}{}:
+		return true
+	case <-ctx.Done():
+		return false
+	}
+}
+
+// ReleaseRenderSlot returns a slot acquired via a successful
+// TryAcquireRenderSlot. Call it exactly once per true acquisition.
+func ReleaseRenderSlot() {
+	<-renderSlots
+}
+
+// pngEncoder is the shared PNG encoder for every card. It uses BestSpeed
+// compression on purpose: png.DefaultCompression accounted for ~68% of a
+// render's CPU, and share cards are ephemeral social images regenerated on
+// demand, so trading a modestly larger byte size for markedly less CPU is
+// the right call. png.Encoder is safe for concurrent use when only
+// CompressionLevel is set (Encode never mutates it), so one package-level
+// value serves all renders.
+var pngEncoder = png.Encoder{CompressionLevel: png.BestSpeed}
 
 // canvas wraps the RGBA image being built plus a font.Face cache.
 //
@@ -86,7 +154,7 @@ func (c *canvas) face(style fontStyle, size float64) font.Face {
 
 func (c *canvas) encode() ([]byte, error) {
 	var buf bytes.Buffer
-	if err := png.Encode(&buf, c.img); err != nil {
+	if err := pngEncoder.Encode(&buf, c.img); err != nil {
 		return nil, fmt.Errorf("sharecard: encode png: %w", err)
 	}
 	return buf.Bytes(), nil

@@ -20,22 +20,29 @@ import (
 type Server struct {
 	ctx        context.Context
 	shutdownFn context.CancelFunc
+	// done is closed once the HTTP server has finished draining in-flight
+	// requests, so Shutdown can block on it before the caller closes the DB.
+	done chan struct{}
 
-	port    uint
-	handler *Handler
+	port           uint
+	handler        *Handler
+	trustedProxies []string
 }
 
 func New(
 	port uint,
 	handler *Handler,
+	trustedProxies []string,
 ) *Server {
 	ctx, shutdownFn := context.WithCancel(context.Background())
 
 	return &Server{
-		ctx:        ctx,
-		shutdownFn: shutdownFn,
-		port:       port,
-		handler:    handler,
+		ctx:            ctx,
+		shutdownFn:     shutdownFn,
+		done:           make(chan struct{}),
+		port:           port,
+		handler:        handler,
+		trustedProxies: trustedProxies,
 	}
 }
 
@@ -43,12 +50,29 @@ func (srv *Server) Run() error {
 	logger.Info("[HTTP] - Starting to listen on port %d", srv.port)
 	r := chi.NewMux()
 
+	// Resolve the real client IP from forwarding headers, but only when they
+	// come from a trusted proxy — replaces chi's middleware.RealIP, which
+	// trusted X-Forwarded-For from any client and made the per-IP rate limiter
+	// bypassable. Must run before the rate-limit middleware below so it keys off
+	// the resolved RemoteAddr.
+	realIP := newTrustedProxyResolver(srv.trustedProxies)
+
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
+	r.Use(realIP.middleware)
 	r.Use(middleware.URLFormat)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
+
+	// Compress text responses (HTML/CSS/JS/JSON/XML/SVG). Everything was served
+	// uncompressed before — e.g. main.css went out at ~172 KB. Binary types not
+	// in this list (image/png, image/jpeg — the generated cards and photos) are
+	// left untouched since they're already compressed.
+	r.Use(middleware.Compress(5,
+		"text/html", "text/css", "application/javascript", "text/javascript",
+		"application/json", "application/xml", "text/xml", "image/svg+xml",
+		"text/plain",
+	))
 
 	// Rate limiting middleware (100 requests per minute per IP)
 	r.Use(httprate.Limit(
@@ -88,10 +112,15 @@ func (srv *Server) Run() error {
 	// Security headers middleware
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// HSTS: Force HTTPS for 1 year, including subdomains
-			// Note: Only enable after deploying with HTTPS!
-			// Uncomment in production with HTTPS enabled
-			// w.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload")
+			// HSTS: force HTTPS for a year (incl. subdomains). Only emitted for
+			// requests that actually arrived over HTTPS, detected via the
+			// proxy-set X-Forwarded-Proto (TLS is terminated at the reverse
+			// proxy, so r.TLS is nil here) or a direct TLS connection. This
+			// avoids pinning HSTS on plain-HTTP health checks. No `preload` — that
+			// is a hard-to-reverse commitment best opted into separately.
+			if r.TLS != nil || strings.EqualFold(r.Header.Get("X-Forwarded-Proto"), "https") {
+				w.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+			}
 
 			// Prevent MIME sniffing
 			w.Header().Set("X-Content-Type-Options", "nosniff")
@@ -146,19 +175,45 @@ func (srv *Server) Run() error {
 		logger.Fatal("[HTTP Server] - Failed to run templates. %v", err)
 	}
 
-	fs := http.FileServer(http.FS(assets))
+	fileServer := http.FileServer(http.FS(assets))
 
-	r.Handle(
-		"/public/*",
-		http.StripPrefix("/public/", fs),
-	)
+	// Embedded assets were served with no Cache-Control at all, so browsers
+	// re-fetched them (~19 MB of images) on every visit. Cache them: images,
+	// icons and other assets are content-stable -> long TTL; CSS/JS can change
+	// on a deploy without a new filename -> short TTL so a deploy propagates
+	// quickly. (Fingerprinted filenames + immutable would allow a max TTL on
+	// everything; that's a follow-up.)
+	publicAssets := http.StripPrefix("/public/", fileServer)
+	r.Handle("/public/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case strings.HasPrefix(r.URL.Path, "/public/images/"),
+			strings.HasPrefix(r.URL.Path, "/public/icons/"),
+			strings.HasPrefix(r.URL.Path, "/public/assets/"):
+			w.Header().Set("Cache-Control", "public, max-age=2592000") // 30 days
+		default:
+			w.Header().Set("Cache-Control", "public, max-age=3600") // 1 hour
+		}
+		publicAssets.ServeHTTP(w, r)
+	}))
 
 	// ********** W E B  U I **********
 	r.Route("/", func(r chi.Router) {
-		r.Get("/healthcheck", handleHealthcheck)
-		r.Get("/robots.txt", robotsTxt)
-		r.Get("/sitemap.xml", srv.handler.sitemapXML)
-		r.Get("/llms.txt", llmsTxt)
+		// Default these routes to text/html so their template responses are
+		// compressible (see defaultHTMLContentType). Scoped to this group so the
+		// /public/* file server (registered above) keeps its per-file types.
+		r.Use(defaultHTMLContentType)
+
+		r.Get("/healthcheck", srv.handler.handleHealthcheck)
+		// Registered WITHOUT the file extension. The global middleware.URLFormat
+		// strips a trailing ".ext" from the routing path before chi matches, so a
+		// route registered as "/robots.txt" never matches GET /robots.txt (it 404s
+		// - the handlers were unreachable dead code). Registering the dotless path
+		// makes BOTH "/robots" and the real "/robots.txt" resolve, the same trick
+		// already used for "/share/card.png". The handlers set Content-Type
+		// themselves, so the served bytes are unaffected.
+		r.Get("/robots", robotsTxt)
+		r.Get("/sitemap", srv.handler.sitemapXML)
+		r.Get("/llms", llmsTxt)
 
 		r.Get("/", srv.handler.index)
 
@@ -293,10 +348,17 @@ func (srv *Server) Run() error {
 
 	go func() {
 		<-srv.ctx.Done()
-		if err := httpServer.Shutdown(srv.ctx); err != nil {
+		// Drain in-flight requests with a FRESH, bounded deadline. Reusing
+		// srv.ctx here would hand Shutdown an already-cancelled context (it is
+		// exactly what just unblocked this goroutine), so Shutdown would return
+		// instantly WITHOUT draining and kill in-flight requests mid-response.
+		drainCtx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+		defer cancel()
+		if err := httpServer.Shutdown(drainCtx); err != nil {
 			logger.Error("[HTTP Server] - Failed to shutdown on port %d. %v", srv.port, err)
 		}
 		logger.Info("[HTTP Server] - Server on port %d has shutdown", srv.port)
+		close(srv.done)
 	}()
 
 	if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -309,5 +371,13 @@ func (srv *Server) Run() error {
 func (srv *Server) Shutdown() {
 	logger.Info("[HTTP Server] - Server on port %d shutting down", srv.port)
 	srv.shutdownFn()
+	// Block until the drain goroutine has finished shutting the HTTP server
+	// down, so the caller (api.Shutdown) doesn't close the DB pool out from
+	// under still-draining requests. Bounded so a stuck drain can't hang exit.
+	select {
+	case <-srv.done:
+	case <-time.After(25 * time.Second):
+		logger.Warn("[HTTP Server] - Server on port %d drain wait timed out", srv.port)
+	}
 	logger.Info("[HTTP Server] - Server on port %d shutted down", srv.port)
 }

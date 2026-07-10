@@ -19,6 +19,22 @@ const (
 	JSON   string = "json"
 )
 
+// DefaultTrustedProxies is used when TrustedProxies is left unset. It trusts
+// loopback and private/link-local ranges only, which is correct for a reverse
+// proxy running on the same host or private network: forwarding headers
+// (X-Forwarded-For / X-Real-IP) are honored from those peers and ignored from
+// any public client, so a client cannot spoof its IP to defeat rate limiting.
+var DefaultTrustedProxies = []string{
+	"127.0.0.0/8",    // IPv4 loopback
+	"::1/128",        // IPv6 loopback
+	"10.0.0.0/8",     // RFC1918 private
+	"172.16.0.0/12",  // RFC1918 private
+	"192.168.0.0/16", // RFC1918 private
+	"169.254.0.0/16", // IPv4 link-local
+	"fc00::/7",       // IPv6 unique-local
+	"fe80::/10",      // IPv6 link-local
+}
+
 type Logger struct {
 	Format string `mapstructure:"format" yaml:"format"`
 	Level  string `mapstructure:"level"  yaml:"level"`
@@ -42,6 +58,17 @@ type Config struct {
 	// the admin endpoints reject every request rather than allowing them
 	// through.
 	AdminToken string `mapstructure:"admin_token" yaml:"admin_token"`
+
+	// TrustedProxies is the set of CIDR ranges whose requests are allowed to
+	// set the client IP via X-Forwarded-For / X-Real-IP. Requests from any
+	// other peer have those headers ignored and are keyed by their real TCP
+	// peer address, so a public client cannot spoof its IP to bypass the rate
+	// limiter. When unset it defaults to loopback + private ranges
+	// (DefaultTrustedProxies), which is correct for a reverse proxy on the same
+	// host / private network. Override via the TRUSTED_PROXIES env var
+	// (comma-separated CIDRs) to match a different topology; set it to a range
+	// that excludes your clients to effectively trust no forwarding headers.
+	TrustedProxies []string `mapstructure:"trusted_proxies" yaml:"trusted_proxies"`
 
 	// Database contains the configuration to connect to the
 	// database instance
@@ -95,6 +122,14 @@ func Load(v *viper.Viper, file string) *Config {
 	// Override config with environment variables if they exist
 	overrideWithEnvVars(config)
 
+	// Default the trusted-proxy set to loopback + private ranges when unset, so
+	// the real-IP extraction is safe out of the box behind a same-host/private
+	// reverse proxy. Set TRUSTED_PROXIES explicitly to match a different
+	// topology.
+	if len(config.TrustedProxies) == 0 {
+		config.TrustedProxies = DefaultTrustedProxies
+	}
+
 	if config.Logger.Format != Common &&
 		config.Logger.Format != JSON {
 		config.Logger.Format = Common
@@ -115,6 +150,15 @@ func overrideWithEnvVars(config *Config) {
 	}
 	if token := secretEnv("ADMIN_TOKEN"); token != "" {
 		config.AdminToken = token
+	}
+	if proxies := os.Getenv("TRUSTED_PROXIES"); proxies != "" {
+		var list []string
+		for _, p := range strings.Split(proxies, ",") {
+			if p = strings.TrimSpace(p); p != "" {
+				list = append(list, p)
+			}
+		}
+		config.TrustedProxies = list
 	}
 
 	// Database configuration

@@ -88,6 +88,15 @@ func (h *Handler) leaderboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// A specific but non-existent category must 404 rather than silently
+	// rendering an empty leaderboard. The empty/default case resolves to the
+	// "global" pseudo-category above and is always valid.
+	if category != "global" && !classExists(classes, category) {
+		logger.Warn("[Handler - Leaderboard] Unknown category: %s", category)
+		http.Error(w, "Categoria no trobada", http.StatusNotFound)
+		return
+	}
+
 	filter := parseTorroFilter(r)
 
 	var entries []LeaderboardEntry
@@ -164,6 +173,13 @@ func (h *Handler) leaderboard(w http.ResponseWriter, r *http.Request) {
 // narrowed down by dietary filter flags
 func (h *Handler) fetchPersonalLeaderboard(r *http.Request, userId, category string, filter domain.TorroFilter) ([]LeaderboardEntry, string, int) {
 	minVotes := getMinVotesForClass(category)
+	if category == "global" {
+		// getMinVotesForClass only knows the concrete class ids "1".."5"; the
+		// "global" pseudo-category falls through to its default (25). Gate the
+		// global/absolute leaderboard on the shared threshold instead so it
+		// stays consistent with the JSON API and /wrapped, /reveal.
+		minVotes = globalLeaderboardMinVotes
+	}
 
 	// Check if user has enough votes
 	var voteCount int
@@ -286,6 +302,17 @@ func calculateRatingPercentages(entries []LeaderboardEntry) []LeaderboardEntry {
 	}
 
 	return entries
+}
+
+// classExists reports whether classId matches a real class row, so callers can
+// reject a specific-but-unknown class with a 404 instead of an empty 200.
+func classExists(classes []*domain.Class, classId string) bool {
+	for _, class := range classes {
+		if class.Id == classId {
+			return true
+		}
+	}
+	return false
 }
 
 // getClassName is a helper to get class name by ID

@@ -1,7 +1,7 @@
 package http
 
 import (
-	"context"
+	"encoding/json"
 	"html/template"
 	"net/http"
 
@@ -102,6 +102,21 @@ func (h *Handler) stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// The user row loaded above already carries this user's per-class vote
+	// counts in its ClassVotes JSONB column (the same value that
+	// GetVoteCountForClass reads via CAST("ClassVotes"->>id AS INTEGER)), so
+	// parse it once and read the counts in-memory below instead of issuing a
+	// separate query per class. A NULL/empty value means "no votes yet".
+	var classVotes map[string]int
+	if len(user.ClassVotes) > 0 {
+		if err := json.Unmarshal(user.ClassVotes, &classVotes); err != nil {
+			logger.Warn("[Handler - Stats] Couldn't parse class votes: %v", err)
+			classVotes = make(map[string]int)
+		}
+	} else {
+		classVotes = make(map[string]int)
+	}
+
 	// Category icons mapping
 	categoryIcons := map[string]template.HTML{
 		"1": iconCategoryClassics,    // Clàssics
@@ -132,7 +147,7 @@ func (h *Handler) stats(w http.ResponseWriter, r *http.Request) {
 		if class.Id == "5" { // Global uses total votes
 			voteCount = user.VoteCount
 		} else {
-			voteCount, _ = h.userRepo.GetVoteCountForClass(r.Context(), userId, class.Id)
+			voteCount = classVotes[class.Id]
 		}
 
 		unlocked := voteCount >= minVotes
@@ -201,7 +216,7 @@ func (h *Handler) stats(w http.ResponseWriter, r *http.Request) {
 			Icon:        iconAchievementCompletista,
 			Name:        "Completista",
 			Description: "Has votat en totes les categories",
-			Unlocked:    h.hasVotedAllCategories(r.Context(), userId, classes),
+			Unlocked:    hasVotedAllCategories(classVotes, classes),
 		},
 		{
 			Icon:        iconAchievementSuperVotant,
@@ -252,15 +267,17 @@ func getUserRank(voteCount int) string {
 	}
 }
 
-// hasVotedAllCategories checks if user has voted in all categories
-func (h *Handler) hasVotedAllCategories(ctx context.Context, userId string, classes []*domain.Class) bool {
+// hasVotedAllCategories reports whether the user has cast at least one vote in
+// every non-global category, read from the already-loaded ClassVotes map (a
+// missing/zero entry means no votes in that class). This mirrors the previous
+// per-class GetVoteCountForClass checks without the redundant round-trips.
+func hasVotedAllCategories(classVotes map[string]int, classes []*domain.Class) bool {
 	for _, class := range classes {
 		if class.Id == "5" {
 			continue // Skip global for this check
 		}
 
-		voteCount, err := h.userRepo.GetVoteCountForClass(ctx, userId, class.Id)
-		if err != nil || voteCount == 0 {
+		if classVotes[class.Id] == 0 {
 			return false
 		}
 	}

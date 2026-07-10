@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/subtle"
 	"fmt"
+	"net"
 	"net/http"
 	"strings"
 
@@ -13,6 +14,101 @@ import (
 	"github.com/krtffl/torro/internal/domain"
 	"github.com/krtffl/torro/internal/logger"
 )
+
+// trustedProxyResolver rewrites r.RemoteAddr to the real client IP, honoring
+// X-Forwarded-For / X-Real-IP ONLY when the direct TCP peer is one of the
+// configured trusted proxies. It replaces chi's middleware.RealIP, which trusts
+// those headers from ANY client and so let a client spoof its IP to bypass the
+// per-IP rate limiter. Downstream limiters (httprate.KeyByIP) then key off a
+// value the client cannot forge.
+type trustedProxyResolver struct {
+	nets []*net.IPNet
+}
+
+// newTrustedProxyResolver parses the trusted-proxy CIDRs; invalid entries are
+// logged and skipped rather than failing startup.
+func newTrustedProxyResolver(cidrs []string) *trustedProxyResolver {
+	r := &trustedProxyResolver{}
+	for _, c := range cidrs {
+		c = strings.TrimSpace(c)
+		if c == "" {
+			continue
+		}
+		_, n, err := net.ParseCIDR(c)
+		if err != nil {
+			logger.Warn("[RealIP] Ignoring invalid trusted-proxy CIDR %q: %v", c, err)
+			continue
+		}
+		r.nets = append(r.nets, n)
+	}
+	return r
+}
+
+func (t *trustedProxyResolver) isTrusted(ip net.IP) bool {
+	for _, n := range t.nets {
+		if n.Contains(ip) {
+			return true
+		}
+	}
+	return false
+}
+
+// clientIP resolves the real client IP for the request. If the direct peer is
+// not a trusted proxy (or is unparseable), forwarding headers are ignored and
+// the real TCP peer address is used — a public client cannot spoof it. If the
+// peer IS trusted, the client is taken from the right-most X-Forwarded-For entry
+// that is not itself a trusted proxy (proxies append the real peer on the right,
+// so this is the client as seen by our outermost trusted proxy and cannot be
+// forged by the client's own left-most entries), falling back to X-Real-IP.
+func (t *trustedProxyResolver) clientIP(r *http.Request) string {
+	host := r.RemoteAddr
+	if h, _, err := net.SplitHostPort(r.RemoteAddr); err == nil {
+		host = h
+	}
+	peer := net.ParseIP(host)
+	if peer == nil || !t.isTrusted(peer) {
+		return host
+	}
+	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
+		parts := strings.Split(xff, ",")
+		for i := len(parts) - 1; i >= 0; i-- {
+			p := strings.TrimSpace(parts[i])
+			ip := net.ParseIP(p)
+			if ip == nil || t.isTrusted(ip) {
+				continue
+			}
+			return p
+		}
+	}
+	if xr := strings.TrimSpace(r.Header.Get("X-Real-IP")); xr != "" && net.ParseIP(xr) != nil {
+		return xr
+	}
+	return host
+}
+
+func (t *trustedProxyResolver) middleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r.RemoteAddr = t.clientIP(r)
+		next.ServeHTTP(w, r)
+	})
+}
+
+// defaultHTMLContentType sets a default text/html Content-Type for the web-UI
+// route group. The template handlers write via buf.WriteTo without setting a
+// Content-Type, so Go only sniffs it at write time — too late for the
+// compression middleware, which decides whether to compress from the header it
+// sees at the first write and so was skipping every HTML page. Setting it up
+// front makes those pages compressible. Handlers that emit something else
+// override it with their own explicit Set (render.JSON, the PNG endpoints, the
+// robots/sitemap/llms handlers). Not applied to /public/* — the file server's
+// ServeContent only auto-detects a type when the header is empty, so a preset
+// value there would mislabel CSS/images.
+func defaultHTMLContentType(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		next.ServeHTTP(w, r)
+	})
+}
 
 // Context keys for storing user information in request context
 type contextKey string

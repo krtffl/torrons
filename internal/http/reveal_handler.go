@@ -143,6 +143,16 @@ func (h *Handler) revealCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Cap concurrent renders (each allocates a large RGBA and pegs a core):
+	// shed load with 503 rather than piling up when the cap is saturated.
+	if !sharecard.TryAcquireRenderSlot(r.Context()) {
+		logger.Warn("[Handler - RevealCard] Render slots saturated; shedding request.")
+		w.Header().Set("Retry-After", "1")
+		http.Error(w, "Service Unavailable", http.StatusServiceUnavailable)
+		return
+	}
+	defer sharecard.ReleaseRenderSlot()
+
 	png, err := sharecard.RenderReveal(data)
 	if err != nil {
 		logger.Error("[Handler - RevealCard] Couldn't render card. %v", err)

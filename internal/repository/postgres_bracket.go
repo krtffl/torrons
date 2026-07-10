@@ -358,11 +358,21 @@ func (r *postgresBracketRepo) CreateTx(tx *sql.Tx, ctx context.Context, bracket 
 	return bracket, nil
 }
 
+// GetTx reads a bracket row inside a transaction and takes a FOR UPDATE row
+// lock. Both callers (Handler.bracketMatchVote and Handler.bracketAdvance) read
+// the bracket exactly once per transaction right before deciding whether to
+// resolve/cascade its current round, so this serializes concurrent
+// round-closing operations on the SAME bracket: two votes that together
+// complete a round (or a vote racing an admin force-advance) now execute their
+// check-and-advance one at a time instead of both reading the round as
+// "not yet advanced" and racing to cascade it (which could stall the round or
+// drop one voter's vote behind a duplicate-key 500 - see cascadeAdvance).
 func (r *postgresBracketRepo) GetTx(tx *sql.Tx, ctx context.Context, id string) (*domain.Bracket, error) {
 	row := tx.QueryRowContext(ctx,
 		`SELECT "Id", "CampaignId", "ClassId", "Size", "CurrentRound", "Status", "ChampionId", "CreatedAt", "CompletedAt"
 		 FROM "Brackets"
-		 WHERE "Id" = $1`,
+		 WHERE "Id" = $1
+		 FOR UPDATE`,
 		id,
 	)
 	return scanBracket(row)

@@ -272,12 +272,19 @@ func (r *postgresTorroRepo) Update(ctx context.Context, id string, rating float6
 
 // Transaction methods
 
+// GetTx reads a torró row inside a transaction and takes a FOR UPDATE row
+// lock. It is used exclusively by the vote path (Handler.result), which does a
+// read-modify-write of "Rating"; the lock serializes concurrent votes on the
+// same torró so they can no longer read the same pre-image and clobber each
+// other's rating update (lost update). Callers must acquire these locks in a
+// deterministic order (sorted by id) to avoid deadlocks.
 func (r *postgresTorroRepo) GetTx(tx *sql.Tx, ctx context.Context, id string) (*domain.Torro, error) {
 	row := tx.QueryRowContext(ctx,
 		`
         SELECT "Id", "Name", "Rating", "Image", "Class"
         FROM "Torrons"
-        WHERE "Id" = $1`,
+        WHERE "Id" = $1
+        FOR UPDATE`,
 		id,
 	)
 
