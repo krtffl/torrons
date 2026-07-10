@@ -33,6 +33,21 @@ func (h *Handler) embedLeaderboard(w http.ResponseWriter, r *http.Request) {
 	classId := r.URL.Query().Get("classId")
 	if classId == "" {
 		classId = embedDefaultClassId
+	} else {
+		// A specific but non-existent class must 404 rather than silently
+		// falling through to an empty widget. The absent/default case
+		// (embedDefaultClassId) is always valid and skips this lookup.
+		classes, err := h.classRepo.List(r.Context())
+		if err != nil {
+			logger.Error("[Handler - EmbedLeaderboard] Couldn't list classes. %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		if !classExists(classes, classId) {
+			logger.Warn("[Handler - EmbedLeaderboard] Unknown classId: %s", classId)
+			http.Error(w, "Class not found", http.StatusNotFound)
+			return
+		}
 	}
 
 	limit := embedDefaultLimit

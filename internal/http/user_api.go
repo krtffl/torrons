@@ -2,13 +2,23 @@ package http
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 
+	"github.com/krtffl/torro/internal/domain"
 	"github.com/krtffl/torro/internal/logger"
 )
+
+// globalLeaderboardMinVotes is the single vote threshold gating access to the
+// global/absolute leaderboard, shared by the JSON API
+// (handleUserGlobalLeaderboard) and the personal web leaderboard
+// (fetchPersonalLeaderboard). It matches the /wrapped and /reveal gate so a
+// 25-49 vote user is treated the same everywhere; getMinVotesForClass's
+// default of 25 must not leak into the global path.
+const globalLeaderboardMinVotes = 50
 
 // UserStatsResponse contains user voting statistics
 type UserStatsResponse struct {
@@ -91,6 +101,20 @@ func (h *Handler) handleUserLeaderboard(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	// Reject a specific but non-existent class with a 404 rather than
+	// returning an empty 200, matching /api/leaderboard/class/{id}.
+	classes, err := h.classRepo.List(r.Context())
+	if err != nil {
+		logger.Error("[User API - Leaderboard] Couldn't list classes. %v", err)
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, map[string]string{"error": "Internal server error"})
+		return
+	}
+	if !classExists(classes, classId) {
+		render.Render(w, r, domain.ErrNotFound(fmt.Errorf("%s: class %s not found", domain.NotFoundError, classId)))
+		return
+	}
+
 	// Get personalized leaderboard (optionally narrowed by dietary filters)
 	entries, err := h.userEloRepo.GetUserLeaderboard(r.Context(), userId, classId, parseTorroFilter(r))
 	if err != nil {
@@ -157,8 +181,8 @@ func (h *Handler) handleUserGlobalLeaderboard(w http.ResponseWriter, r *http.Req
 		"total_votes":        totalVotes,
 		"entries":            entries,
 		"total_entries":      len(entries),
-		"min_votes_met":      totalVotes >= 50, // Global minimum
-		"min_votes_required": 50,
+		"min_votes_met":      totalVotes >= globalLeaderboardMinVotes,
+		"min_votes_required": globalLeaderboardMinVotes,
 	}
 
 	render.Status(r, http.StatusOK)

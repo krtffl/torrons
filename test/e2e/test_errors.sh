@@ -30,12 +30,13 @@ assert_status S7  "history negative offset clamped -> 200" 200 GET "/history?off
 assert_status S7b "history non-numeric offset -> 200"    200 GET "/history?offset=abc" -b "$C_UNLOCKED"
 assert_status S7c "history overflow offset -> 200"       200 GET "/history?offset=99999999999999999999" -b "$C_UNLOCKED"
 
-# --- confirmed inconsistency: unknown class id contract differs across surfaces ---
-# api/leaderboard/class/999 -> 404 (asserted E08 above), but these return 200+empty:
-xfail_status  S6a "leaderboard ?category=999 -> 200 empty (api sibling 404s)" \
-	200 404 GET "/leaderboard?category=999"
-xfail_status  S6b "api/user/leaderboard/class/999 -> 200 empty (sibling 404s)" \
-	200 404 GET /api/user/leaderboard/class/999 -b "$C_UNLOCKED"
+# --- FIXED (Batch 10): unknown class id now 404 consistently across surfaces ---
+assert_status S6a "leaderboard ?category=999 -> 404"           404 GET "/leaderboard?category=999"
+assert_status S6b "api/user/leaderboard/class/999 -> 404"      404 GET /api/user/leaderboard/class/999 -b "$C_UNLOCKED"
+assert_status S6c "embed/leaderboard ?classId=999 -> 404"      404 GET "/embed/leaderboard?classId=999"
+# valid class / default still fine
+assert_status S6d "leaderboard ?category=1 -> 200"             200 GET "/leaderboard?category=1"
+assert_status S6e "embed/leaderboard default -> 200"           200 GET /embed/leaderboard
 
 # --- gated pages below threshold render locked-state 200 (design), not an error ---
 assert_status E11 "wrapped, fresh user -> 200 (locked state)" \
