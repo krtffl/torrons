@@ -93,6 +93,23 @@ func (t *trustedProxyResolver) middleware(next http.Handler) http.Handler {
 	})
 }
 
+// defaultHTMLContentType sets a default text/html Content-Type for the web-UI
+// route group. The template handlers write via buf.WriteTo without setting a
+// Content-Type, so Go only sniffs it at write time — too late for the
+// compression middleware, which decides whether to compress from the header it
+// sees at the first write and so was skipping every HTML page. Setting it up
+// front makes those pages compressible. Handlers that emit something else
+// override it with their own explicit Set (render.JSON, the PNG endpoints, the
+// robots/sitemap/llms handlers). Not applied to /public/* — the file server's
+// ServeContent only auto-detects a type when the header is empty, so a preset
+// value there would mislabel CSS/images.
+func defaultHTMLContentType(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		next.ServeHTTP(w, r)
+	})
+}
+
 // Context keys for storing user information in request context
 type contextKey string
 

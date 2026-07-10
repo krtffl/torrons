@@ -64,6 +64,16 @@ func (srv *Server) Run() error {
 	r.Use(middleware.URLFormat)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
+	// Compress text responses (HTML/CSS/JS/JSON/XML/SVG). Everything was served
+	// uncompressed before — e.g. main.css went out at ~172 KB. Binary types not
+	// in this list (image/png, image/jpeg — the generated cards and photos) are
+	// left untouched since they're already compressed.
+	r.Use(middleware.Compress(5,
+		"text/html", "text/css", "application/javascript", "text/javascript",
+		"application/json", "application/xml", "text/xml", "image/svg+xml",
+		"text/plain",
+	))
+
 	// Rate limiting middleware (100 requests per minute per IP)
 	r.Use(httprate.Limit(
 		100,                                     // requests
@@ -165,15 +175,34 @@ func (srv *Server) Run() error {
 		logger.Fatal("[HTTP Server] - Failed to run templates. %v", err)
 	}
 
-	fs := http.FileServer(http.FS(assets))
+	fileServer := http.FileServer(http.FS(assets))
 
-	r.Handle(
-		"/public/*",
-		http.StripPrefix("/public/", fs),
-	)
+	// Embedded assets were served with no Cache-Control at all, so browsers
+	// re-fetched them (~19 MB of images) on every visit. Cache them: images,
+	// icons and other assets are content-stable -> long TTL; CSS/JS can change
+	// on a deploy without a new filename -> short TTL so a deploy propagates
+	// quickly. (Fingerprinted filenames + immutable would allow a max TTL on
+	// everything; that's a follow-up.)
+	publicAssets := http.StripPrefix("/public/", fileServer)
+	r.Handle("/public/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case strings.HasPrefix(r.URL.Path, "/public/images/"),
+			strings.HasPrefix(r.URL.Path, "/public/icons/"),
+			strings.HasPrefix(r.URL.Path, "/public/assets/"):
+			w.Header().Set("Cache-Control", "public, max-age=2592000") // 30 days
+		default:
+			w.Header().Set("Cache-Control", "public, max-age=3600") // 1 hour
+		}
+		publicAssets.ServeHTTP(w, r)
+	}))
 
 	// ********** W E B  U I **********
 	r.Route("/", func(r chi.Router) {
+		// Default these routes to text/html so their template responses are
+		// compressible (see defaultHTMLContentType). Scoped to this group so the
+		// /public/* file server (registered above) keeps its per-file types.
+		r.Use(defaultHTMLContentType)
+
 		r.Get("/healthcheck", handleHealthcheck)
 		// Registered WITHOUT the file extension. The global middleware.URLFormat
 		// strips a trailing ".ext" from the routing path before chi matches, so a
