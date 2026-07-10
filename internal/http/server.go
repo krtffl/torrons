@@ -175,9 +175,16 @@ func (srv *Server) Run() error {
 	// ********** W E B  U I **********
 	r.Route("/", func(r chi.Router) {
 		r.Get("/healthcheck", handleHealthcheck)
-		r.Get("/robots.txt", robotsTxt)
-		r.Get("/sitemap.xml", srv.handler.sitemapXML)
-		r.Get("/llms.txt", llmsTxt)
+		// Registered WITHOUT the file extension. The global middleware.URLFormat
+		// strips a trailing ".ext" from the routing path before chi matches, so a
+		// route registered as "/robots.txt" never matches GET /robots.txt (it 404s
+		// - the handlers were unreachable dead code). Registering the dotless path
+		// makes BOTH "/robots" and the real "/robots.txt" resolve, the same trick
+		// already used for "/share/card.png". The handlers set Content-Type
+		// themselves, so the served bytes are unaffected.
+		r.Get("/robots", robotsTxt)
+		r.Get("/sitemap", srv.handler.sitemapXML)
+		r.Get("/llms", llmsTxt)
 
 		r.Get("/", srv.handler.index)
 
