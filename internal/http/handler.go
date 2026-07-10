@@ -110,6 +110,14 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 	buf := h.bpool.Get()
 	defer h.bpool.Put(buf)
 
+	// Purely static (no DB dependency) - safe to cache. Same 1-hour TTL used
+	// for /public/* CSS/JS: short enough that a deploy propagates quickly,
+	// long enough to actually get cached. Vary on HX-Request because the
+	// template renders a full page shell vs. an htmx partial depending on it -
+	// without Vary a shared cache could serve the wrong variant to a client
+	// with a different HX-Request header than whoever populated the cache.
+	setStaticPageCacheHeaders(w)
+
 	if err := h.template.ExecuteTemplate(buf, "index.html", Content{
 		HX: isHX(r),
 	}); err != nil {

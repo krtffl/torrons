@@ -37,3 +37,16 @@ _assert_not_gzip CACHE06 /public/assets/og-image.jpg "og-image JPEG"
 # Static assets carry a Cache-Control (were served with none)
 _assert_cc CACHE07 /public/css/main.css        "max-age"
 _assert_cc CACHE08 /public/assets/og-image.jpg "max-age=2592000"
+
+# Static pages (index + the About/IGP/comparison/glossary cluster) now carry
+# a Cache-Control too, plus Vary: HX-Request since their templates render a
+# full page shell or an htmx partial depending on that header.
+for p in / /sobre /torro-agramunt-igp /torro-agramunt-vs-xixona /tipus-de-torrons; do
+	_assert_cc CACHE09 "$p" "max-age=3600"
+done
+_vary="$(curl -s -o /dev/null -D - -H "$(_xff)" "${BASE_URL}/sobre" | grep -i '^vary:' | tr -d '\r')"
+if grep -qi 'HX-Request' <<<"$_vary"; then _ok "[CACHE10] /sobre Vary: HX-Request present"; else _no "[CACHE10] /sobre missing Vary: HX-Request ($_vary)"; fi
+
+# A DB-backed page (categories can change) is deliberately NOT cached.
+_classes_cc="$(curl -s -o /dev/null -D - -H "$(_xff)" "${BASE_URL}/classes" | grep -i '^cache-control:' | tr -d '\r')"
+if [[ -z "$_classes_cc" ]]; then _ok "[CACHE11] /classes correctly has no Cache-Control (DB-backed)"; else _no "[CACHE11] /classes unexpectedly cached ($_classes_cc)"; fi
