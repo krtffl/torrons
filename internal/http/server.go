@@ -20,6 +20,9 @@ import (
 type Server struct {
 	ctx        context.Context
 	shutdownFn context.CancelFunc
+	// done is closed once the HTTP server has finished draining in-flight
+	// requests, so Shutdown can block on it before the caller closes the DB.
+	done chan struct{}
 
 	port           uint
 	handler        *Handler
@@ -36,6 +39,7 @@ func New(
 	return &Server{
 		ctx:            ctx,
 		shutdownFn:     shutdownFn,
+		done:           make(chan struct{}),
 		port:           port,
 		handler:        handler,
 		trustedProxies: trustedProxies,
@@ -308,10 +312,17 @@ func (srv *Server) Run() error {
 
 	go func() {
 		<-srv.ctx.Done()
-		if err := httpServer.Shutdown(srv.ctx); err != nil {
+		// Drain in-flight requests with a FRESH, bounded deadline. Reusing
+		// srv.ctx here would hand Shutdown an already-cancelled context (it is
+		// exactly what just unblocked this goroutine), so Shutdown would return
+		// instantly WITHOUT draining and kill in-flight requests mid-response.
+		drainCtx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+		defer cancel()
+		if err := httpServer.Shutdown(drainCtx); err != nil {
 			logger.Error("[HTTP Server] - Failed to shutdown on port %d. %v", srv.port, err)
 		}
 		logger.Info("[HTTP Server] - Server on port %d has shutdown", srv.port)
+		close(srv.done)
 	}()
 
 	if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -324,5 +335,13 @@ func (srv *Server) Run() error {
 func (srv *Server) Shutdown() {
 	logger.Info("[HTTP Server] - Server on port %d shutting down", srv.port)
 	srv.shutdownFn()
+	// Block until the drain goroutine has finished shutting the HTTP server
+	// down, so the caller (api.Shutdown) doesn't close the DB pool out from
+	// under still-draining requests. Bounded so a stuck drain can't hang exit.
+	select {
+	case <-srv.done:
+	case <-time.After(25 * time.Second):
+		logger.Warn("[HTTP Server] - Server on port %d drain wait timed out", srv.port)
+	}
 	logger.Info("[HTTP Server] - Server on port %d shutted down", srv.port)
 }
