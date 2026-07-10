@@ -19,17 +19,13 @@ assert_status E08 "api lb class, unknown class -> 404"   404 GET /api/leaderboar
 assert_status E09 "path traversal is neutralized"        404 GET /leaderboard/../../etc/passwd
 assert_status E10 "friends circle, unknown id -> 404"    404 GET /friends/00000000-0000-0000-0000-000000000000
 
-# --- confirmed defects: NotFound wrapped as ErrInternal -> 500 (should be 404) ---
-xfail_status  S1  "vote screen, nonexistent class -> 500 (want 404)" \
-	500 404 GET /classes/999/vote
-xfail_status  S1b "vote screen, non-numeric class -> 500 (want 404)" \
-	500 404 GET /classes/abc/vote
-xfail_status  S2  "vote, nonexistent pairing -> 500 (want 404)" \
-	500 404 POST "/pairings/00000000-0000-0000-0000-000000000000/vote?id=x"
+# --- FIXED (Batch 2): NotFound now mapped to 404 via domain.ErrFromRepo ---
+assert_status S1  "vote screen, nonexistent class -> 404"  404 GET /classes/999/vote
+assert_status S1b "vote screen, non-numeric class -> 404"  404 GET /classes/abc/vote
+assert_status S2  "vote, nonexistent pairing -> 404"       404 POST "/pairings/00000000-0000-0000-0000-000000000000/vote?id=x"
 
-# --- confirmed defect: negative OFFSET reaches SQL -> 500 (should clamp/400) ---
-xfail_status  S7  "history negative offset -> 500 (want 200/400)" \
-	500 200 GET "/history?offset=-5" -b "$C_UNLOCKED"
+# --- FIXED (Batch 2): negative OFFSET clamped to 0 -> 200 ---
+assert_status S7  "history negative offset clamped -> 200" 200 GET "/history?offset=-5" -b "$C_UNLOCKED"
 # non-numeric / overflow offset are handled (default to 0) — hard asserts
 assert_status S7b "history non-numeric offset -> 200"    200 GET "/history?offset=abc" -b "$C_UNLOCKED"
 assert_status S7c "history overflow offset -> 200"       200 GET "/history?offset=99999999999999999999" -b "$C_UNLOCKED"

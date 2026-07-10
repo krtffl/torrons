@@ -162,7 +162,9 @@ func (h *Handler) vote(w http.ResponseWriter, r *http.Request) {
 	p, err := h.pairingRepo.GetRandom(r.Context(), classId)
 	if err != nil {
 		logger.Error("[Handler - Vote] Couldn't get random pairing. %v", err)
-		render.Render(w, r, domain.ErrInternal(err))
+		// A nonexistent class (or one with no pairings) surfaces as a
+		// not-found repo error -> 404, not a 500.
+		render.Render(w, r, domain.ErrFromRepo(err))
 		return
 	}
 
@@ -250,7 +252,9 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	p, err := h.pairingRepo.Get(r.Context(), pairingId)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't get pairing with ID %s. %v", pairingId, err)
-		render.Render(w, r, domain.ErrInternal(err))
+		// A nonexistent/malformed pairing id surfaces as a not-found repo
+		// error -> 404, not a 500.
+		render.Render(w, r, domain.ErrFromRepo(err))
 		return
 	}
 
@@ -421,7 +425,9 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 			PairingId: pairingId,
 		}); err != nil {
 			logger.Error("[Handler - Result] Couldn't record advent vote. %v", err)
-			render.Render(w, r, domain.ErrInternal(err))
+			// A repeat of today's featured duel hits the UNIQUE(UserId,VoteDate)
+			// constraint -> duplicate-key -> 409 Conflict, not a 500.
+			render.Render(w, r, domain.ErrFromRepo(err))
 			return
 		}
 	}

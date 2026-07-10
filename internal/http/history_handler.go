@@ -63,6 +63,12 @@ func (h *Handler) history(w http.ResponseWriter, r *http.Request) {
 	if offsetStr != "" {
 		offset, _ = strconv.Atoi(offsetStr)
 	}
+	// Clamp to a non-negative value: a negative offset (e.g. ?offset=-5) would
+	// otherwise reach Postgres's OFFSET clause, which rejects it and turned the
+	// request into a 500. Atoi already yields 0 on a non-numeric value.
+	if offset < 0 {
+		offset = 0
+	}
 
 	limit := 20 // Show 20 votes per page
 
