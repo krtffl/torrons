@@ -21,21 +21,24 @@ type Server struct {
 	ctx        context.Context
 	shutdownFn context.CancelFunc
 
-	port    uint
-	handler *Handler
+	port           uint
+	handler        *Handler
+	trustedProxies []string
 }
 
 func New(
 	port uint,
 	handler *Handler,
+	trustedProxies []string,
 ) *Server {
 	ctx, shutdownFn := context.WithCancel(context.Background())
 
 	return &Server{
-		ctx:        ctx,
-		shutdownFn: shutdownFn,
-		port:       port,
-		handler:    handler,
+		ctx:            ctx,
+		shutdownFn:     shutdownFn,
+		port:           port,
+		handler:        handler,
+		trustedProxies: trustedProxies,
 	}
 }
 
@@ -43,10 +46,17 @@ func (srv *Server) Run() error {
 	logger.Info("[HTTP] - Starting to listen on port %d", srv.port)
 	r := chi.NewMux()
 
+	// Resolve the real client IP from forwarding headers, but only when they
+	// come from a trusted proxy — replaces chi's middleware.RealIP, which
+	// trusted X-Forwarded-For from any client and made the per-IP rate limiter
+	// bypassable. Must run before the rate-limit middleware below so it keys off
+	// the resolved RemoteAddr.
+	realIP := newTrustedProxyResolver(srv.trustedProxies)
+
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
+	r.Use(realIP.middleware)
 	r.Use(middleware.URLFormat)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
@@ -88,10 +98,15 @@ func (srv *Server) Run() error {
 	// Security headers middleware
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// HSTS: Force HTTPS for 1 year, including subdomains
-			// Note: Only enable after deploying with HTTPS!
-			// Uncomment in production with HTTPS enabled
-			// w.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload")
+			// HSTS: force HTTPS for a year (incl. subdomains). Only emitted for
+			// requests that actually arrived over HTTPS, detected via the
+			// proxy-set X-Forwarded-Proto (TLS is terminated at the reverse
+			// proxy, so r.TLS is nil here) or a direct TLS connection. This
+			// avoids pinning HSTS on plain-HTTP health checks. No `preload` — that
+			// is a hard-to-reverse commitment best opted into separately.
+			if r.TLS != nil || strings.EqualFold(r.Header.Get("X-Forwarded-Proto"), "https") {
+				w.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+			}
 
 			// Prevent MIME sniffing
 			w.Header().Set("X-Content-Type-Options", "nosniff")

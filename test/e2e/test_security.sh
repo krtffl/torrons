@@ -29,25 +29,37 @@ else
 	_no "[SEC06] global rate limit never fired for a fixed IP (limiter broken?)"
 fi
 
-# --- CONFIRMED FINDING: rate limit is bypassable by rotating X-Forwarded-For ---
-# RealIP trusts the header from any client, so a rotating XFF defeats both the
-# global and the per-user vote limiter. We assert the CURRENT (vulnerable)
-# behavior so this guard flips loudly once a trusted-proxy allowlist is added.
-_rl_rotating() {
-	local n=140 blocked=0 i code
-	for i in $(seq 1 $n); do
-		code=$(curl -s -o /dev/null -w '%{http_code}' -H "X-Forwarded-For: 10.10.$((i/256)).$((i%256))" "${BASE_URL}/api/campaign/countdown")
-		[[ "$code" == "429" ]] && blocked=$((blocked+1))
+# --- FIXED (Batch 3): X-Forwarded-For is only honored from a trusted proxy ---
+# The main suite server runs with the default trusted set (loopback trusted), so
+# its XFF rotation is honored — that's why the functional tests can dodge the
+# per-IP limit. To prove the bypass is CLOSED for an untrusted peer, boot a
+# second instance with TRUSTED_PROXIES set to a range that EXCLUDES loopback:
+# now the loopback test client is untrusted, its spoofed XFF is ignored, and all
+# requests key on the real ::1 peer -> the rotation no longer bypasses the limit.
+if [[ -n "${SERVER_BIN:-}" ]]; then
+	_sec_port=8479
+	_host="$(sed -E 's|.*@([^:/]+):.*|\1|' <<<"$DB_URL")"
+	_dbport="$(sed -E 's|.*:([0-9]+)/.*|\1|' <<<"$DB_URL")"
+	env -C "$ROOT" DB_HOST="$_host" DB_PORT="$_dbport" DB_USER=myUser DB_PASSWORD=myPassword \
+		DB_NAME=databaseName DB_SSL_MODE=disable PORT="$_sec_port" LOGGER_LEVEL=error LOGGER_PATH= \
+		ADMIN_TOKEN="$ADMIN_TOKEN" TRUSTED_PROXIES="203.0.113.0/24" \
+		"$SERVER_BIN" >/dev/null 2>&1 &
+	_sec_pid=$!
+	disown "$_sec_pid" 2>/dev/null || true
+	for _i in $(seq 1 40); do curl -s -o /dev/null "http://localhost:${_sec_port}/healthcheck" 2>/dev/null && break; sleep 0.5; done
+	_blocked=0
+	for _i in $(seq 1 140); do
+		_c=$(curl -s -o /dev/null -w '%{http_code}' -H "X-Forwarded-For: 10.10.$((_i/256)).$((_i%256))" "http://localhost:${_sec_port}/api/campaign/countdown")
+		[[ "$_c" == "429" ]] && _blocked=$((_blocked+1))
 	done
-	echo "$blocked"
-}
-_blocked="$(_rl_rotating)"
-if [[ "$_blocked" == "0" ]]; then
-	XFAIL=$((XFAIL+1))
-	printf '  \033[33mxfail\033[0m [SEC07] rate limit fully bypassed by rotating X-Forwarded-For (140/140 passed) — KNOWN: add trusted-proxy allowlist\n'
+	kill -9 "$_sec_pid" 2>/dev/null
+	if (( _blocked > 0 )); then
+		_ok "[SEC07] untrusted peer: spoofed rotating X-Forwarded-For ignored, rate limit enforced ($_blocked/140 blocked)"
+	else
+		_no "[SEC07] untrusted peer still bypassed the rate limit via rotating X-Forwarded-For (0/140 blocked)"
+	fi
 else
-	XPASS=$((XPASS+1))
-	printf '  \033[36mXPASS\033[0m [SEC07] rotating-XFF bypass now partially blocked (%s/140 got 429) — trusted-proxy fix may be in; tighten this guard\n' "$_blocked"
+	printf '  \033[36minfo\033[0m  [SEC07] skipped (SERVER_BIN not exported; run via run.sh)\n'
 fi
 
 # --- identity model: an unknown-UUID cookie is treated as anonymous (new user),

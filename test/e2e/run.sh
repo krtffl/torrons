@@ -95,6 +95,9 @@ setup_db() {
 boot_server() {
 	log "building server binary"
 	( cd "$ROOT" && go build -o "$SERVER_BIN" ./cmd/server ) || die "go build failed"
+	# Exported so security sub-tests can boot a second instance with a different
+	# TRUSTED_PROXIES config (see test_security.sh SEC07).
+	export SERVER_BIN
 	log "booting server on :$APP_PORT (migrations run automatically on boot)"
 	local host port
 	host="$(sed -E 's|.*@([^:/]+):.*|\1|' <<<"$DB_URL")"
