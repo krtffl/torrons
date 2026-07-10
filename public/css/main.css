@@ -4391,6 +4391,13 @@ button.arena-card-action:focus-visible {
     white-space: nowrap;
 }
 
+/* Desktop-only: the tree doesn't need the swipe hint once it fits without
+   scrolling, so this status echo takes that slot instead - hidden here,
+   shown at >=1280px below. */
+.bracket-tree-hint-pill {
+    display: none;
+}
+
 .bracket-tree-scroll {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -7032,6 +7039,11 @@ button.arena-card-action:focus-visible {
         --desktop-rail-width: 280px;
         --desktop-photo-col-width: 420px;
         --desktop-photo-col-height: 520px;
+        /* Bracket needs more room than a duel or a spec sheet - documented
+           exception, wider than --desktop-column-width. */
+        --desktop-bracket-column-width: 1200px;
+        --desktop-bracket-champion-photo-width: 130px;
+        --desktop-bracket-champion-photo-height: 180px;
     }
 }
 
@@ -7044,6 +7056,9 @@ button.arena-card-action:focus-visible {
         --desktop-rail-width: 340px;
         --desktop-photo-col-width: 560px;
         --desktop-photo-col-height: 680px;
+        --desktop-bracket-column-width: 1680px;
+        --desktop-bracket-champion-photo-width: 170px;
+        --desktop-bracket-champion-photo-height: 244px;
     }
 }
 
@@ -7055,7 +7070,8 @@ button.arena-card-action:focus-visible {
        as on every other page; only these two pages' own content area adopts
        the two-tone canvas. */
     #main-content:has(> #vote-page),
-    #main-content:has(> #torro-detail-container) {
+    #main-content:has(> #torro-detail-container),
+    #main-content:has(> #bracket-container) {
         background-color: var(--color-desktop-background);
     }
 
@@ -7286,5 +7302,153 @@ button.arena-card-action:focus-visible {
 
     .torro-detail-content-col .torro-cta-wrap {
         max-width: none;
+    }
+
+    /* Bracket: the tree grows and centers within a wider, deliberately
+       two-toned column instead of sitting left-anchored in empty canvas.
+       See docs/design-prompts/23-bracket-desktop-populated-view.md and its
+       Claude Design deliverable for the full audit this responds to. */
+    #bracket-container {
+        max-width: var(--desktop-bracket-column-width);
+        margin: 0 auto;
+        padding: var(--spacing-xl) var(--spacing-xl) calc(var(--spacing-xl) * 1.5);
+        background-color: var(--color-background);
+        box-shadow: 0 0 80px rgba(58, 42, 28, 0.14);
+    }
+
+    .bracket-tree-hint {
+        margin: 0 0 var(--spacing-lg);
+    }
+
+    .bracket-tree-hint-icon {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-left: 2px solid var(--color-text);
+        border-bottom: 2px solid var(--color-text);
+        transform: rotate(45deg);
+        flex: none;
+    }
+
+    .bracket-tree-hint-label {
+        font-size: 0.8rem;
+        letter-spacing: 0.04em;
+        color: var(--color-text-light-dark);
+    }
+
+    /* The swipe hint only makes sense while the tree needs horizontal
+       scrolling - it doesn't at this width, so the pill takes its slot. */
+    .bracket-tree-hint-swipe {
+        display: none;
+    }
+
+    .bracket-tree-hint-pill {
+        display: inline-block;
+        margin-top: 0;
+    }
+
+    .bracket-tree-scroll {
+        overflow-x: visible;
+        margin: 0;
+        padding: 8px 0 0;
+    }
+
+    /* Deliberate empty-space treatment: a soft halo behind the tree
+       instead of flat, unfinished-looking background. */
+    .bracket-tree-scroll {
+        position: relative;
+        background-image: radial-gradient(1100px 460px at 50% 8%, rgba(255, 250, 241, 0.85), rgba(251, 242, 227, 0) 72%);
+    }
+
+    .bracket-tree {
+        --bracket-gap: 48px;
+        width: max-content;
+        margin: 0 auto;
+    }
+
+    /* Round columns grow toward the final instead of staying a uniform
+       250px regardless of round - generic by proximity to .is-final, not
+       hardcoded to any specific round count. */
+    .bracket-round.is-final {
+        flex-basis: 320px;
+        width: 320px;
+    }
+
+    .bracket-round:has(+ .bracket-round.is-final),
+    .bracket-round.is-final + .bracket-round {
+        flex-basis: 280px;
+        width: 280px;
+    }
+
+    .bracket-match {
+        padding: var(--spacing-md) var(--spacing-lg);
+        gap: 10px;
+    }
+
+    .bracket-round.is-final .bracket-match,
+    .bracket-round:has(+ .bracket-round.is-final) .bracket-match,
+    .bracket-round.is-final + .bracket-round .bracket-match {
+        padding: var(--spacing-lg) 22px;
+    }
+
+    #bracket-container .history-torron-img {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+    }
+
+    #bracket-container .history-torron-name {
+        font-size: 1rem;
+    }
+
+    .bracket-seed {
+        width: 22px;
+        height: 22px;
+        font-size: 0.7rem;
+    }
+
+    /* The confirmed-path treatment: a decided match whose winner hasn't
+       lost since (BracketMatchView.OnConfirmedPath, computed server-side
+       in bracket_handler.go) stays visually "live" - a burgundy-tinted
+       card and a burgundy outgoing connector - instead of the neutral
+       styling every other decided match gets. The moment that torró
+       loses, the match reverts to neutral, same as any other. */
+    .bracket-match.on-path {
+        background-color: var(--color-competition-tint);
+        border-color: var(--color-competition);
+    }
+
+    .bracket-round:not(:last-child) .bracket-match.on-path::after {
+        background-color: var(--color-competition);
+        height: 4px;
+    }
+
+    /* The live final: dashed burgundy border, no bold winner emphasis on
+       either side since it hasn't been decided yet. Reuses the existing
+       .is-final/.is-current round markers - a final round only ever has
+       one match, so this scopes precisely without a new per-match field. */
+    .bracket-round.is-final.is-current .bracket-match:not(.decided) {
+        border: 2px dashed var(--color-competition);
+        background-color: var(--color-card);
+    }
+
+    .bracket-champion {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xl);
+        text-align: left;
+        padding: var(--spacing-xl) 40px;
+    }
+
+    .bracket-champion-image {
+        width: var(--desktop-bracket-champion-photo-width);
+        height: var(--desktop-bracket-champion-photo-height);
+        margin-bottom: 0;
+        flex: none;
+    }
+
+    .bracket-champion-name {
+        font-size: 44px;
+        margin: 6px 0 0;
     }
 }
