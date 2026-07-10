@@ -263,6 +263,20 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Look up the active campaign to tag this vote with, BEFORE opening the
+	// transaction. GetActive uses the pooled *sql.DB (not tx); running it while
+	// the transaction below holds its own pooled connection (and, now, FOR
+	// UPDATE row locks) means each in-flight vote would hold one connection and
+	// block waiting for a second — under concurrent votes that exhausts the
+	// pool and deadlocks. This is a soft attach: voting isn't restricted to the
+	// campaign window, so no active campaign just leaves CampaignId nil.
+	var campaignIdPtr *string
+	if campaign, err := h.campaignRepo.GetActive(r.Context()); err == nil {
+		campaignIdPtr = &campaign.Id
+	} else {
+		logger.Debug("[Handler - Result] No active campaign to tag this vote with. %v", err)
+	}
+
 	// Start transaction to prevent race conditions in concurrent votes
 	tx, err := h.db.Begin()
 	if err != nil {
@@ -272,15 +286,22 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	}
 	defer tx.Rollback() // Rollback if not committed
 
-	// Get both torros within transaction (ensures consistent read)
-	t1, err := h.torroRepo.GetTx(tx, r.Context(), p.Torro1)
-	if err != nil {
-		logger.Error("[Handler - Result] Couldn't get torro. %v", err)
-		render.Render(w, r, domain.ErrInternal(err))
-		return
+	// Read + lock both torró rows FOR UPDATE (GetTx takes a row lock) so
+	// concurrent votes on the same torró serialize their read-modify-write of
+	// "Rating" instead of clobbering each other (lost update). The two rows are
+	// locked in a deterministic order (sorted by id) so two votes touching the
+	// same pair can never deadlock by acquiring the locks in opposite orders.
+	// t1/t2 keep their pairing meaning (t1 == p.Torro1) regardless of lock order.
+	var t1, t2 *domain.Torro
+	if p.Torro1 <= p.Torro2 {
+		if t1, err = h.torroRepo.GetTx(tx, r.Context(), p.Torro1); err == nil {
+			t2, err = h.torroRepo.GetTx(tx, r.Context(), p.Torro2)
+		}
+	} else {
+		if t2, err = h.torroRepo.GetTx(tx, r.Context(), p.Torro2); err == nil {
+			t1, err = h.torroRepo.GetTx(tx, r.Context(), p.Torro1)
+		}
 	}
-
-	t2, err := h.torroRepo.GetTx(tx, r.Context(), p.Torro2)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't get torro. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))
@@ -294,18 +315,6 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	var userIdPtr *string
 	if userId != "" {
 		userIdPtr = &userId
-	}
-
-	// Tag this vote with the currently active campaign, if any. This is a
-	// soft attach, not a requirement: voting isn't restricted to the
-	// campaign window, so the common case of no active campaign (most of
-	// the year, outside Phase 1) just leaves CampaignId nil rather than
-	// failing the vote.
-	var campaignIdPtr *string
-	if campaign, err := h.campaignRepo.GetActive(r.Context()); err == nil {
-		campaignIdPtr = &campaign.Id
-	} else {
-		logger.Debug("[Handler - Result] No active campaign to tag this vote with. %v", err)
 	}
 
 	// Create result record within transaction

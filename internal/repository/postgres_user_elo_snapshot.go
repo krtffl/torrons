@@ -243,10 +243,15 @@ func (r *postgresUserEloSnapshotRepo) ListByUser(ctx context.Context, userId str
 // Transaction methods
 
 func (r *postgresUserEloSnapshotRepo) GetTx(tx *sql.Tx, ctx context.Context, userId string, torronId string) (*domain.UserEloSnapshot, error) {
+	// FOR UPDATE locks the snapshot row for the duration of the vote
+	// transaction so concurrent votes by the SAME user on the same torró
+	// serialize their personalized read-modify-write instead of clobbering
+	// each other (same lost-update class as the global Torrons.Rating fix).
 	row := tx.QueryRowContext(ctx,
 		`SELECT "Id", "UserId", "TorronId", "Rating", "VoteCount", "LastUpdated"
 		 FROM "UserEloSnapshots"
-		 WHERE "UserId" = $1 AND "TorronId" = $2`,
+		 WHERE "UserId" = $1 AND "TorronId" = $2
+		 FOR UPDATE`,
 		userId,
 		torronId,
 	)

@@ -49,11 +49,12 @@ printf '  winner rating: observed=%s  serialized-correct=%s  |Δ|=%s (tol=%s)\n'
 # Sanity: every vote must still be recorded (the race corrupts ratings, not row writes)
 if [[ "$results_written" == "$N" ]]; then _ok "[RACE0] all $N votes recorded as Results rows"; else _no "[RACE0] only $results_written/$N Results rows written"; fi
 
+# FIXED (Batch 1): the vote tx now locks both torró rows FOR UPDATE in sorted
+# id order, so concurrent votes on the same torró serialize their ELO
+# read-modify-write instead of clobbering each other. Hard assertion now.
 within="$(python3 -c "print(1 if abs($observed-$expected)<=$TOL else 0)")"
 if [[ "$within" == "1" ]]; then
-	XPASS=$((XPASS+1))
-	printf '  \033[36mXPASS\033[0m [RACE1] ratings now consistent under concurrency (|Δ|=%s ≤ %s) — lost-update fix appears present; convert to hard assert\n' "$diff" "$TOL"
+	_ok "[RACE1] ELO consistent under $N concurrent votes (|Δ|=$diff ≤ $TOL, no lost update)"
 else
-	XFAIL=$((XFAIL+1))
-	printf '  \033[33mxfail\033[0m [RACE1] KNOWN lost-update race: |Δ|=%s > %s — %s of the ELO movement was lost to concurrent clobbering (fix: SELECT FOR UPDATE or atomic UPDATE ... SET Rating=Rating+delta)\n' "$diff" "$TOL" "significant"
+	_no "[RACE1] lost-update race present: |Δ|=$diff > $TOL — concurrent votes clobbered each other's rating"
 fi
