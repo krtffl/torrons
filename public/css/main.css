@@ -6987,6 +6987,108 @@ button.arena-card-action:focus-visible {
     color: var(--color-text-light-dark);
 }
 
+/* Comparativa (Agramunt vs Xixona): base styles are mobile-first, a single
+   stacked column - the desktop two-column grid is added at >=1280px
+   alongside the other desktop treatments. See
+   docs/design-prompts/22-comparativa-two-column-desktop.md. Calm,
+   non-rotated card language deliberately, not the sticker system used for
+   competition moments - this documents facts, it isn't a duel. */
+.comparativa-column-header {
+    display: none; /* only meaningful once there are two visual columns, >=1280px */
+}
+
+.comparativa-topic {
+    margin-bottom: var(--spacing-xl);
+}
+
+.comparativa-topic-eyebrow {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-sm);
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-md);
+}
+
+.comparativa-topic-rule {
+    width: 20px;
+    height: 2px;
+    background-color: var(--color-primary);
+    flex: none;
+}
+
+.comparativa-topic-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+}
+
+.comparativa-card {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    padding: var(--spacing-lg);
+}
+
+.comparativa-card p {
+    margin: 0;
+}
+
+.comparativa-card-label {
+    font-family: ui-monospace, Menlo, monospace;
+    font-weight: 600;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-sm);
+}
+
+.comparativa-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
+}
+
+.comparativa-badge {
+    display: inline-block;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    padding: 4px var(--spacing-sm);
+    font-family: ui-monospace, Menlo, monospace;
+    font-weight: 600;
+    font-size: 0.65rem;
+    color: var(--color-primary-dark);
+    white-space: nowrap;
+}
+
+.comparativa-stats {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
+}
+
+.comparativa-stat-value {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: 1.375rem;
+    color: var(--color-text);
+}
+
+.comparativa-stat-label {
+    font-family: ui-monospace, Menlo, monospace;
+    font-weight: 600;
+    font-size: 0.6rem;
+    color: var(--color-text-light-dark);
+    margin-top: 2px;
+}
+
 .content-cross-links {
     display: flex;
     flex-wrap: wrap;
@@ -7071,7 +7173,8 @@ button.arena-card-action:focus-visible {
        the two-tone canvas. */
     #main-content:has(> #vote-page),
     #main-content:has(> #torro-detail-container),
-    #main-content:has(> #bracket-container) {
+    #main-content:has(> #bracket-container),
+    #main-content:has(> #content-page-container:has(.comparativa-topic)) {
         background-color: var(--color-desktop-background);
     }
 
@@ -7450,5 +7553,103 @@ button.arena-card-action:focus-visible {
     .bracket-champion-name {
         font-size: 44px;
         margin: 6px 0 0;
+    }
+
+    /* Comparativa: two-column grid, Xixona deliberately wider (it covers
+       two IGPs under one regulatory body, Agramunt covers one - not a
+       mirrored layout). Only this prose page widens beyond the shared
+       720px #content-page-container; the other three (/sobre,
+       /torro-agramunt-igp, /tipus-de-torrons) are unaffected. */
+    #content-page-container:has(.comparativa-topic) {
+        max-width: var(--desktop-column-width);
+        margin: 0 auto;
+        padding: var(--spacing-xl) var(--spacing-xl) calc(var(--spacing-xl) * 1.5);
+        background-color: var(--color-background);
+        box-shadow: 0 0 80px rgba(58, 42, 28, 0.14);
+    }
+
+    .comparativa-column-header {
+        display: grid;
+        grid-template-columns: 5fr 7fr;
+        gap: 48px;
+        align-items: center;
+        padding-bottom: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .comparativa-column-heading {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+    }
+
+    .comparativa-column-icon {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        flex: none;
+    }
+
+    .comparativa-column-icon::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 3px solid var(--color-primary);
+        background-color: var(--color-background);
+    }
+
+    .comparativa-column-icon--agramunt::after {
+        content: "";
+        position: absolute;
+        left: 12px;
+        top: 12px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--color-primary-dark);
+    }
+
+    .comparativa-column-icon--xixona {
+        width: 52px;
+    }
+
+    .comparativa-column-icon--xixona::after {
+        content: "";
+        position: absolute;
+        left: 14px;
+        top: 2px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 3px solid var(--color-primary);
+        background-color: rgba(251, 242, 227, 0.65);
+    }
+
+    .comparativa-column-name {
+        font-family: var(--font-family-display);
+        font-weight: 800;
+        font-size: 1.25rem;
+        color: var(--color-text);
+        line-height: 1.15;
+    }
+
+    .comparativa-column-meta {
+        font-family: ui-monospace, Menlo, monospace;
+        font-weight: 600;
+        font-size: 0.65rem;
+        letter-spacing: 0.03em;
+        color: var(--color-primary-dark);
+        margin-top: 3px;
+    }
+
+    .comparativa-topic-grid {
+        grid-template-columns: 5fr 7fr;
+        gap: 48px;
+        align-items: start;
     }
 }
