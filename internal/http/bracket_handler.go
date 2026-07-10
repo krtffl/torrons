@@ -51,6 +51,12 @@ type BracketMatchView struct {
 	Torro2    *BracketTorroView // nil for a bye
 	Torro1Won bool
 	Torro2Won bool
+	// OnConfirmedPath is true for a decided match whose winner hasn't lost
+	// any later match yet - the desktop tree traces this as the burgundy
+	// "confirmed" thread toward the champion (or toward a still-open
+	// final). Only ever set on the overview page; the single-match vote
+	// card doesn't render the tree, so it's left at its zero value there.
+	OnConfirmedPath bool
 }
 
 // BracketRoundView groups matches by round for the overview page.
@@ -134,6 +140,7 @@ func (h *Handler) bracketOverview(w http.ResponseWriter, r *http.Request) {
 	}
 
 	getTorro := h.torroFetcher(ctx)
+	alive := confirmedPathWinners(matches)
 
 	roundsByNumber := make(map[int][]BracketMatchView)
 	maxRound := 0
@@ -143,6 +150,13 @@ func (h *Handler) bracketOverview(w http.ResponseWriter, r *http.Request) {
 			logger.Error("[Handler - BracketOverview] Couldn't build match view for %s. %v", m.Id, err)
 			render.Render(w, r, domain.ErrInternal(err))
 			return
+		}
+		if view.Decided {
+			winnerId := view.Torro1.Id
+			if view.Torro2Won {
+				winnerId = view.Torro2.Id
+			}
+			view.OnConfirmedPath = alive[winnerId]
 		}
 		roundsByNumber[m.Round] = append(roundsByNumber[m.Round], view)
 		if m.Round > maxRound {
@@ -851,6 +865,34 @@ func totalVotes(votes map[string]int) int {
 		total += c
 	}
 	return total
+}
+
+// confirmedPathWinners returns the set of torró IDs still alive in this
+// bracket - winners of every match they've played so far. A decided match
+// sits on the "confirmed" desktop-tree path exactly when its own winner is
+// in this set; the moment a torró loses a later match, every earlier match
+// that produced them reverts to neutral, since their thread is cut.
+func confirmedPathWinners(matches []*domain.BracketMatch) map[string]bool {
+	eliminated := make(map[string]bool)
+	for _, m := range matches {
+		if m.WinnerId == nil || m.Torro2Id == nil {
+			continue // undecided, or a bye with no loser
+		}
+		loser := m.Torro1Id
+		if *m.WinnerId == m.Torro1Id {
+			loser = *m.Torro2Id
+		}
+		eliminated[loser] = true
+	}
+
+	alive := make(map[string]bool)
+	for _, m := range matches {
+		if m.WinnerId == nil || eliminated[*m.WinnerId] {
+			continue
+		}
+		alive[*m.WinnerId] = true
+	}
+	return alive
 }
 
 // decideMatchWinner tallies a match's votes and returns the winning

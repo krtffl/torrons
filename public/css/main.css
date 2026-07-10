@@ -4391,6 +4391,13 @@ button.arena-card-action:focus-visible {
     white-space: nowrap;
 }
 
+/* Desktop-only: the tree doesn't need the swipe hint once it fits without
+   scrolling, so this status echo takes that slot instead - hidden here,
+   shown at >=1280px below. */
+.bracket-tree-hint-pill {
+    display: none;
+}
+
 .bracket-tree-scroll {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -6980,6 +6987,108 @@ button.arena-card-action:focus-visible {
     color: var(--color-text-light-dark);
 }
 
+/* Comparativa (Agramunt vs Xixona): base styles are mobile-first, a single
+   stacked column - the desktop two-column grid is added at >=1280px
+   alongside the other desktop treatments. See
+   docs/design-prompts/22-comparativa-two-column-desktop.md. Calm,
+   non-rotated card language deliberately, not the sticker system used for
+   competition moments - this documents facts, it isn't a duel. */
+.comparativa-column-header {
+    display: none; /* only meaningful once there are two visual columns, >=1280px */
+}
+
+.comparativa-topic {
+    margin-bottom: var(--spacing-xl);
+}
+
+.comparativa-topic-eyebrow {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-sm);
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-md);
+}
+
+.comparativa-topic-rule {
+    width: 20px;
+    height: 2px;
+    background-color: var(--color-primary);
+    flex: none;
+}
+
+.comparativa-topic-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+}
+
+.comparativa-card {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    padding: var(--spacing-lg);
+}
+
+.comparativa-card p {
+    margin: 0;
+}
+
+.comparativa-card-label {
+    font-family: ui-monospace, Menlo, monospace;
+    font-weight: 600;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-sm);
+}
+
+.comparativa-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
+}
+
+.comparativa-badge {
+    display: inline-block;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    padding: 4px var(--spacing-sm);
+    font-family: ui-monospace, Menlo, monospace;
+    font-weight: 600;
+    font-size: 0.65rem;
+    color: var(--color-primary-dark);
+    white-space: nowrap;
+}
+
+.comparativa-stats {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
+}
+
+.comparativa-stat-value {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: 1.375rem;
+    color: var(--color-text);
+}
+
+.comparativa-stat-label {
+    font-family: ui-monospace, Menlo, monospace;
+    font-weight: 600;
+    font-size: 0.6rem;
+    color: var(--color-text-light-dark);
+    margin-top: 2px;
+}
+
 .content-cross-links {
     display: flex;
     flex-wrap: wrap;
@@ -7032,6 +7141,11 @@ button.arena-card-action:focus-visible {
         --desktop-rail-width: 280px;
         --desktop-photo-col-width: 420px;
         --desktop-photo-col-height: 520px;
+        /* Bracket needs more room than a duel or a spec sheet - documented
+           exception, wider than --desktop-column-width. */
+        --desktop-bracket-column-width: 1200px;
+        --desktop-bracket-champion-photo-width: 130px;
+        --desktop-bracket-champion-photo-height: 180px;
     }
 }
 
@@ -7044,6 +7158,9 @@ button.arena-card-action:focus-visible {
         --desktop-rail-width: 340px;
         --desktop-photo-col-width: 560px;
         --desktop-photo-col-height: 680px;
+        --desktop-bracket-column-width: 1680px;
+        --desktop-bracket-champion-photo-width: 170px;
+        --desktop-bracket-champion-photo-height: 244px;
     }
 }
 
@@ -7055,7 +7172,9 @@ button.arena-card-action:focus-visible {
        as on every other page; only these two pages' own content area adopts
        the two-tone canvas. */
     #main-content:has(> #vote-page),
-    #main-content:has(> #torro-detail-container) {
+    #main-content:has(> #torro-detail-container),
+    #main-content:has(> #bracket-container),
+    #main-content:has(> #content-page-container:has(.comparativa-topic)) {
         background-color: var(--color-desktop-background);
     }
 
@@ -7286,5 +7405,251 @@ button.arena-card-action:focus-visible {
 
     .torro-detail-content-col .torro-cta-wrap {
         max-width: none;
+    }
+
+    /* Bracket: the tree grows and centers within a wider, deliberately
+       two-toned column instead of sitting left-anchored in empty canvas.
+       See docs/design-prompts/23-bracket-desktop-populated-view.md and its
+       Claude Design deliverable for the full audit this responds to. */
+    #bracket-container {
+        max-width: var(--desktop-bracket-column-width);
+        margin: 0 auto;
+        padding: var(--spacing-xl) var(--spacing-xl) calc(var(--spacing-xl) * 1.5);
+        background-color: var(--color-background);
+        box-shadow: 0 0 80px rgba(58, 42, 28, 0.14);
+    }
+
+    .bracket-tree-hint {
+        margin: 0 0 var(--spacing-lg);
+    }
+
+    .bracket-tree-hint-icon {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-left: 2px solid var(--color-text);
+        border-bottom: 2px solid var(--color-text);
+        transform: rotate(45deg);
+        flex: none;
+    }
+
+    .bracket-tree-hint-label {
+        font-size: 0.8rem;
+        letter-spacing: 0.04em;
+        color: var(--color-text-light-dark);
+    }
+
+    /* The swipe hint only makes sense while the tree needs horizontal
+       scrolling - it doesn't at this width, so the pill takes its slot. */
+    .bracket-tree-hint-swipe {
+        display: none;
+    }
+
+    .bracket-tree-hint-pill {
+        display: inline-block;
+        margin-top: 0;
+    }
+
+    .bracket-tree-scroll {
+        overflow-x: visible;
+        margin: 0;
+        padding: 8px 0 0;
+    }
+
+    /* Deliberate empty-space treatment: a soft halo behind the tree
+       instead of flat, unfinished-looking background. */
+    .bracket-tree-scroll {
+        position: relative;
+        background-image: radial-gradient(1100px 460px at 50% 8%, rgba(255, 250, 241, 0.85), rgba(251, 242, 227, 0) 72%);
+    }
+
+    .bracket-tree {
+        --bracket-gap: 48px;
+        width: max-content;
+        margin: 0 auto;
+    }
+
+    /* Round columns grow toward the final instead of staying a uniform
+       250px regardless of round - generic by proximity to .is-final, not
+       hardcoded to any specific round count. */
+    .bracket-round.is-final {
+        flex-basis: 320px;
+        width: 320px;
+    }
+
+    .bracket-round:has(+ .bracket-round.is-final),
+    .bracket-round.is-final + .bracket-round {
+        flex-basis: 280px;
+        width: 280px;
+    }
+
+    .bracket-match {
+        padding: var(--spacing-md) var(--spacing-lg);
+        gap: 10px;
+    }
+
+    .bracket-round.is-final .bracket-match,
+    .bracket-round:has(+ .bracket-round.is-final) .bracket-match,
+    .bracket-round.is-final + .bracket-round .bracket-match {
+        padding: var(--spacing-lg) 22px;
+    }
+
+    #bracket-container .history-torron-img {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+    }
+
+    #bracket-container .history-torron-name {
+        font-size: 1rem;
+    }
+
+    .bracket-seed {
+        width: 22px;
+        height: 22px;
+        font-size: 0.7rem;
+    }
+
+    /* The confirmed-path treatment: a decided match whose winner hasn't
+       lost since (BracketMatchView.OnConfirmedPath, computed server-side
+       in bracket_handler.go) stays visually "live" - a burgundy-tinted
+       card and a burgundy outgoing connector - instead of the neutral
+       styling every other decided match gets. The moment that torró
+       loses, the match reverts to neutral, same as any other. */
+    .bracket-match.on-path {
+        background-color: var(--color-competition-tint);
+        border-color: var(--color-competition);
+    }
+
+    .bracket-round:not(:last-child) .bracket-match.on-path::after {
+        background-color: var(--color-competition);
+        height: 4px;
+    }
+
+    /* The live final: dashed burgundy border, no bold winner emphasis on
+       either side since it hasn't been decided yet. Reuses the existing
+       .is-final/.is-current round markers - a final round only ever has
+       one match, so this scopes precisely without a new per-match field. */
+    .bracket-round.is-final.is-current .bracket-match:not(.decided) {
+        border: 2px dashed var(--color-competition);
+        background-color: var(--color-card);
+    }
+
+    .bracket-champion {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xl);
+        text-align: left;
+        padding: var(--spacing-xl) 40px;
+    }
+
+    .bracket-champion-image {
+        width: var(--desktop-bracket-champion-photo-width);
+        height: var(--desktop-bracket-champion-photo-height);
+        margin-bottom: 0;
+        flex: none;
+    }
+
+    .bracket-champion-name {
+        font-size: 44px;
+        margin: 6px 0 0;
+    }
+
+    /* Comparativa: two-column grid, Xixona deliberately wider (it covers
+       two IGPs under one regulatory body, Agramunt covers one - not a
+       mirrored layout). Only this prose page widens beyond the shared
+       720px #content-page-container; the other three (/sobre,
+       /torro-agramunt-igp, /tipus-de-torrons) are unaffected. */
+    #content-page-container:has(.comparativa-topic) {
+        max-width: var(--desktop-column-width);
+        margin: 0 auto;
+        padding: var(--spacing-xl) var(--spacing-xl) calc(var(--spacing-xl) * 1.5);
+        background-color: var(--color-background);
+        box-shadow: 0 0 80px rgba(58, 42, 28, 0.14);
+    }
+
+    .comparativa-column-header {
+        display: grid;
+        grid-template-columns: 5fr 7fr;
+        gap: 48px;
+        align-items: center;
+        padding-bottom: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .comparativa-column-heading {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+    }
+
+    .comparativa-column-icon {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        flex: none;
+    }
+
+    .comparativa-column-icon::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 3px solid var(--color-primary);
+        background-color: var(--color-background);
+    }
+
+    .comparativa-column-icon--agramunt::after {
+        content: "";
+        position: absolute;
+        left: 12px;
+        top: 12px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--color-primary-dark);
+    }
+
+    .comparativa-column-icon--xixona {
+        width: 52px;
+    }
+
+    .comparativa-column-icon--xixona::after {
+        content: "";
+        position: absolute;
+        left: 14px;
+        top: 2px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 3px solid var(--color-primary);
+        background-color: rgba(251, 242, 227, 0.65);
+    }
+
+    .comparativa-column-name {
+        font-family: var(--font-family-display);
+        font-weight: 800;
+        font-size: 1.25rem;
+        color: var(--color-text);
+        line-height: 1.15;
+    }
+
+    .comparativa-column-meta {
+        font-family: ui-monospace, Menlo, monospace;
+        font-weight: 600;
+        font-size: 0.65rem;
+        letter-spacing: 0.03em;
+        color: var(--color-primary-dark);
+        margin-top: 3px;
+    }
+
+    .comparativa-topic-grid {
+        grid-template-columns: 5fr 7fr;
+        gap: 48px;
+        align-items: start;
     }
 }

@@ -46,7 +46,9 @@ to catch any drift or inconsistency before calling the redesign done.
 | # | Screen | Status |
 |---|---|---|
 | [20](20-design-system-audit.md) | Design system consistency & UX audit | Not built — a QA/critique pass over 01–19's output, commission last |
-| [21](21-desktop-wide-viewport-treatment.md) | Desktop / wide-viewport treatment | Cross-cutting addendum — 01 was explicitly scoped mobile-first, site is now live and desktop was never designed. Priority: [04](04-the-duel-vote-screen.md) (vote screen, critical) then [08](08-product-detail-page.md) (product detail, major) |
+| [21](21-desktop-wide-viewport-treatment.md) | Desktop / wide-viewport treatment | Cross-cutting addendum — 01 was explicitly scoped mobile-first, site is now live and desktop was never designed. Priority: [04](04-the-duel-vote-screen.md) (vote screen, critical) then [08](08-product-detail-page.md) (product detail, major). Shipped (vote + product pages only). |
+| [22](22-comparativa-two-column-desktop.md) | Comparativa (Agramunt vs Xixona) two-column desktop layout | Addendum to 21 — resolves 21's own open question about this page. Not designed/built yet. |
+| [23](23-bracket-desktop-populated-view.md) | Bracket / knockout view: populated desktop treatment | Addendum to [10](10-bracket-knockout-view.md) — audits the never-before-screenshotted populated bracket at desktop width (real seeded data, not guesses). Not designed/built yet. |
 
 ## Notes for whoever commissions these
 

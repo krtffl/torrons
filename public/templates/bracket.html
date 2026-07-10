@@ -98,9 +98,11 @@
     <!-- Champion banner -->
     <div class="bracket-champion">
         <img class="bracket-champion-image" src="/public/images/{{ .Champion.Image }}" alt="{{ .Champion.Name }}">
-        <div class="bracket-champion-icon">🏆</div>
-        <div class="bracket-champion-label">Campió del bracket</div>
-        <div class="bracket-champion-name">{{ .Champion.Name }}</div>
+        <div class="bracket-champion-info">
+            <div class="bracket-champion-icon">🏆</div>
+            <div class="bracket-champion-label">Campió del bracket</div>
+            <div class="bracket-champion-name">{{ .Champion.Name }}</div>
+        </div>
     </div>
     {{ else }}
     <div class="bracket-cta">
@@ -113,9 +115,15 @@
     <!-- Round by round results: the full bracket tree, horizontally
          scrollable so it never clips on narrow viewports (audit fix). -->
     <div class="bracket-tree-hint">
-        <span class="bracket-tree-hint-label">El quadre complet</span>
+        <span class="bracket-tree-hint-icon" aria-hidden="true"></span>
+        <span class="bracket-tree-hint-label">{{ .ClassName }} &middot; el quadre complet</span>
         <span class="bracket-tree-hint-rule" aria-hidden="true"></span>
         <span class="bracket-tree-hint-swipe">llisca en horitzontal &rarr;</span>
+        {{ if eq .Bracket.Status "completed" }}
+        <span class="bracket-tree-hint-pill bracket-status-pill is-closed">Torneig tancat</span>
+        {{ else }}
+        <span class="bracket-tree-hint-pill bracket-status-pill is-open">Torneig obert</span>
+        {{ end }}
     </div>
     <div class="bracket-tree-scroll" tabindex="0" role="group" aria-label="Quadre complet del bracket, desplaçable horitzontalment">
         <div class="bracket-tree">
@@ -148,7 +156,7 @@
 
 
 {{ define "bracket-match-summary" }}
-<div class="bracket-match {{ if .Decided }}decided{{ end }}">
+<div class="bracket-match {{ if .Decided }}decided{{ end }}{{ if .OnConfirmedPath }} on-path{{ end }}">
     <div class="bracket-competitor {{ if .Torro1Won }}winner{{ else if .Decided }}loser{{ end }}">
         <img src="/public/images/{{ .Torro1.Image }}" alt="{{ .Torro1.Name }}" class="history-torron-img">
         <div class="history-torron-info">
