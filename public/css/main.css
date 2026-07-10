@@ -7140,7 +7140,13 @@ button.arena-card-action:focus-visible {
         --desktop-vs-size: 76px;
         --desktop-rail-width: 280px;
         --desktop-photo-col-width: 420px;
-        --desktop-photo-col-height: 520px;
+        /* 4:3 landscape, not the original 420x520 (0.82:1) portrait - real
+           product photos average ~1.3-1.6:1 landscape (see the product-photo
+           audit in project history), so a portrait box was cropping 36-50%
+           of width off every photo and forcing 1.8-2.3x upscaling on top.
+           4:3 cuts both: ~3-20% crop across the actual size distribution,
+           worst-case upscale down to ~1.45x. */
+        --desktop-photo-col-height: 315px;
         /* Bracket needs more room than a duel or a spec sheet - documented
            exception, wider than --desktop-column-width. */
         --desktop-bracket-column-width: 1200px;
@@ -7157,7 +7163,7 @@ button.arena-card-action:focus-visible {
         --desktop-vs-size: 96px;
         --desktop-rail-width: 340px;
         --desktop-photo-col-width: 560px;
-        --desktop-photo-col-height: 680px;
+        --desktop-photo-col-height: 420px; /* 4:3, see the 1280px tier's comment */
         --desktop-bracket-column-width: 1680px;
         --desktop-bracket-champion-photo-width: 170px;
         --desktop-bracket-champion-photo-height: 244px;
