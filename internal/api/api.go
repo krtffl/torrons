@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
@@ -198,13 +199,16 @@ func createGlobalPairings(
 						Class:  globalClassId,
 					}
 
-					if err := insertPairingTx(ctx, tx, &pairing); err != nil {
+					inserted, err := insertPairingTx(ctx, tx, &pairing)
+					if err != nil {
 						return 0, fmt.Errorf("create global pairing (%s vs %s): %w",
 							torron.Id, otherTorron.Id, err)
 					}
 
 					pairingsMap[pairingKey] = true
-					pairingsCreated++
+					if inserted {
+						pairingsCreated++
+					}
 				}
 			}
 		}
@@ -213,13 +217,29 @@ func createGlobalPairings(
 	return pairingsCreated, nil
 }
 
-// insertPairingTx inserts a single pairing within a transaction.
-func insertPairingTx(ctx context.Context, tx *sql.Tx, p *domain.Pairing) error {
-	_, err := tx.ExecContext(ctx,
-		`INSERT INTO "Pairings" ("Id", "Torro1", "Torro2", "Class") VALUES ($1, $2, $3, $4)`,
+// insertPairingTx inserts a single pairing within a transaction, silently
+// skipping it if the same matchup (order-independent) already exists for this
+// class - see migration idx_pairings_unique_matchup. This makes concurrent
+// seeding across two instances that both raced to seed the same class safe:
+// whichever loses the row-level conflict just no-ops instead of erroring or
+// double-inserting. Returns whether a row was actually inserted, so callers
+// can report an accurate created-count even when some inserts are skipped.
+func insertPairingTx(ctx context.Context, tx *sql.Tx, p *domain.Pairing) (bool, error) {
+	var id string
+	err := tx.QueryRowContext(ctx,
+		`INSERT INTO "Pairings" ("Id", "Torro1", "Torro2", "Class")
+		 VALUES ($1, $2, $3, $4)
+		 ON CONFLICT (LEAST("Torro1", "Torro2"), GREATEST("Torro1", "Torro2"), "Class") DO NOTHING
+		 RETURNING "Id"`,
 		uuid.NewString(), p.Torro1, p.Torro2, p.Class,
-	)
-	return err
+	).Scan(&id)
+	if errors.Is(err, sql.ErrNoRows) {
+		return false, nil // matchup already exists - not an error
+	}
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // createAllPairs seeds every unordered pair of a regular class's torrons within
@@ -234,10 +254,13 @@ func createAllPairs(ctx context.Context, tx *sql.Tx, torroRep domain.TorroRepo, 
 	for i := 0; i < len(t); i++ {
 		for j := i + 1; j < len(t); j++ {
 			pairing := domain.Pairing{Torro1: t[i].Id, Torro2: t[j].Id, Class: classId}
-			if err := insertPairingTx(ctx, tx, &pairing); err != nil {
+			inserted, err := insertPairingTx(ctx, tx, &pairing)
+			if err != nil {
 				return 0, fmt.Errorf("create pairing (%s vs %s): %w", t[i].Id, t[j].Id, err)
 			}
-			created++
+			if inserted {
+				created++
+			}
 		}
 	}
 	return created, nil
