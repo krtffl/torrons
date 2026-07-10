@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
@@ -117,6 +118,24 @@ const (
 	userIDKey contextKey = "user_id"
 )
 
+// lastSeenStaleAfter bounds how often UserMiddleware actually writes a user's
+// LastSeen - see isLastSeenStale.
+const lastSeenStaleAfter = 5 * time.Minute
+
+// isLastSeenStale reports whether a user's stored LastSeen is old enough to be
+// worth refreshing. LastSeen comes back from a Postgres "timestamp without
+// time zone" column via database/sql's generic time.Time->string conversion,
+// which yields an RFC3339 string (the same conversion behavior documented
+// against LastVoteDate in handler.go). If it can't be parsed, default to
+// stale so a parse hiccup never silently stops LastSeen from ever refreshing.
+func isLastSeenStale(lastSeen string) bool {
+	t, err := time.Parse(time.RFC3339, lastSeen)
+	if err != nil {
+		return true
+	}
+	return time.Since(t) > lastSeenStaleAfter
+}
+
 // UserMiddleware handles user identification via cookies
 // Creates new users if cookie doesn't exist, validates existing users
 func (h *Handler) UserMiddleware(next http.Handler) http.Handler {
@@ -146,13 +165,20 @@ func (h *Handler) UserMiddleware(next http.Handler) http.Handler {
 			if err == nil && user != nil {
 				userId = user.Id
 
-				// Update last seen timestamp (async, don't block request)
-				go func() {
-					ctx := context.Background()
-					if err := h.userRepo.UpdateLastSeen(ctx, userId); err != nil {
-						logger.Warn("[UserMiddleware] Failed to update last seen for user %s: %v", userId, err)
-					}
-				}()
+				// Update last seen timestamp asynchronously, but only if it's
+				// actually stale. A returning visitor loading several pages in
+				// quick succession previously spawned one goroutine + one DB
+				// write PER REQUEST for a timestamp that barely moved;
+				// isLastSeenStale bounds this to at most one write per user
+				// per lastSeenStaleAfter.
+				if isLastSeenStale(user.LastSeen) {
+					go func() {
+						ctx := context.Background()
+						if err := h.userRepo.UpdateLastSeen(ctx, userId); err != nil {
+							logger.Warn("[UserMiddleware] Failed to update last seen for user %s: %v", userId, err)
+						}
+					}()
+				}
 			} else {
 				// Cookie exists but user not found in DB, create new user
 				logger.Info("[UserMiddleware] Cookie found but user not in DB, creating new user")
@@ -240,4 +266,21 @@ func (h *Handler) RequireAdminToken(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
+}
+
+// staticPageCacheMaxAge is how long purely-static, zero-DB pages (index, the
+// About/FAQ/IGP/comparison/glossary cluster) may be cached. Matches the TTL
+// already used for /public/* CSS/JS: short enough that a deploy's content
+// change propagates quickly, long enough to actually get cached.
+const staticPageCacheMaxAge = "public, max-age=3600"
+
+// setStaticPageCacheHeaders marks a response as cacheable for the handlers
+// above. Vary: HX-Request matters here specifically because these templates
+// render a full page shell or an htmx partial depending on that header - a
+// shared/public cache keys primarily on URL, so without Vary it could serve a
+// full-page response to an htmx boost request (or vice versa) cached by a
+// different client.
+func setStaticPageCacheHeaders(w http.ResponseWriter) {
+	w.Header().Set("Cache-Control", staticPageCacheMaxAge)
+	w.Header().Set("Vary", "HX-Request")
 }

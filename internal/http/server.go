@@ -338,9 +338,17 @@ func (srv *Server) Run() error {
 	// **********                **********
 
 	httpServer := &http.Server{
-		Addr:           fmt.Sprintf(":%d", srv.port),
-		Handler:        r,
-		ReadTimeout:    15 * time.Second,
+		Addr:        fmt.Sprintf(":%d", srv.port),
+		Handler:     r,
+		ReadTimeout: 15 * time.Second,
+		// WriteTimeout's main exposure is the four PNG card render endpoints
+		// (the only handlers with meaningfully variable response time).
+		// Verified with the render-concurrency semaphore in place
+		// (sharecard.TryAcquireRenderSlot): fully saturating it (8 concurrent
+		// renders on an 8-core box) completed in <700ms, and even 2x
+		// oversaturation (16 concurrent - half correctly shed with 503 via the
+		// semaphore's 250ms acquire-wait) completed the rest in ~1.3s. Both are
+		// far under this budget, so 15s is not a real ceiling in practice.
 		WriteTimeout:   15 * time.Second,
 		IdleTimeout:    60 * time.Second,
 		MaxHeaderBytes: 1 << 20, // 1 MB

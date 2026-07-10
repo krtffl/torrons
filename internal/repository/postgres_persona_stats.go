@@ -7,6 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"sync"
+	"time"
 
 	"github.com/krtffl/torro/internal/domain"
 )
@@ -114,12 +116,88 @@ func parseClassVotes(raw json.RawMessage) (map[string]int, error) {
 	return votes, nil
 }
 
+// personaCohortCacheTTL bounds how often cohortTopClassIds actually queries
+// the database. A cache miss scans every user with VoteCount >= minVotes and
+// parses their ClassVotes JSONB in Go - on every /reveal request, for a
+// cohort-wide distribution that only shifts as users cross the vote
+// threshold. A short in-process TTL collapses that to at most one refresh
+// per window, the same treatment already given to the /premsa stats
+// (press_handler.go's pressStatsCacheTTL).
+const personaCohortCacheTTL = 5 * time.Minute
+
+// personaCohortCache memoizes cohortTopClassIds's result, keyed by the
+// minVotes threshold it was computed for (in practice always the same fixed
+// value - see getMinVotesForClass("5") in reveal_handler.go - but keying on
+// it defensively costs nothing and stays correct if that ever changes). mu
+// guards the cached value; refresh serializes recomputation so a burst of
+// requests arriving at expiry collapses into a single DB pass instead of a
+// stampede.
+var personaCohortCache struct {
+	mu       sync.RWMutex
+	minVotes int
+	topIds   []string
+	expiry   time.Time
+	hasData  bool
+
+	refresh sync.Mutex
+}
+
 // cohortTopClassIds returns the TopClassId of every user who has cleared
 // minVotes AND has a single clear-favorite arena themselves (ties are
 // excluded from the cohort, same rule as the current user's own
 // HasClearFavorite check) - exactly the denominator/numerator inputs
-// percentileOf needs.
+// percentileOf needs. Served from a short-TTL in-process cache (see
+// personaCohortCacheTTL) since a miss scans every qualifying user.
 func (r *postgresPersonaRepo) cohortTopClassIds(ctx context.Context, minVotes int) ([]string, error) {
+	// Fast path: a fresh cached value for this exact threshold serves the
+	// vast majority of requests under a single read lock.
+	personaCohortCache.mu.RLock()
+	if personaCohortCache.hasData && personaCohortCache.minVotes == minVotes && time.Now().Before(personaCohortCache.expiry) {
+		ids := personaCohortCache.topIds
+		personaCohortCache.mu.RUnlock()
+		return ids, nil
+	}
+	personaCohortCache.mu.RUnlock()
+
+	// Stale, cold, or a different threshold: serialize the refresh.
+	personaCohortCache.refresh.Lock()
+	defer personaCohortCache.refresh.Unlock()
+
+	// Re-check: another goroutine may have refreshed while we waited.
+	personaCohortCache.mu.RLock()
+	if personaCohortCache.hasData && personaCohortCache.minVotes == minVotes && time.Now().Before(personaCohortCache.expiry) {
+		ids := personaCohortCache.topIds
+		personaCohortCache.mu.RUnlock()
+		return ids, nil
+	}
+	personaCohortCache.mu.RUnlock()
+
+	topIds, err := r.computeCohortTopClassIds(ctx, minVotes)
+	if err != nil {
+		// Fall back to the last good value on a transient failure, but only
+		// if it was computed for this SAME threshold - a cache primed for a
+		// different minVotes would silently misreport the percentile.
+		personaCohortCache.mu.RLock()
+		defer personaCohortCache.mu.RUnlock()
+		if personaCohortCache.hasData && personaCohortCache.minVotes == minVotes {
+			return personaCohortCache.topIds, nil
+		}
+		return nil, err
+	}
+
+	personaCohortCache.mu.Lock()
+	personaCohortCache.minVotes = minVotes
+	personaCohortCache.topIds = topIds
+	personaCohortCache.expiry = time.Now().Add(personaCohortCacheTTL)
+	personaCohortCache.hasData = true
+	personaCohortCache.mu.Unlock()
+
+	return topIds, nil
+}
+
+// computeCohortTopClassIds runs the actual aggregation cohortTopClassIds
+// serves from cache.
+func (r *postgresPersonaRepo) computeCohortTopClassIds(ctx context.Context, minVotes int) ([]string, error) {
 	rows, err := r.db.QueryContext(ctx,
 		`SELECT "ClassVotes" FROM "Users" WHERE "VoteCount" >= $1`,
 		minVotes,

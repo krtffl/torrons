@@ -38,6 +38,8 @@ func (h *Handler) torroGlossary(w http.ResponseWriter, r *http.Request) {
 // beyond the HX flag) shared by every handler in this file, following the
 // same buffer/error-page convention as index() and classes().
 func (h *Handler) renderStaticPage(w http.ResponseWriter, templateName string, hx bool) {
+	setStaticPageCacheHeaders(w)
+
 	buf := h.bpool.Get()
 	defer h.bpool.Put(buf)
 
