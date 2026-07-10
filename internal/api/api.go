@@ -10,6 +10,7 @@ import (
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"github.com/google/uuid"
 	_ "github.com/lib/pq"
 	"github.com/oxtoacart/bpool"
 
@@ -29,8 +30,8 @@ type Torrons struct {
 	eCh chan error
 }
 
-func New(c *config.Config) *Torrons {
-	db, err := NewDatabaseConnection(c.Database)
+func New(c *config.Config, runMigrations bool) *Torrons {
+	db, err := NewDatabaseConnection(c.Database, runMigrations)
 	if err != nil {
 		logger.Fatal("[API - New] - "+
 			"Failed to connect to database. %v", err)
@@ -58,7 +59,7 @@ func New(c *config.Config) *Torrons {
 	wrappedStatsRepo := repository.NewWrappedStatsRepo(db)
 	personaRepo := repository.NewPersonaRepo(db)
 
-	if err := CheckPairingsCreated(paringRepo, torroRepo, classRepo); err != nil {
+	if err := CheckPairingsCreated(db, paringRepo, torroRepo, classRepo); err != nil {
 		logger.Fatal("[API - New] - "+
 			"Failed to check pairings. %v", err)
 	}
@@ -129,7 +130,7 @@ func (t *Torrons) Shutdown() {
 // - This allows ELO to converge to a global ranking efficiently
 func createGlobalPairings(
 	ctx context.Context,
-	pairingRep domain.PairingRepo,
+	tx *sql.Tx,
 	torroRep domain.TorroRepo,
 	globalClassId string,
 ) (int, error) {
@@ -197,14 +198,9 @@ func createGlobalPairings(
 						Class:  globalClassId,
 					}
 
-					_, err := pairingRep.Create(ctx, &pairing)
-					if err != nil {
-						logger.Error("[API - createGlobalPairings] - "+
-							"Failed to create pairing (%s vs %s). %v",
-							torron.Id,
-							otherTorron.Id,
-							err)
-						continue
+					if err := insertPairingTx(ctx, tx, &pairing); err != nil {
+						return 0, fmt.Errorf("create global pairing (%s vs %s): %w",
+							torron.Id, otherTorron.Id, err)
 					}
 
 					pairingsMap[pairingKey] = true
@@ -217,7 +213,38 @@ func createGlobalPairings(
 	return pairingsCreated, nil
 }
 
+// insertPairingTx inserts a single pairing within a transaction.
+func insertPairingTx(ctx context.Context, tx *sql.Tx, p *domain.Pairing) error {
+	_, err := tx.ExecContext(ctx,
+		`INSERT INTO "Pairings" ("Id", "Torro1", "Torro2", "Class") VALUES ($1, $2, $3, $4)`,
+		uuid.NewString(), p.Torro1, p.Torro2, p.Class,
+	)
+	return err
+}
+
+// createAllPairs seeds every unordered pair of a regular class's torrons within
+// the given transaction.
+func createAllPairs(ctx context.Context, tx *sql.Tx, torroRep domain.TorroRepo, classId string) (int, error) {
+	t, err := torroRep.ListByClass(ctx, classId)
+	if err != nil {
+		return 0, err
+	}
+
+	created := 0
+	for i := 0; i < len(t); i++ {
+		for j := i + 1; j < len(t); j++ {
+			pairing := domain.Pairing{Torro1: t[i].Id, Torro2: t[j].Id, Class: classId}
+			if err := insertPairingTx(ctx, tx, &pairing); err != nil {
+				return 0, fmt.Errorf("create pairing (%s vs %s): %w", t[i].Id, t[j].Id, err)
+			}
+			created++
+		}
+	}
+	return created, nil
+}
+
 func CheckPairingsCreated(
+	db *sql.DB,
 	pairingRep domain.PairingRepo,
 	torroRep domain.TorroRepo,
 	classRep domain.ClassRepo,
@@ -234,63 +261,45 @@ func CheckPairingsCreated(
 			return err
 		}
 
-		if count < 1 {
-			logger.Info("[API - New] - "+
-				"%s - Creating pairings", c.Name)
-
-			// Global category uses smart pairing strategy
-			if c.Id == "5" {
-				createdCount, err := createGlobalPairings(ctx, pairingRep, torroRep, c.Id)
-				if err != nil {
-					return err
-				}
-				logger.Info("[API - New] - "+
-					"%s - Created %d strategic pairings", c.Name, createdCount)
-				continue
-			}
-
-			// Regular categories use all-pairs strategy
-			t, err := torroRep.ListByClass(ctx, c.Id)
-			if err != nil {
-				return err
-			}
-
-			count := 0
-			for i := 0; i < len(t); i++ {
-				for j := i + 1; j < len(t); j++ {
-					pairing := domain.Pairing{
-						Torro1: t[i].Id,
-						Torro2: t[j].Id,
-						Class:  c.Id,
-					}
-
-					_, err := pairingRep.Create(ctx, &pairing)
-					if err != nil {
-						logger.Error("[API - New] - "+
-							"%s - Failed to create pairing (%s vs %s). %v",
-							c.Name,
-							t[i].Id,
-							t[j].Id,
-							err)
-						continue
-					}
-					count++
-				}
-			}
-
-			logger.Info("[API - New] - "+
-				"%s - Created %d pairings", c.Name, count)
+		if count >= 1 {
+			logger.Info("[API - New] - %s - %d pairings already created", c.Name, count)
 			continue
 		}
 
-		logger.Info("[API - New] - "+
-			"%s - %d pairings already created", c.Name, count)
+		logger.Info("[API - New] - %s - Creating pairings", c.Name)
+
+		// Seed a class's pairings inside a single transaction: if any insert
+		// fails the whole class rolls back, instead of leaving a permanently
+		// partial set that the count<1 guard above would then treat as "done".
+		// One commit per class is also far faster than the previous per-row
+		// autocommit (thousands of round-trips).
+		tx, err := db.Begin()
+		if err != nil {
+			return err
+		}
+
+		var created int
+		if c.Id == "5" {
+			// Global (cross-category) uses the smart pairing strategy.
+			created, err = createGlobalPairings(ctx, tx, torroRep, c.Id)
+		} else {
+			created, err = createAllPairs(ctx, tx, torroRep, c.Id)
+		}
+		if err != nil {
+			_ = tx.Rollback()
+			return err
+		}
+		if err := tx.Commit(); err != nil {
+			return err
+		}
+
+		logger.Info("[API - New] - %s - Created %d pairings", c.Name, created)
 	}
 
 	return nil
 }
 
-func NewDatabaseConnection(c config.Database) (*sql.DB, error) {
+func NewDatabaseConnection(c config.Database, runMigrations bool) (*sql.DB, error) {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
 		c.Host,
@@ -317,6 +326,14 @@ func NewDatabaseConnection(c config.Database) (*sql.DB, error) {
 	dbConnection.SetMaxIdleConns(5)                  // Maximum idle connections in pool
 	dbConnection.SetConnMaxLifetime(5 * time.Minute) // Maximum connection age
 	dbConnection.SetConnMaxIdleTime(1 * time.Minute) // Maximum idle time before close
+
+	// This embedded run is the single migration mechanism. Honor the
+	// skip-migrations flag here (previously it ran unconditionally, so the flag
+	// was a no-op).
+	if !runMigrations {
+		logger.Info("[API - NewDatabaseConnection] - Skipping migrations (--skip-migrations)")
+		return dbConnection, nil
+	}
 
 	driver, err := postgres.WithInstance(dbConnection, &postgres.Config{})
 	if err != nil {

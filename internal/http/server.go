@@ -203,7 +203,7 @@ func (srv *Server) Run() error {
 		// /public/* file server (registered above) keeps its per-file types.
 		r.Use(defaultHTMLContentType)
 
-		r.Get("/healthcheck", handleHealthcheck)
+		r.Get("/healthcheck", srv.handler.handleHealthcheck)
 		// Registered WITHOUT the file extension. The global middleware.URLFormat
 		// strips a trailing ".ext" from the routing path before chi matches, so a
 		// route registered as "/robots.txt" never matches GET /robots.txt (it 404s
