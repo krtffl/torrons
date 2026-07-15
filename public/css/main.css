@@ -7600,7 +7600,12 @@ button.arena-card-action:focus-visible {
         display: flex;
         flex-direction: row;
         gap: 64px;
-        align-items: flex-start;
+        /* Center the columns against each other so neither side strands: a
+           torró with sparse data (title + rank only) has a short right column
+           that would leave the tall photo hanging; a fully-populated torró
+           (specs, intensity, allergens, ingredients) has a right column
+           taller than the photo. Centering balances both. */
+        align-items: center;
     }
 
     .torro-detail-photo-col {
