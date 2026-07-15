@@ -32,7 +32,10 @@
     --color-competition-tint: rgba(138, 38, 56, 0.08);
     --color-competition-contrast: #FFFAF1;
 
-    --color-white: #FFFFFF;
+    /* F-14: dedicated focus-ring color, AA on cream (~3.6:1) */
+    --color-focus: #B96F26;
+
+    --color-white: #FFFFFF;              /* F-04: icon/text contrast ONLY — never a surface; surfaces use --color-card */
     --color-card: #FFFAF1;               /* taula/card surface, near-white */
     --color-background: #FBF2E3;         /* crema lluminosa — page/content background */
     --color-surface: #F0DFC2;            /* crema fosca — secondary surface, hover backgrounds */
@@ -56,40 +59,40 @@
     --color-overlay-light: rgba(255, 255, 255, 0.3);
     --color-overlay-dark: rgba(58, 42, 28, 0.55);
 
-    /* Semantic / status colors (unrelated to the brand palette — unchanged) */
-    --color-success: #4CAF50;
-    --color-success-bg: rgba(76, 175, 80, 0.1);
-    --color-danger: #F44336;
-    --color-danger-bg: rgba(244, 67, 54, 0.1);
-    --color-warning: #FF9800;
-    --color-warning-bg: rgba(255, 152, 0, 0.1);
-    --color-info: #2196F3;
+    /* Semantic / status colors — warm, brand-aligned (F-01) */
+    --color-success: #5E7A4A;
+    --color-success-bg: rgba(94, 122, 74, 0.1);
+    --color-danger: #B23B2E;
+    --color-danger-bg: rgba(178, 59, 46, 0.1);
+    --color-warning: #B96F26;
+    --color-warning-bg: rgba(185, 111, 38, 0.1);
+    --color-info: #3E6B63;
 
-    /* Ranking / medal accent colors (podium gold/silver/bronze — distinct from
-       --color-brand-gold above; unrelated to the brand palette, unchanged) */
-    --color-gold: #FFD700;
-    --color-gold-bg: #FFF9E6;
-    --color-silver: #C0C0C0;
-    --color-bronze: #CD7F32;
-    --color-bronze-bg: #FFF5E6;
+    /* Ranking / medal accent colors (podium gold/silver/bronze — warm,
+       brand-aligned per F-02; distinct from --color-brand-gold above) */
+    --color-gold: #EFC26E;
+    --color-gold-bg: #F5EEDD;            /* warm cream medal backdrop, not #FFF9E6 */
+    --color-silver: #D8C097;
+    --color-bronze: #C88E52;
+    --color-bronze-bg: #F5EEDD;          /* warm cream medal backdrop, not #FFF5E6 */
 
-    /* Neutral grays (skeletons, tracks, muted borders) */
-    --color-neutral: #f0f0f0;
-    --color-neutral-light: #f5f5f5;
-    --color-neutral-dark: #e0e0e0;
-    --color-border-muted: #ccc;
+    /* Warm neutrals — skeletons, tracks, muted borders (F-03) */
+    --color-neutral: #F0DFC2;
+    --color-neutral-light: #F5EEDD;
+    --color-neutral-dark: #E8D6B4;
+    --color-border-muted: #D8C097;
 
     /* Brand / social colors */
     --color-twitter: #1DA1F2;
     --color-facebook: #4267B2;
     --color-whatsapp: #25D366;
 
-    /* Spacing */
-    --spacing-xs: 5px;
-    --spacing-sm: 10px;
-    --spacing-md: 15px;
-    --spacing-lg: 25px;
-    --spacing-xl: 40px;
+    /* Spacing — 4px base grid (F-05) */
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
 
     /* Typography */
     --font-family: 'Newsreader', Georgia, serif;                 /* body copy, italic notes/taglines */
@@ -100,13 +103,18 @@
     --font-size-xl: 1.5rem;
     --font-size-2xl: 2rem;
 
-    /* Transitions */
-    --transition-fast: 0.2s ease;
-    --transition-normal: 0.3s ease;
+    /* Motion — branded curves + durations (F-07) */
+    --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+    --ease-pop: cubic-bezier(0.34, 1.4, 0.4, 1);
+    --dur-fast: 120ms;
+    --dur-base: 180ms;
+    --dur-slow: 280ms;
+    --transition-fast: var(--dur-fast) var(--ease-standard);
+    --transition-normal: var(--dur-base) var(--ease-standard);
 
-    /* Border radius */
-    --border-radius: 5px;
-    --border-radius-lg: 10px;
+    /* Border radius (F-06) */
+    --border-radius: 12px;
+    --border-radius-lg: 16px;
     --radius-card: 20px;      /* "adhesius arrodonits" — rounded sticker cards */
     --radius-button: 18px;
     --radius-pill: 999px;
