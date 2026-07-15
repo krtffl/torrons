@@ -32,7 +32,10 @@
     --color-competition-tint: rgba(138, 38, 56, 0.08);
     --color-competition-contrast: #FFFAF1;
 
-    --color-white: #FFFFFF;
+    /* F-14: dedicated focus-ring color, AA on cream (~3.6:1) */
+    --color-focus: #B96F26;
+
+    --color-white: #FFFFFF;              /* F-04: icon/text contrast ONLY — never a surface; surfaces use --color-card */
     --color-card: #FFFAF1;               /* taula/card surface, near-white */
     --color-background: #FBF2E3;         /* crema lluminosa — page/content background */
     --color-surface: #F0DFC2;            /* crema fosca — secondary surface, hover backgrounds */
@@ -41,6 +44,7 @@
     --color-text: #3A2A1C;               /* cacau */
     --color-text-light: #8A7458;         /* terra suau — secondary text */
     --color-text-light-dark: #6B5A44;    /* terra fosc — AA-contrast secondary text */
+    --color-ink-panel: #4A3524;          /* raised panel inside dark "fitxa" callouts */
 
     --color-border: #E8D6B4;             /* default card/element border */
     --color-border-dashed: #D8C097;      /* dashed border — sponsorship / reserved-space placeholders */
@@ -56,40 +60,40 @@
     --color-overlay-light: rgba(255, 255, 255, 0.3);
     --color-overlay-dark: rgba(58, 42, 28, 0.55);
 
-    /* Semantic / status colors (unrelated to the brand palette — unchanged) */
-    --color-success: #4CAF50;
-    --color-success-bg: rgba(76, 175, 80, 0.1);
-    --color-danger: #F44336;
-    --color-danger-bg: rgba(244, 67, 54, 0.1);
-    --color-warning: #FF9800;
-    --color-warning-bg: rgba(255, 152, 0, 0.1);
-    --color-info: #2196F3;
+    /* Semantic / status colors — warm, brand-aligned (F-01) */
+    --color-success: #5E7A4A;
+    --color-success-bg: rgba(94, 122, 74, 0.1);
+    --color-danger: #B23B2E;
+    --color-danger-bg: rgba(178, 59, 46, 0.1);
+    --color-warning: #B96F26;
+    --color-warning-bg: rgba(185, 111, 38, 0.1);
+    --color-info: #3E6B63;
 
-    /* Ranking / medal accent colors (podium gold/silver/bronze — distinct from
-       --color-brand-gold above; unrelated to the brand palette, unchanged) */
-    --color-gold: #FFD700;
-    --color-gold-bg: #FFF9E6;
-    --color-silver: #C0C0C0;
-    --color-bronze: #CD7F32;
-    --color-bronze-bg: #FFF5E6;
+    /* Ranking / medal accent colors (podium gold/silver/bronze — warm,
+       brand-aligned per F-02; distinct from --color-brand-gold above) */
+    --color-gold: #EFC26E;
+    --color-gold-bg: #F5EEDD;            /* warm cream medal backdrop, not #FFF9E6 */
+    --color-silver: #D8C097;
+    --color-bronze: #C88E52;
+    --color-bronze-bg: #F5EEDD;          /* warm cream medal backdrop, not #FFF5E6 */
 
-    /* Neutral grays (skeletons, tracks, muted borders) */
-    --color-neutral: #f0f0f0;
-    --color-neutral-light: #f5f5f5;
-    --color-neutral-dark: #e0e0e0;
-    --color-border-muted: #ccc;
+    /* Warm neutrals — skeletons, tracks, muted borders (F-03) */
+    --color-neutral: #F0DFC2;
+    --color-neutral-light: #F5EEDD;
+    --color-neutral-dark: #E8D6B4;
+    --color-border-muted: #D8C097;
 
     /* Brand / social colors */
     --color-twitter: #1DA1F2;
     --color-facebook: #4267B2;
     --color-whatsapp: #25D366;
 
-    /* Spacing */
-    --spacing-xs: 5px;
-    --spacing-sm: 10px;
-    --spacing-md: 15px;
-    --spacing-lg: 25px;
-    --spacing-xl: 40px;
+    /* Spacing — 4px base grid (F-05) */
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
 
     /* Typography */
     --font-family: 'Newsreader', Georgia, serif;                 /* body copy, italic notes/taglines */
@@ -100,13 +104,19 @@
     --font-size-xl: 1.5rem;
     --font-size-2xl: 2rem;
 
-    /* Transitions */
-    --transition-fast: 0.2s ease;
-    --transition-normal: 0.3s ease;
+    /* Motion — branded curves + durations (F-07) */
+    --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+    --ease-pop: cubic-bezier(0.34, 1.4, 0.4, 1);
+    --dur-fast: 120ms;
+    --dur-base: 180ms;
+    --dur-slow: 280ms;
+    --transition-fast: var(--dur-fast) var(--ease-standard);
+    --transition-normal: var(--dur-base) var(--ease-standard);
 
-    /* Border radius */
-    --border-radius: 5px;
-    --border-radius-lg: 10px;
+    /* Border radius (F-06) */
+    --border-radius-sm: 6px;  /* small decorative elements — swatches, chips, small icons */
+    --border-radius: 12px;
+    --border-radius-lg: 16px;
     --radius-card: 20px;      /* "adhesius arrodonits" — rounded sticker cards */
     --radius-button: 18px;
     --radius-pill: 999px;
@@ -179,9 +189,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #header p:focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--color-focus);
     outline-offset: 3px;
-    border-radius: 6px;
+    border-radius: var(--border-radius-sm);
 }
 
 .brand-mark {
@@ -313,7 +323,7 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--color-text-light-dark);
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: 0.2px;
     text-align: center;
     white-space: nowrap;
@@ -628,7 +638,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .countdown-unit-label {
     font-family: var(--font-family-display);
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -772,9 +782,9 @@ h1, h2, h3, h4, h5, h6 {
 .hero-torro-silhouette {
     width: 45%;
     height: 60%;
-    border-radius: 6px;
+    border-radius: var(--border-radius-sm);
     background-color: var(--color-placeholder-2);
-    border: 1px solid var(--color-neutral-dark);
+    border: 1px solid var(--color-border);
 }
 
 .hero-torro-photo-label {
@@ -991,7 +1001,7 @@ h1, h2, h3, h4, h5, h6 {
 .bracket-teaser-row--semis span {
     width: 36px;
     height: 14px;
-    border-radius: 5px;
+    border-radius: var(--border-radius-sm);
     background-color: var(--color-brand-gold);
     border: 1px solid var(--color-primary-dark);
 }
@@ -1015,7 +1025,7 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: 1.5px;
     color: var(--color-competition);
 }
@@ -1050,7 +1060,7 @@ h1, h2, h3, h4, h5, h6 {
     border: 1.5px dashed var(--color-border-dashed);
     border-radius: 14px;
     padding: 10px 18px;
-    font: 600 9px ui-monospace, Menlo, monospace;
+    font: 600 11px ui-monospace, Menlo, monospace;
     letter-spacing: 0.3px;
     color: var(--color-text-light-dark);
 }
@@ -1229,7 +1239,7 @@ button.arena-card-action:active {
 }
 
 button.arena-card-action:focus-visible {
-    outline: 3px solid var(--color-primary);
+    outline: 3px solid var(--color-focus);
     outline-offset: 2px;
 }
 
@@ -1328,7 +1338,7 @@ button.arena-card-action:focus-visible {
 
 .arena-soon-badge {
     font-family: var(--font-family-display);
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.6px;
     color: var(--color-text-light-dark);
@@ -1377,7 +1387,7 @@ button.arena-card-action:focus-visible {
 .arena-icon-diamond-lg {
     width: 22px;
     height: 22px;
-    border-radius: 5px;
+    border-radius: var(--border-radius-sm);
     background: var(--color-primary);
     transform: rotate(45deg);
     position: absolute;
@@ -1507,7 +1517,7 @@ button.arena-card-action:focus-visible {
 .arena-eyebrow {
     font-family: ui-monospace, Menlo, monospace;
     font-weight: 600;
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: 0.5px;
     color: var(--color-text-light-dark);
 }
@@ -1530,7 +1540,7 @@ button.arena-card-action:focus-visible {
 .arena-tag {
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: 0.8px;
     color: var(--color-primary-dark);
 }
@@ -1589,7 +1599,7 @@ button.arena-card-action:focus-visible {
     align-items: center;
     justify-content: space-between;
     flex-direction: column;
-    background-color: var(--color-white);
+    background-color: var(--color-card);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
     padding: var(--spacing-lg);
@@ -1689,7 +1699,7 @@ button.arena-card-action:focus-visible {
     background-color: var(--color-primary);
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.3s ease;
+    transition: transform var(--transition-normal);
     z-index: 9999;
 }
 
@@ -1767,8 +1777,8 @@ button.arena-card-action:focus-visible {
     transform: translate(-50%, -50%);
     width: 40px;
     height: 40px;
-    border: 4px solid var(--color-overlay-light);
-    border-top-color: var(--color-white);
+    border: 4px solid var(--color-border);
+    border-top-color: var(--color-primary-dark);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     z-index: 10;
@@ -1777,13 +1787,13 @@ button.arena-card-action:focus-visible {
 /* Swapping state (smoother transitions) */
 .htmx-swapping {
     opacity: 0;
-    transition: opacity 0.2s ease-out;
+    transition: opacity var(--transition-fast);
 }
 
 /* Settling state */
 .htmx-settling {
     opacity: 1;
-    transition: opacity 0.2s ease-in;
+    transition: opacity var(--transition-fast);
 }
 
 /* Content loading skeleton */
@@ -1824,7 +1834,7 @@ button.arena-card-action:focus-visible {
 .torron-card:focus,
 #header p:focus,
 #topbar img:focus {
-    outline: 3px solid var(--color-primary);
+    outline: 3px solid var(--color-focus);
     outline-offset: 2px;
 }
 
@@ -2053,7 +2063,7 @@ button.arena-card-action:focus-visible {
 .streak-label {
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 8.5px;
+    font-size: 11px;
     letter-spacing: 0.4px;
     text-transform: uppercase;
     color: var(--color-text-light-dark);
@@ -2113,7 +2123,7 @@ button.arena-card-action:focus-visible {
     color: var(--color-competition-contrast);
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 10px;
+    font-size: 11px;
     padding: 4px 10px;
     border-radius: var(--radius-pill);
     transform: rotate(-8deg);
@@ -2268,7 +2278,7 @@ button.arena-card-action:focus-visible {
     color: var(--color-text);
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 10.5px;
+    font-size: 11px;
     letter-spacing: 0.3px;
     text-transform: uppercase;
     padding: 5px 11px;
@@ -2506,7 +2516,7 @@ button.arena-card-action:focus-visible {
 .hero-entry-elo-label {
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.5px;
     color: var(--color-text-light);
     margin-top: 2px;
@@ -2602,7 +2612,7 @@ button.arena-card-action:focus-visible {
 .row-elo-label {
     font-family: var(--font-family-display);
     font-weight: 600;
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: 0.4px;
     color: var(--color-text-light-dark);
     margin-top: 2px;
@@ -2731,7 +2741,7 @@ button.arena-card-action:focus-visible {
 .rank-new .rank-change-value {
     background-color: var(--color-primary);
     color: var(--color-text);
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
     font-weight: 800;
     letter-spacing: 0.4px;
     padding: 2px 8px;
@@ -2871,7 +2881,7 @@ button.arena-card-action:focus-visible {
 }
 
 .stats-card {
-    background-color: var(--color-white);
+    background-color: var(--color-card);
     border-radius: var(--border-radius-lg);
     padding: var(--spacing-lg);
     text-align: center;
@@ -3004,7 +3014,7 @@ button.arena-card-action:focus-visible {
     display: inline-block;
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.5px;
     text-transform: uppercase;
     padding: 3px 9px;
@@ -3303,7 +3313,7 @@ button.arena-card-action:focus-visible {
     color: var(--color-text-light);
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.6px;
     text-transform: uppercase;
     padding: 5px 11px;
@@ -3324,7 +3334,7 @@ button.arena-card-action:focus-visible {
     color: var(--color-primary-dark);
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.6px;
     text-transform: uppercase;
     padding: 5px 11px;
@@ -3501,7 +3511,7 @@ button.arena-card-action:focus-visible {
 }
 
 .history-count {
-    font: 600 10px ui-monospace, Menlo, monospace;
+    font: 600 11px ui-monospace, Menlo, monospace;
     color: var(--color-text-light-dark);
 }
 
@@ -3568,7 +3578,7 @@ button.arena-card-action:focus-visible {
 }
 
 .filter-btn:focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
 }
 
@@ -3585,7 +3595,7 @@ button.arena-card-action:focus-visible {
     padding: 13px 16px 6px;
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 10.5px;
+    font-size: 11px;
     letter-spacing: 1px;
     color: var(--color-text-light);
 }
@@ -3659,14 +3669,14 @@ button.arena-card-action:focus-visible {
 
 .history-item-meta {
     margin-top: 3px;
-    font: 600 8.5px ui-monospace, Menlo, monospace;
+    font: 600 11px ui-monospace, Menlo, monospace;
     letter-spacing: 0.3px;
     color: var(--color-text-light-dark);
 }
 
 .history-item-time {
     flex: none;
-    font: 600 9.5px ui-monospace, Menlo, monospace;
+    font: 600 11px ui-monospace, Menlo, monospace;
     color: var(--color-text-light-dark);
 }
 
@@ -3722,7 +3732,7 @@ button.arena-card-action:focus-visible {
 .history-empty {
     text-align: center;
     padding: var(--spacing-xl);
-    background-color: var(--color-white);
+    background-color: var(--color-card);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-sm);
     margin: var(--spacing-xl) auto;
@@ -3768,7 +3778,7 @@ button.arena-card-action:focus-visible {
     }
 
     .history-item-time {
-        font-size: 9px;
+        font-size: 11px;
     }
 }
 
@@ -3777,7 +3787,7 @@ button.arena-card-action:focus-visible {
    ======================================== */
 
 .share-section {
-    background-color: var(--color-white);
+    background-color: var(--color-card);
     border-radius: var(--border-radius-lg);
     padding: var(--spacing-lg);
     margin: var(--spacing-xl) 0;
@@ -3865,7 +3875,7 @@ button.arena-card-action:focus-visible {
 }
 
 .toast {
-    background-color: var(--color-white);
+    background-color: var(--color-card);
     border-radius: var(--border-radius);
     padding: var(--spacing-md);
     box-shadow: var(--shadow-md);
@@ -3901,8 +3911,8 @@ button.arena-card-action:focus-visible {
 }
 
 .toast-achievement {
-    border-left: 4px solid var(--color-gold);
-    background: linear-gradient(135deg, var(--color-gold-bg) 0%, var(--color-white) 100%);
+    border-left: 4px solid var(--color-brand-gold);
+    background: linear-gradient(135deg, var(--color-gold-bg) 0%, var(--color-card) 100%);
 }
 
 .toast-error {
@@ -3998,7 +4008,7 @@ button.arena-card-action:focus-visible {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 .modal-close:hover {
@@ -4009,7 +4019,7 @@ button.arena-card-action:focus-visible {
 .onboarding-eyebrow {
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 1.5px;
     color: var(--color-text-light-dark);
 }
@@ -4104,7 +4114,7 @@ button.arena-card-action:focus-visible {
     width: 6px;
     border-radius: var(--radius-pill);
     background: var(--color-border);
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 .onboarding-dot.onboarding-dot--active {
@@ -4180,20 +4190,20 @@ button.arena-card-action:focus-visible {
 
 /* Enhanced focus styles for keyboard navigation */
 *:focus-visible {
-    outline: 3px solid var(--color-primary);
+    outline: 3px solid var(--color-focus);
     outline-offset: 2px;
     border-radius: var(--border-radius);
 }
 
 .torron-card:focus-visible {
-    outline: 4px solid var(--color-primary);
+    outline: 4px solid var(--color-focus);
     outline-offset: 4px;
     transform: scale(1.02);
 }
 
 .btn:focus-visible,
 .nav-link:focus-visible {
-    outline: 3px solid var(--color-primary);
+    outline: 3px solid var(--color-focus);
     outline-offset: 3px;
 }
 
@@ -4271,7 +4281,7 @@ button.arena-card-action:focus-visible {
     color: var(--color-competition-contrast);
     font-family: var(--font-family-display);
     font-weight: 800;
-    font-size: 0.6rem;
+    font-size: 0.6875rem;
     transform: rotate(-8deg);
 }
 
@@ -4406,7 +4416,7 @@ button.arena-card-action:focus-visible {
 }
 
 .bracket-tree-scroll:focus-visible {
-    outline: 3px solid var(--color-primary);
+    outline: 3px solid var(--color-focus);
     outline-offset: 2px;
     border-radius: var(--border-radius);
 }
@@ -4556,7 +4566,7 @@ button.arena-card-action:focus-visible {
     color: var(--color-text-light);
     font-family: ui-monospace, Menlo, monospace;
     font-weight: 700;
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
     margin-right: var(--spacing-xs);
 }
 
@@ -4590,12 +4600,12 @@ button.arena-card-action:focus-visible {
 
 #bracket-container .winner-badge {
     align-self: flex-start;
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
 }
 
 #bracket-container .history-vs {
     font-family: var(--font-family-display);
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -4854,7 +4864,7 @@ button.arena-card-action:focus-visible {
     display: block;
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 10.5px;
+    font-size: 11px;
     letter-spacing: 1px;
     text-transform: uppercase;
     color: var(--color-text-light-dark);
@@ -4901,7 +4911,7 @@ button.arena-card-action:focus-visible {
     display: block;
     font-family: var(--font-family-display);
     font-weight: 600;
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: .5px;
     text-transform: uppercase;
     color: var(--color-text-light-dark);
@@ -5023,7 +5033,7 @@ button.arena-card-action:focus-visible {
 .torro-diet-label {
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 9.5px;
+    font-size: 11px;
     line-height: 1.2;
     color: var(--color-text);
     max-width: 74px;
@@ -5209,7 +5219,7 @@ button.arena-card-action:focus-visible {
 }
 
 .press-card {
-    background: var(--color-white);
+    background: var(--color-card);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
     padding: var(--spacing-lg);
@@ -5347,7 +5357,7 @@ button.arena-card-action:focus-visible {
     padding-top: var(--spacing-md);
     border-top: 1px solid var(--color-border);
     font-family: var(--press-mono);
-    font-size: 10.5px;
+    font-size: 11px;
     letter-spacing: .4px;
     color: var(--color-text-light);
 }
@@ -5640,7 +5650,7 @@ button.arena-card-action:focus-visible {
     margin-bottom: var(--spacing-md);
     border-radius: var(--border-radius);
     border: 1px solid var(--color-border);
-    background: var(--color-white);
+    background: var(--color-card);
     font-family: var(--font-family);
     font-size: var(--font-size-base);
     color: var(--color-text);
@@ -5771,7 +5781,7 @@ button.arena-card-action:focus-visible {
 .advent-legend-swatch {
     width: 14px;
     height: 14px;
-    border-radius: 5px;
+    border-radius: var(--border-radius-sm);
     flex: none;
 }
 
@@ -5788,7 +5798,7 @@ button.arena-card-action:focus-visible {
 .advent-legend-label {
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.5px;
     text-transform: uppercase;
     color: var(--color-text-light);
@@ -5845,7 +5855,7 @@ button.arena-card-action:focus-visible {
     font-weight: 800;
     font-size: 11px;
     padding: 3px 10px;
-    border-radius: 6px;
+    border-radius: var(--border-radius-sm);
     transform: rotate(-2deg);
     box-shadow: var(--shadow-sticker-badge);
 }
@@ -5884,7 +5894,7 @@ button.arena-card-action:focus-visible {
     justify-content: center;
     font-family: var(--font-family-display);
     font-weight: 800;
-    font-size: 9px;
+    font-size: 11px;
 }
 
 .advent-door-today-label {
@@ -5924,7 +5934,7 @@ button.arena-card-action:focus-visible {
 
 .advent-door-hint {
     font-family: ui-monospace, Menlo, monospace;
-    font-size: 9px;
+    font-size: 11px;
     color: var(--color-text-light-dark);
     text-align: center;
 }
@@ -6182,7 +6192,7 @@ button.arena-card-action:focus-visible {
     text-align: center;
     font-family: var(--font-family-display);
     font-weight: 700;
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
     letter-spacing: .8px;
     text-transform: uppercase;
     color: var(--color-text-light);
@@ -6272,7 +6282,7 @@ button.arena-card-action:focus-visible {
 }
 
 .podium-elo-label {
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
     letter-spacing: .5px;
     color: var(--color-text-light);
     margin-top: 2px;
@@ -6627,7 +6637,7 @@ button.arena-card-action:focus-visible {
 .wrapped-bracket-key {
     font-family: var(--font-family-display);
     font-weight: 600;
-    font-size: 10.5px;
+    font-size: 11px;
     letter-spacing: 0.5px;
     text-transform: uppercase;
     color: var(--color-text-light);
@@ -6919,6 +6929,18 @@ button.arena-card-action:focus-visible {
 .content-body h2 {
     font-size: var(--font-size-xl);
     margin: var(--spacing-xl) 0 var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.content-body h2::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background-color: var(--color-primary);
+    flex: none;
 }
 
 .content-body h2:first-child {
@@ -6949,17 +6971,23 @@ button.arena-card-action:focus-visible {
     text-decoration: underline;
 }
 
-/* FAQ disclosure widget - native <details>/<summary>, zero JS */
+/* FAQ disclosure widget - native <details>/<summary>, zero JS.
+   Sticker-card treatment with the +/- indicator on the right (mockup 3a). */
 .content-faq-item {
-    border-bottom: 1px solid var(--color-border);
-    padding: var(--spacing-md) 0;
-}
-
-.content-faq-item:first-of-type {
-    border-top: 1px solid var(--color-border);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    background-color: var(--color-card);
+    box-shadow: var(--shadow-sticker);
+    margin-bottom: var(--spacing-md);
+    overflow: hidden;
 }
 
 .content-faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
     font-family: var(--font-family-display);
     font-weight: 700;
     font-size: var(--font-size-lg);
@@ -6971,20 +6999,118 @@ button.arena-card-action:focus-visible {
     display: none;
 }
 
-.content-faq-question::before {
+.content-faq-question::after {
     content: '+';
-    display: inline-block;
-    width: 1em;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: var(--font-size-xl);
+    line-height: 1;
     color: var(--color-primary-dark);
+    flex: none;
 }
 
-.content-faq-item[open] .content-faq-question::before {
+.content-faq-item[open] .content-faq-question::after {
     content: '\2212';
 }
 
 .content-faq-answer {
-    margin: var(--spacing-sm) 0 0;
+    margin: 0;
+    padding: 0 var(--spacing-md) var(--spacing-md);
     color: var(--color-text-light-dark);
+}
+
+/* Glossary term card with category chip (mockup 3b) */
+.content-term-card {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.content-term-head {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.content-term-card h3 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+}
+
+.content-term-chip {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    color: var(--color-competition);
+    background-color: var(--color-surface);
+    border-radius: var(--radius-pill);
+    padding: 3px 10px;
+}
+
+.content-term-card p {
+    margin: var(--spacing-xs) 0 0;
+    color: var(--color-text-light-dark);
+}
+
+/* Dark "fitxa" key-facts callout (mockup 3c) */
+.content-callout {
+    background-color: var(--color-text);
+    border-radius: var(--radius-card);
+    padding: var(--spacing-lg);
+    margin: var(--spacing-lg) 0;
+}
+
+.content-callout-eyebrow {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--color-brand-gold);
+}
+
+.content-callout-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+}
+
+.content-callout-stat {
+    flex: 1;
+    min-width: 130px;
+    background-color: var(--color-ink-panel);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.content-callout-value {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: var(--font-size-2xl);
+    line-height: 1;
+    color: var(--color-brand-gold);
+}
+
+.content-callout-label {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    color: var(--color-surface);
+    margin-top: var(--spacing-xs);
+}
+
+.content-callout-note {
+    font-family: var(--font-family);
+    font-style: italic;
+    font-size: var(--font-size-base);
+    color: var(--color-surface);
+    margin: var(--spacing-sm) 0 0;
 }
 
 /* Comparativa (Agramunt vs Xixona): base styles are mobile-first, a single
@@ -7041,7 +7167,7 @@ button.arena-card-action:focus-visible {
 .comparativa-card-label {
     font-family: ui-monospace, Menlo, monospace;
     font-weight: 600;
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--color-text-light);
@@ -7055,6 +7181,12 @@ button.arena-card-action:focus-visible {
     margin-bottom: var(--spacing-sm);
 }
 
+/* F-19: a second badge row inside a card, separated from the stats above it
+   (was a static inline margin-top on comparativa.html) */
+.comparativa-badges--stacked {
+    margin-top: var(--spacing-md);
+}
+
 .comparativa-badge {
     display: inline-block;
     background-color: var(--color-surface);
@@ -7063,7 +7195,7 @@ button.arena-card-action:focus-visible {
     padding: 4px var(--spacing-sm);
     font-family: ui-monospace, Menlo, monospace;
     font-weight: 600;
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
     color: var(--color-primary-dark);
     white-space: nowrap;
 }
@@ -7084,7 +7216,7 @@ button.arena-card-action:focus-visible {
 .comparativa-stat-label {
     font-family: ui-monospace, Menlo, monospace;
     font-weight: 600;
-    font-size: 0.6rem;
+    font-size: 0.6875rem;
     color: var(--color-text-light-dark);
     margin-top: 2px;
 }
@@ -7314,7 +7446,7 @@ button.arena-card-action:focus-visible {
     .vote-context-rail-streak-label {
         font-family: var(--font-family-display);
         font-weight: 700;
-        font-size: 9.5px;
+        font-size: 11px;
         letter-spacing: 0.5px;
         text-transform: uppercase;
         color: var(--color-text-light-dark);
@@ -7647,7 +7779,7 @@ button.arena-card-action:focus-visible {
     .comparativa-column-meta {
         font-family: ui-monospace, Menlo, monospace;
         font-weight: 600;
-        font-size: 0.65rem;
+        font-size: 0.6875rem;
         letter-spacing: 0.03em;
         color: var(--color-primary-dark);
         margin-top: 3px;
