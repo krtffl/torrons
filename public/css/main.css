@@ -7338,9 +7338,46 @@ button.arena-card-action:focus-visible {
     #main-content:has(> #vote-page),
     #main-content:has(> #torro-detail-container),
     #main-content:has(> #bracket-container),
+    #main-content:has(> #description),
     #main-content:has(> #content-page-container:has(.comparativa-topic)) {
         background-color: var(--color-desktop-background);
     }
+
+    /* Homepage / landing: a centered cream column with a two-column hero
+       (copy + CTA left, product preview right) and full-width sections below,
+       instead of the 480px mobile column stranded on a wide viewport. */
+    #description {
+        max-width: none;
+        width: 1000px;
+        margin: 0 auto;
+        padding: 52px 56px 56px;
+        background-color: var(--color-background);
+        box-shadow: 0 0 80px rgba(58, 42, 28, 0.14);
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        column-gap: 56px;
+        align-items: start;
+        grid-template-areas:
+            "badge     preview"
+            "copy      preview"
+            "actions   preview"
+            "countdown countdown"
+            "how       how"
+            "bracket   bracket";
+    }
+    #description > .hero-badge-row { grid-area: badge; margin: 0; }
+    #description > .hero-copy { grid-area: copy; padding: 12px 0 0; }
+    #description > .hero-actions { grid-area: actions; padding: 24px 0 0; align-items: flex-start; }
+    #description > .hero-preview { grid-area: preview; align-self: center; padding: 0; }
+    #description > .landing-countdown { grid-area: countdown; margin-top: 44px; padding: 0; }
+    #description > .how-it-works-section { grid-area: how; padding: 48px 0 0; }
+    #description > .bracket-teaser { grid-area: bracket; width: 100%; max-width: 560px; margin: 32px auto 0; }
+    #description .hero-headline { font-size: 52px; }
+    #description .hero-cta { width: auto; max-width: none; }
+    #description .how-it-works { flex-direction: row; gap: 28px; justify-content: center; }
+    #description .how-it-works-step { flex-direction: column; align-items: center; text-align: center; flex: 1; }
+    #description .how-it-works-marker { flex-direction: row; }
+    #description .how-it-works-connector { display: none; }
 
     #vote-page {
         width: var(--desktop-column-width);
