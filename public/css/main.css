@@ -7310,6 +7310,14 @@ button.arena-card-action:focus-visible {
         --desktop-bracket-column-width: 1200px;
         --desktop-bracket-champion-photo-width: 130px;
         --desktop-bracket-champion-photo-height: 180px;
+        /* Semantic column widths for the wide-viewport treatment on the
+           remaining pages. feed = single-column lists (leaderboard, history);
+           panel = data-dense dashboards (stats, press); narrow = self-
+           contained centered content (friends, reveal). Prose content pages
+           keep their own 720px measure. */
+        --desktop-feed-width: 820px;
+        --desktop-panel-width: 1040px;
+        --desktop-narrow-width: 700px;
     }
 }
 
@@ -7325,6 +7333,9 @@ button.arena-card-action:focus-visible {
         --desktop-bracket-column-width: 1680px;
         --desktop-bracket-champion-photo-width: 170px;
         --desktop-bracket-champion-photo-height: 244px;
+        --desktop-feed-width: 920px;
+        --desktop-panel-width: 1240px;
+        --desktop-narrow-width: 780px;
     }
 }
 
@@ -7339,7 +7350,14 @@ button.arena-card-action:focus-visible {
     #main-content:has(> #torro-detail-container),
     #main-content:has(> #bracket-container),
     #main-content:has(> #description),
-    #main-content:has(> #content-page-container:has(.comparativa-topic)) {
+    #main-content:has(> #stats-container),
+    #main-content:has(> #leaderboard-container),
+    #main-content:has(> #history-container),
+    #main-content:has(> #press-container),
+    #main-content:has(> #friends-container),
+    #main-content:has(> #wrapped-container),
+    #main-content:has(> #reveal-container),
+    #main-content:has(> #content-page-container) {
         background-color: var(--color-desktop-background);
     }
 
@@ -7852,5 +7870,67 @@ button.arena-card-action:focus-visible {
         grid-template-columns: 5fr 7fr;
         gap: 48px;
         align-items: start;
+    }
+
+    /* ----------------------------------------------------------------
+       Remaining pages: the same cream-sheet-on-taupe-canvas treatment
+       the vote/product/bracket/comparativa/homepage already use, sized
+       per page archetype. The canvas backdrop is set by the shared
+       #main-content:has(...) selector above; each container becomes the
+       centered cream sheet. Mobile (<1280px) is untouched — every rule
+       here lives inside the 1280px media query.
+       ---------------------------------------------------------------- */
+
+    /* Single-column feeds: a ranked list / a vote log read best at a
+       constrained measure, not stretched into ultra-wide thin rows. */
+    #leaderboard-container,
+    #history-container {
+        max-width: var(--desktop-feed-width);
+        margin: 0 auto;
+        padding: var(--spacing-xl) var(--spacing-xl) calc(var(--spacing-xl) * 1.5);
+        background-color: var(--color-background);
+        box-shadow: 0 0 80px rgba(58, 42, 28, 0.14);
+    }
+
+    /* Data-dense dashboards: a stat-card row + progress/badge grids read as
+       a framed panel rather than edge-to-edge content. */
+    #stats-container,
+    #press-container {
+        max-width: var(--desktop-panel-width);
+        margin: 0 auto;
+        padding: var(--spacing-xl) var(--spacing-xl) calc(var(--spacing-xl) * 1.5);
+        background-color: var(--color-background);
+        box-shadow: 0 0 80px rgba(58, 42, 28, 0.14);
+    }
+
+    /* Self-contained centered content: a single result/persona card or an
+       empty-state, kept at a narrow measure so it doesn't strand. */
+    #friends-container,
+    #reveal-container {
+        max-width: var(--desktop-narrow-width);
+        margin: 0 auto;
+        padding: var(--spacing-xl) var(--spacing-xl) calc(var(--spacing-xl) * 1.5);
+        background-color: var(--color-background);
+        box-shadow: 0 0 80px rgba(58, 42, 28, 0.14);
+    }
+
+    /* Prose content pages (/sobre, /tipus-de-torrons, /torro-agramunt-igp):
+       keep the 720px reading measure from the base rule, add the cream-sheet
+       frame. The comparativa page keeps its own wider two-column rule
+       (#content-page-container:has(.comparativa-topic)) — higher specificity,
+       so its width wins there. */
+    #content-page-container {
+        padding: var(--spacing-xl) var(--spacing-xl) calc(var(--spacing-xl) * 1.5);
+        background-color: var(--color-background);
+        box-shadow: 0 0 80px rgba(58, 42, 28, 0.14);
+    }
+
+    /* Wrapped is a self-contained dark "poster" card with its own surface and
+       shadow — it sits centered directly on the taupe canvas (no cream sheet
+       behind it), a deliberate one-page exception. It keeps the base 720px
+       measure at 1280px and grows a touch at 1920px via --desktop-narrow-width
+       so it doesn't look small on the widest canvas. */
+    #wrapped-container {
+        max-width: var(--desktop-narrow-width);
     }
 }
