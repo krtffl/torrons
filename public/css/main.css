@@ -114,6 +114,7 @@
     --transition-normal: var(--dur-base) var(--ease-standard);
 
     /* Border radius (F-06) */
+    --border-radius-sm: 6px;  /* small decorative elements — swatches, chips, small icons */
     --border-radius: 12px;
     --border-radius-lg: 16px;
     --radius-card: 20px;      /* "adhesius arrodonits" — rounded sticker cards */
@@ -190,7 +191,7 @@ h1, h2, h3, h4, h5, h6 {
 #header p:focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 3px;
-    border-radius: 6px;
+    border-radius: var(--border-radius-sm);
 }
 
 .brand-mark {
@@ -781,7 +782,7 @@ h1, h2, h3, h4, h5, h6 {
 .hero-torro-silhouette {
     width: 45%;
     height: 60%;
-    border-radius: 6px;
+    border-radius: var(--border-radius-sm);
     background-color: var(--color-placeholder-2);
     border: 1px solid var(--color-border);
 }
@@ -1000,7 +1001,7 @@ h1, h2, h3, h4, h5, h6 {
 .bracket-teaser-row--semis span {
     width: 36px;
     height: 14px;
-    border-radius: 5px;
+    border-radius: var(--border-radius-sm);
     background-color: var(--color-brand-gold);
     border: 1px solid var(--color-primary-dark);
 }
@@ -1386,7 +1387,7 @@ button.arena-card-action:focus-visible {
 .arena-icon-diamond-lg {
     width: 22px;
     height: 22px;
-    border-radius: 5px;
+    border-radius: var(--border-radius-sm);
     background: var(--color-primary);
     transform: rotate(45deg);
     position: absolute;
@@ -1698,7 +1699,7 @@ button.arena-card-action:focus-visible {
     background-color: var(--color-primary);
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.3s ease;
+    transition: transform var(--transition-normal);
     z-index: 9999;
 }
 
@@ -1786,13 +1787,13 @@ button.arena-card-action:focus-visible {
 /* Swapping state (smoother transitions) */
 .htmx-swapping {
     opacity: 0;
-    transition: opacity 0.2s ease-out;
+    transition: opacity var(--transition-fast);
 }
 
 /* Settling state */
 .htmx-settling {
     opacity: 1;
-    transition: opacity 0.2s ease-in;
+    transition: opacity var(--transition-fast);
 }
 
 /* Content loading skeleton */
@@ -4007,7 +4008,7 @@ button.arena-card-action:focus-visible {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 .modal-close:hover {
@@ -4113,7 +4114,7 @@ button.arena-card-action:focus-visible {
     width: 6px;
     border-radius: var(--radius-pill);
     background: var(--color-border);
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 .onboarding-dot.onboarding-dot--active {
@@ -5780,7 +5781,7 @@ button.arena-card-action:focus-visible {
 .advent-legend-swatch {
     width: 14px;
     height: 14px;
-    border-radius: 5px;
+    border-radius: var(--border-radius-sm);
     flex: none;
 }
 
@@ -5854,7 +5855,7 @@ button.arena-card-action:focus-visible {
     font-weight: 800;
     font-size: 11px;
     padding: 3px 10px;
-    border-radius: 6px;
+    border-radius: var(--border-radius-sm);
     transform: rotate(-2deg);
     box-shadow: var(--shadow-sticker-badge);
 }
