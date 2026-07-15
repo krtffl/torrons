@@ -7420,11 +7420,18 @@ button.arena-card-action:focus-visible {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 64px;
+        gap: 48px;
         padding: var(--spacing-xl);
     }
 
     .torron-comparison.vote-duel {
+        /* Shrink to the two cards' intrinsic width instead of inheriting the
+           base width:100%, which grew the duel to fill the row and stranded
+           the context rail against the far right edge with a large empty gap.
+           Now the duel + rail sit as one centered group with a controlled
+           48px gap between them. */
+        width: auto;
+        flex: none;
         max-width: none;
         margin: 0;
         gap: 24px;
