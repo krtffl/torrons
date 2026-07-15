@@ -44,6 +44,7 @@
     --color-text: #3A2A1C;               /* cacau */
     --color-text-light: #8A7458;         /* terra suau — secondary text */
     --color-text-light-dark: #6B5A44;    /* terra fosc — AA-contrast secondary text */
+    --color-ink-panel: #4A3524;          /* raised panel inside dark "fitxa" callouts */
 
     --color-border: #E8D6B4;             /* default card/element border */
     --color-border-dashed: #D8C097;      /* dashed border — sponsorship / reserved-space placeholders */
@@ -6927,6 +6928,18 @@ button.arena-card-action:focus-visible {
 .content-body h2 {
     font-size: var(--font-size-xl);
     margin: var(--spacing-xl) 0 var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.content-body h2::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background-color: var(--color-primary);
+    flex: none;
 }
 
 .content-body h2:first-child {
@@ -6957,17 +6970,23 @@ button.arena-card-action:focus-visible {
     text-decoration: underline;
 }
 
-/* FAQ disclosure widget - native <details>/<summary>, zero JS */
+/* FAQ disclosure widget - native <details>/<summary>, zero JS.
+   Sticker-card treatment with the +/- indicator on the right (mockup 3a). */
 .content-faq-item {
-    border-bottom: 1px solid var(--color-border);
-    padding: var(--spacing-md) 0;
-}
-
-.content-faq-item:first-of-type {
-    border-top: 1px solid var(--color-border);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    background-color: var(--color-card);
+    box-shadow: var(--shadow-sticker);
+    margin-bottom: var(--spacing-md);
+    overflow: hidden;
 }
 
 .content-faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
     font-family: var(--font-family-display);
     font-weight: 700;
     font-size: var(--font-size-lg);
@@ -6979,20 +6998,118 @@ button.arena-card-action:focus-visible {
     display: none;
 }
 
-.content-faq-question::before {
+.content-faq-question::after {
     content: '+';
-    display: inline-block;
-    width: 1em;
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: var(--font-size-xl);
+    line-height: 1;
     color: var(--color-primary-dark);
+    flex: none;
 }
 
-.content-faq-item[open] .content-faq-question::before {
+.content-faq-item[open] .content-faq-question::after {
     content: '\2212';
 }
 
 .content-faq-answer {
-    margin: var(--spacing-sm) 0 0;
+    margin: 0;
+    padding: 0 var(--spacing-md) var(--spacing-md);
     color: var(--color-text-light-dark);
+}
+
+/* Glossary term card with category chip (mockup 3b) */
+.content-term-card {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.content-term-head {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.content-term-card h3 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+}
+
+.content-term-chip {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    color: var(--color-competition);
+    background-color: var(--color-surface);
+    border-radius: var(--radius-pill);
+    padding: 3px 10px;
+}
+
+.content-term-card p {
+    margin: var(--spacing-xs) 0 0;
+    color: var(--color-text-light-dark);
+}
+
+/* Dark "fitxa" key-facts callout (mockup 3c) */
+.content-callout {
+    background-color: var(--color-text);
+    border-radius: var(--radius-card);
+    padding: var(--spacing-lg);
+    margin: var(--spacing-lg) 0;
+}
+
+.content-callout-eyebrow {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--color-brand-gold);
+}
+
+.content-callout-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+}
+
+.content-callout-stat {
+    flex: 1;
+    min-width: 130px;
+    background-color: var(--color-ink-panel);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.content-callout-value {
+    font-family: var(--font-family-display);
+    font-weight: 800;
+    font-size: var(--font-size-2xl);
+    line-height: 1;
+    color: var(--color-brand-gold);
+}
+
+.content-callout-label {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    color: var(--color-surface);
+    margin-top: var(--spacing-xs);
+}
+
+.content-callout-note {
+    font-family: var(--font-family);
+    font-style: italic;
+    font-size: var(--font-size-base);
+    color: var(--color-surface);
+    margin: var(--spacing-sm) 0 0;
 }
 
 /* Comparativa (Agramunt vs Xixona): base styles are mobile-first, a single
@@ -7061,6 +7178,12 @@ button.arena-card-action:focus-visible {
     flex-wrap: wrap;
     gap: var(--spacing-xs);
     margin-bottom: var(--spacing-sm);
+}
+
+/* F-19: a second badge row inside a card, separated from the stats above it
+   (was a static inline margin-top on comparativa.html) */
+.comparativa-badges--stacked {
+    margin-top: var(--spacing-md);
 }
 
 .comparativa-badge {
