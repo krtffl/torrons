@@ -38,6 +38,21 @@ type Content struct {
 	// hides the pill -- it's decorative and never blocks voting.
 	CurrentStreak int
 	StreakAtRisk  bool
+
+	// Vote-progress fields for the vote screen's "unlock the result" ring.
+	// VoteCount is the user's real vote count for this class (total votes for
+	// the Global class "5", matching stats/leaderboard); MinVotes is the
+	// per-class threshold; ProgressPercentage is the derived fill; Category is
+	// the class id for the "Veure resultats" link; ResultsUnlocked is whether
+	// the threshold is already met. Wired to the same numbers /stats uses so
+	// the ring reflects genuine progress and a real unlock, not a client-only
+	// animation that promised a result it never delivered.
+	VoteCount          int
+	MinVotes           int
+	ProgressPercentage int
+	ProgressDegrees    float64
+	ResultsUnlocked    bool
+	Category           string
 }
 
 type Handler struct {
@@ -199,6 +214,7 @@ func (h *Handler) vote(w http.ResponseWriter, r *http.Request) {
 	// failing the vote screen.
 	var currentStreak int
 	var streakAtRisk bool
+	var voteCount int
 	if userId := GetUserIDFromContext(r.Context()); userId != "" {
 		if user, err := h.userRepo.Get(r.Context(), userId); err != nil {
 			logger.Warn("[Handler - Vote] Couldn't get user for streak indicator. %v", err)
@@ -211,6 +227,31 @@ func (h *Handler) vote(w http.ResponseWriter, r *http.Request) {
 			// so compare by prefix rather than exact equality.
 			streakAtRisk = currentStreak > 0 &&
 				(user.LastVoteDate == nil || !strings.HasPrefix(*user.LastVoteDate, today))
+
+			// The Global class "5" unlocks on total votes (like stats/leaderboard);
+			// every other class unlocks on its own per-class count.
+			if classId == "5" {
+				voteCount = user.VoteCount
+			}
+		}
+		if classId != "5" {
+			if vc, err := h.userRepo.GetVoteCountForClass(r.Context(), userId, classId); err != nil {
+				logger.Warn("[Handler - Vote] Couldn't get class vote count for progress. %v", err)
+			} else {
+				voteCount = vc
+			}
+		}
+	}
+
+	// Real progress toward this class's results-unlock threshold (same source
+	// of truth as /stats and the leaderboard gate), so the vote-screen ring is
+	// honest rather than a decorative +5%-per-click animation.
+	minVotes := getMinVotesForClass(classId)
+	progressPct := 0
+	if minVotes > 0 {
+		progressPct = voteCount * 100 / minVotes
+		if progressPct > 100 {
+			progressPct = 100
 		}
 	}
 
@@ -218,11 +259,17 @@ func (h *Handler) vote(w http.ResponseWriter, r *http.Request) {
 	defer h.bpool.Put(buf)
 
 	if err := h.template.ExecuteTemplate(buf, "vote.html", Content{
-		Pairing:       p,
-		Torrons:       []*domain.Torro{t1, t2},
-		HX:            isHX(r),
-		CurrentStreak: currentStreak,
-		StreakAtRisk:  streakAtRisk,
+		Pairing:            p,
+		Torrons:            []*domain.Torro{t1, t2},
+		HX:                 isHX(r),
+		CurrentStreak:      currentStreak,
+		StreakAtRisk:       streakAtRisk,
+		VoteCount:          voteCount,
+		MinVotes:           minVotes,
+		ProgressPercentage: progressPct,
+		ProgressDegrees:    float64(progressPct) * 3.6,
+		ResultsUnlocked:    voteCount >= minVotes,
+		Category:           classId,
 	}); err != nil {
 		logger.Error("[Handler - Vote] Couldn't execute template. %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -468,7 +515,7 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newP, err := h.pairingRepo.GetRandom(r.Context(), p.Class)
+	newP, err := h.pairingRepo.GetRandomExcluding(r.Context(), p.Class, pairingId)
 	if err != nil {
 		logger.Error("[Handler - Result] Couldn't get random pairing. %v", err)
 		render.Render(w, r, domain.ErrInternal(err))

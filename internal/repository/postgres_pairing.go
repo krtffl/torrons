@@ -169,6 +169,53 @@ func (r *postgresPairingRepo) GetRandom(ctx context.Context, classId string) (*d
 	return pairing, nil
 }
 
+// GetRandomExcluding mirrors GetRandom but skips excludeId, so the duel served
+// right after a vote is never a verbatim repeat of the one just voted on. If
+// the class has no other pairing, it falls back to GetRandom.
+func (r *postgresPairingRepo) GetRandomExcluding(ctx context.Context, classId, excludeId string) (*domain.Pairing, error) {
+	var count int
+	if err := r.db.QueryRowContext(ctx,
+		`SELECT COUNT(*) FROM "Pairings" WHERE "Class" = $1 AND "Id" <> $2`,
+		classId, excludeId,
+	).Scan(&count); err != nil {
+		return nil, handleErrors(err)
+	}
+
+	// Only the just-voted pairing exists (or none) — fall back rather than
+	// erroring, so a single-pairing class still returns something.
+	if count == 0 {
+		return r.GetRandom(ctx, classId)
+	}
+
+	offsetBig, err := rand.Int(rand.Reader, big.NewInt(int64(count)))
+	if err != nil {
+		return nil, handleErrors(err)
+	}
+	offset := int(offsetBig.Int64())
+
+	row := r.db.QueryRowContext(ctx,
+		`
+        SELECT "Id", "Torro1", "Torro2", "Class"
+        FROM "Pairings"
+        WHERE "Class" = $1 AND "Id" <> $2
+        LIMIT 1 OFFSET $3`,
+		classId,
+		excludeId,
+		offset,
+	)
+	pairing := &domain.Pairing{}
+	if err := row.Scan(
+		&pairing.Id,
+		&pairing.Torro1,
+		&pairing.Torro2,
+		&pairing.Class,
+	); err != nil {
+		return nil, handleErrors(err)
+	}
+
+	return pairing, nil
+}
+
 // GetDeterministic returns the same pairing for a given (classId, seed) pair
 // every time, mirroring GetRandom's offset-based query but using a caller
 // supplied seed instead of crypto/rand. An explicit ORDER BY is required

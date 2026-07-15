@@ -97,9 +97,14 @@
     <div class="vote-context-rail-divider"></div>
     {{ end }}
     <div class="vote-context-rail-progress">
-        <div id="progress-ring" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-        <div class="vote-context-rail-progress-text">vots per desbloquejar el resultat</div>
+        <div id="progress-ring" role="progressbar" aria-valuenow="{{ .ProgressPercentage }}" aria-valuemin="0" aria-valuemax="100"
+             style="background: conic-gradient(var(--color-primary) {{ .ProgressDegrees }}deg, var(--color-surface) {{ .ProgressDegrees }}deg);"></div>
+        <div class="vote-context-rail-progress-text js-progress-label">{{ if .ResultsUnlocked }}Resultats desbloquejats!{{ else }}{{ .VoteCount }}/{{ .MinVotes }} vots per desbloquejar el resultat{{ end }}</div>
     </div>
+    <a class="vote-context-rail-cta progress-unlock{{ if .ResultsUnlocked }} is-unlocked{{ end }}"
+       href="/leaderboard?view=personal&category={{ .Category }}"
+       hx-get="/leaderboard?view=personal&category={{ .Category }}" hx-boost="true"
+       hx-target="#main-content" hx-push-url="/leaderboard?view=personal&category={{ .Category }}">Veure resultats</a>
     <div class="vote-context-rail-tip">Vota cada dia per mantenir la ratxa.</div>
 </div>
 {{ end }}
@@ -148,7 +153,7 @@
 {{ end }}
 
 {{ define "progress" }}
-<div id="progress">
+<div id="progress" data-vote-count="{{ .VoteCount }}" data-min-votes="{{ .MinVotes }}">
     <div class="vote-round-header">
         <div class="vote-round-label">
             <span class="vote-round-icon" aria-hidden="true"></span>
@@ -169,28 +174,43 @@
         {{ end }}
     </div>
     <div class="progress-container">
-        <div id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        <div id="progress-bar" role="progressbar" aria-valuenow="{{ .ProgressPercentage }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ .ProgressPercentage }}%"></div>
     </div>
+    <a class="progress-unlock-link progress-unlock{{ if .ResultsUnlocked }} is-unlocked{{ end }}"
+       href="/leaderboard?view=personal&category={{ .Category }}"
+       hx-get="/leaderboard?view=personal&category={{ .Category }}" hx-boost="true"
+       hx-target="#main-content" hx-push-url="/leaderboard?view=personal&category={{ .Category }}">Resultats desbloquejats — veure</a>
 </div>
 
 <script>
+    // Advance the results-unlock progress by one REAL vote. Seeded server-side
+    // from the user's actual class vote count vs the threshold (data-* on
+    // #progress); when the threshold is reached, reveal the real "Veure
+    // resultats" link — replacing the old fake +5%-per-click animation that
+    // filled up and then did nothing.
     function updateProgress(event) {
-        var progressBar = document.getElementById("progress-bar");
-        var currentWidth = parseFloat(progressBar.style.width) || 0;
+        var root = document.getElementById("progress");
+        if (!root) return;
+        var min = parseInt(root.getAttribute("data-min-votes"), 10) || 0;
+        var count = parseInt(root.getAttribute("data-vote-count"), 10) || 0;
+        if (min <= 0 || count >= min) return;
 
-        if (currentWidth < 100) {
-            var newWidth = Math.min(currentWidth + 5, 100);
-            progressBar.style.width = newWidth + "%";
-            progressBar.setAttribute('aria-valuenow', newWidth);
+        count = Math.min(count + 1, min);
+        root.setAttribute("data-vote-count", count);
+        var pct = Math.min(Math.round((count / min) * 100), 100);
+        var deg = (pct / 100) * 360;
 
-            // Desktop-only ring (≥1280px) mirrors the same value — element
-            // isn't in the DOM outside the vote-context-rail, hence the guard.
-            var progressRing = document.getElementById("progress-ring");
-            if (progressRing) {
-                var deg = (newWidth / 100) * 360;
-                progressRing.style.background = "conic-gradient(var(--color-primary) " + deg + "deg, var(--color-surface) " + deg + "deg)";
-                progressRing.setAttribute('aria-valuenow', newWidth);
-            }
+        var bar = document.getElementById("progress-bar");
+        if (bar) { bar.style.width = pct + "%"; bar.setAttribute("aria-valuenow", pct); }
+        var ring = document.getElementById("progress-ring");
+        if (ring) {
+            ring.style.background = "conic-gradient(var(--color-primary) " + deg + "deg, var(--color-surface) " + deg + "deg)";
+            ring.setAttribute("aria-valuenow", pct);
+        }
+
+        if (count >= min) {
+            document.querySelectorAll(".progress-unlock").forEach(function (el) { el.classList.add("is-unlocked"); });
+            document.querySelectorAll(".js-progress-label").forEach(function (el) { el.textContent = "Resultats desbloquejats!"; });
         }
     }
 </script>

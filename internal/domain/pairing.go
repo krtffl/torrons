@@ -15,6 +15,13 @@ type PairingRepo interface {
 	ListByClass(ctx context.Context, classId string) ([]*Pairing, error)
 	GetRandom(ctx context.Context, classId string) (*Pairing, error)
 
+	// GetRandomExcluding returns a random pairing from the class other than
+	// excludeId. Used right after a vote so the next duel served is never a
+	// verbatim repeat of the one just voted on (plain GetRandom draws with
+	// replacement and can hand back the identical pair, reading as "my vote
+	// did nothing"). Falls back to any pairing if the class has only one.
+	GetRandomExcluding(ctx context.Context, classId, excludeId string) (*Pairing, error)
+
 	// GetDeterministic returns the same pairing for a given (classId, seed)
 	// pair every time it's called, mirroring GetRandom's offset-based query
 	// but with a caller-supplied seed instead of crypto/rand. Used to pick a

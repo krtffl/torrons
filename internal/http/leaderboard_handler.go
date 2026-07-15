@@ -181,10 +181,18 @@ func (h *Handler) fetchPersonalLeaderboard(r *http.Request, userId, category str
 		minVotes = globalLeaderboardMinVotes
 	}
 
+	// The "Global" competition is class id "5" AND the "global" pseudo-category;
+	// both mean "the whole thing", gated on total votes. The stats page unlocks
+	// class "5" against user.VoteCount (see stats_handler.go) and its "Veure
+	// resultats" link passes category=5, so this leaderboard MUST count total
+	// votes for "5" too — otherwise it re-checks the tiny per-arena count and
+	// contradicts the stats page ("51/50 unlocked" -> "no tens prou vots").
+	isGlobal := category == "global" || category == "5"
+
 	// Check if user has enough votes
 	var voteCount int
 	var err error
-	if category == "global" {
+	if isGlobal {
 		// For global, check total vote count
 		user, err := h.userRepo.Get(r.Context(), userId)
 		if err != nil {
