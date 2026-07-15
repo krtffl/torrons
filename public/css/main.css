@@ -45,6 +45,7 @@
     --color-text-light: #8A7458;         /* terra suau — secondary text */
     --color-text-light-dark: #6B5A44;    /* terra fosc — AA-contrast secondary text */
     --color-ink-panel: #4A3524;          /* raised panel inside dark "fitxa" callouts */
+    --color-ink-dim: #D8C7A8;            /* dimmed cream — secondary text on dark surfaces */
 
     --color-border: #E8D6B4;             /* default card/element border */
     --color-border-dashed: #D8C097;      /* dashed border — sponsorship / reserved-space placeholders */
@@ -177,6 +178,7 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     align-items: center;
     gap: 10px;
+    min-height: 44px;
     color: var(--color-card);
     cursor: pointer;
     margin: 0;
@@ -263,8 +265,9 @@ h1, h2, h3, h4, h5, h6 {
 
 #topbar img {
     margin: 0;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
+    padding: 2px;
     object-fit: contain;
     border-radius: 10px;
     cursor: pointer;
@@ -791,8 +794,8 @@ h1, h2, h3, h4, h5, h6 {
     position: absolute;
     top: 8px;
     left: 8px;
-    font: 600 7px ui-monospace, Menlo, monospace;
-    color: var(--color-text-light);
+    font: 600 11px ui-monospace, Menlo, monospace;
+    color: var(--color-text-light-dark);
 }
 
 .hero-torro-name {
@@ -1243,39 +1246,6 @@ button.arena-card-action:focus-visible {
     outline-offset: 2px;
 }
 
-/* Arena 02 — Novetats: a hair warmer than the default card tint (mockup's
-   own literal value; no existing token matches it closely enough to reuse). */
-.arena-card--2 .arena-card-action {
-    background: #FDF0DE;
-    border-color: #EAD2A6;
-    box-shadow: 0 3px 0 #EAD2A6;
-}
-
-.arena-card--2 button.arena-card-action:hover {
-    box-shadow: 0 6px 0 #EAD2A6;
-}
-
-.arena-card--2 button.arena-card-action:active {
-    box-shadow: 0 2px 0 #EAD2A6;
-}
-
-/* Arena 04 — Adrià Natura: quieter "limited edition" surface (mockup's own
-   literal value, same reasoning as Arena 02 above). */
-.arena-card--4 .arena-card-action {
-    background: #F6F2E6;
-    border: 1px solid #E3D6B0;
-    padding: 20px;
-    box-shadow: 0 1px 0 #E3D6B0;
-}
-
-.arena-card--4 button.arena-card-action:hover {
-    box-shadow: 0 4px 0 #E3D6B0;
-}
-
-.arena-card--4 button.arena-card-action:active {
-    box-shadow: 0 1px 0 #E3D6B0;
-}
-
 /* Arena 05 — Global: the premium cross-category showdown finale. Dark cacau
    surface + brand gold, matching the "GUANYADOR/VS" gold accent language —
    deliberately NOT burgundy, which stays reserved for competition-outcome
@@ -1286,22 +1256,22 @@ button.arena-card-action:focus-visible {
     border: 2px solid var(--color-brand-gold);
     border-radius: 22px;
     padding: 22px;
-    box-shadow: 0 8px 0 rgba(0, 0, 0, 0.18), 0 16px 34px var(--color-shadow-heavy);
+    box-shadow: 0 8px 0 var(--color-shadow-heavy), 0 16px 34px var(--color-shadow-heavy);
     margin-top: 4px;
 }
 
 .arena-card--final button.arena-card-action:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 0 rgba(0, 0, 0, 0.18), 0 20px 38px var(--color-shadow-heavy);
+    box-shadow: 0 10px 0 var(--color-shadow-heavy), 0 20px 38px var(--color-shadow-heavy);
 }
 
 .arena-card--final button.arena-card-action:active {
     transform: translateY(-1px);
-    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.18), 0 12px 28px var(--color-shadow-heavy);
+    box-shadow: 0 6px 0 var(--color-shadow-heavy), 0 12px 28px var(--color-shadow-heavy);
 }
 
 .arena-card--final button.arena-card-action:focus-visible {
-    outline-color: var(--color-brand-gold);
+    outline-color: var(--color-focus);
 }
 
 .arena-card--final .arena-eyebrow,
@@ -1315,7 +1285,7 @@ button.arena-card-action:focus-visible {
 }
 
 .arena-card--final .arena-description {
-    color: #D8C7A8; /* mockup's own literal tint of cream over the dark card; no token covers a text-on-dark shade */
+    color: var(--color-ink-dim);
 }
 
 /* Sinergia — visual-only, non-interactive placeholder (see markup comment
@@ -2671,6 +2641,7 @@ button.arena-card-action:focus-visible {
 .rank-1 .torron-info-link:hover,
 .rank-1 .torron-info-link:focus-visible {
     color: var(--color-brand-gold);
+    outline-color: var(--color-brand-gold);
 }
 
 /* Rating bar (reused by both hero and row layouts) */
@@ -2977,6 +2948,17 @@ button.arena-card-action:focus-visible {
     color: var(--color-text);
 }
 
+.category-tag {
+    display: inline-block;
+    margin-left: var(--spacing-xs);
+    font-family: var(--font-family-display);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: var(--color-text-light-dark);
+}
+
 .category-progress-meta {
     flex: none;
     text-align: right;
@@ -3060,7 +3042,9 @@ button.arena-card-action:focus-visible {
 }
 
 .category-progress-cta {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     font-family: var(--font-family-display);
     font-weight: 700;
     font-size: var(--font-size-sm);
@@ -3078,7 +3062,7 @@ button.arena-card-action:focus-visible {
 }
 
 .category-progress-cta:focus-visible {
-    outline: 2px solid var(--color-competition);
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
 }
 
@@ -3100,7 +3084,7 @@ button.arena-card-action:focus-visible {
     padding: var(--spacing-xs) var(--spacing-md);
     font-size: var(--font-size-sm);
     background-color: var(--color-primary);
-    color: var(--color-white);
+    color: var(--color-text);
     text-decoration: none;
     border-radius: var(--border-radius);
     transition: all var(--transition-fast);
@@ -3497,7 +3481,7 @@ button.arena-card-action:focus-visible {
     font-weight: 700;
     font-size: 11px;
     letter-spacing: 0.8px;
-    color: var(--color-text-light);
+    color: var(--color-text-light-dark);
     text-transform: uppercase;
 }
 
@@ -3533,7 +3517,7 @@ button.arena-card-action:focus-visible {
     font-family: var(--font-family);
     font-style: italic;
     font-size: 13.5px;
-    color: var(--color-text-light);
+    color: var(--color-text-light-dark);
 }
 
 /* Filter chips — horizontal-scroll pill row */
@@ -3553,9 +3537,12 @@ button.arena-card-action:focus-visible {
 
 .filter-btn {
     flex: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     padding: 7px 14px;
     background-color: transparent;
-    color: var(--color-text-light);
+    color: var(--color-text-light-dark);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-pill);
     cursor: pointer;
@@ -3597,7 +3584,7 @@ button.arena-card-action:focus-visible {
     font-weight: 700;
     font-size: 11px;
     letter-spacing: 1px;
-    color: var(--color-text-light);
+    color: var(--color-text-light-dark);
 }
 
 .history-item {
@@ -3753,7 +3740,7 @@ button.arena-card-action:focus-visible {
 
 .empty-hint {
     font-size: var(--font-size-base);
-    color: var(--color-text-light);
+    color: var(--color-text-light-dark);
     margin-bottom: var(--spacing-lg);
 }
 
@@ -3798,7 +3785,7 @@ button.arena-card-action:focus-visible {
 .share-title {
     font-size: var(--font-size-lg);
     font-weight: 700;
-    color: var(--color-primary);
+    color: var(--color-primary-dark);
     margin-bottom: var(--spacing-md);
 }
 
@@ -4002,8 +3989,8 @@ button.arena-card-action:focus-visible {
     color: var(--color-text-light);
     cursor: pointer;
     padding: 0;
-    width: 26px;
-    height: 26px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4691,14 +4678,14 @@ button.arena-card-action:focus-visible {
     display: inline-block;
     margin-top: var(--spacing-sm);
     font-size: var(--font-size-sm);
-    color: var(--color-text-light);
+    color: var(--color-text-light-dark);
     text-decoration: none;
     cursor: pointer;
 }
 
 .torron-info-link:hover,
 .torron-info-link:focus-visible {
-    color: var(--color-primary);
+    color: var(--color-primary-dark);
     text-decoration: underline;
 }
 
@@ -4761,7 +4748,7 @@ button.arena-card-action:focus-visible {
     font-family: var(--font-family-display);
     font-weight: 700;
     font-size: var(--font-size-sm);
-    color: var(--color-primary);
+    color: var(--color-primary-dark);
     text-decoration: none;
     padding: var(--spacing-xs) var(--spacing-sm);
     margin: calc(-1 * var(--spacing-xs)) calc(-1 * var(--spacing-sm));
@@ -4965,8 +4952,8 @@ button.arena-card-action:focus-visible {
 }
 
 .torro-intensity-seg.is-filled {
-    background-color: var(--color-competition);
-    border-color: var(--color-competition);
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
 }
 
 .torro-diet-grid {
@@ -5359,14 +5346,14 @@ button.arena-card-action:focus-visible {
     font-family: var(--press-mono);
     font-size: 11px;
     letter-spacing: .4px;
-    color: var(--color-text-light);
+    color: var(--color-text-light-dark);
 }
 
 .press-credit-dot {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: var(--color-competition);
+    background: var(--color-primary-dark);
     flex-shrink: 0;
 }
 
@@ -5953,6 +5940,10 @@ button.arena-card-action:focus-visible {
     box-shadow: var(--shadow-sticker);
 }
 
+.advent-torron-card .torron-name {
+    color: var(--color-text);
+}
+
 .advent-torron-card:nth-child(1) { transform: rotate(-1deg); }
 .advent-torron-card:nth-child(3) { transform: rotate(1deg); }
 
@@ -6127,7 +6118,7 @@ button.arena-card-action:focus-visible {
 }
 
 .friends-bridge-card:focus-visible {
-    outline: 2px solid var(--color-primary-dark);
+    outline: 3px solid var(--color-focus);
     outline-offset: 3px;
 }
 
@@ -6533,7 +6524,7 @@ button.arena-card-action:focus-visible {
 .wrapped-empty {
     font-family: var(--font-family);
     font-style: italic;
-    color: var(--color-text-light);
+    color: var(--color-text-light-dark);
     margin: 0;
 }
 
@@ -6599,7 +6590,7 @@ button.arena-card-action:focus-visible {
 .wrapped-stat-caption {
     font-family: var(--font-family);
     font-size: var(--font-size-sm);
-    color: var(--color-text-light);
+    color: var(--color-text-light-dark);
     margin: 0;
 }
 
@@ -6640,7 +6631,7 @@ button.arena-card-action:focus-visible {
     font-size: 11px;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    color: var(--color-text-light);
+    color: var(--color-text-light-dark);
     margin-top: 2px;
 }
 
@@ -7136,7 +7127,7 @@ button.arena-card-action:focus-visible {
     font-size: 0.75rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--color-text-light);
+    color: var(--color-text-light-dark);
     margin-bottom: var(--spacing-md);
 }
 
@@ -7170,7 +7161,7 @@ button.arena-card-action:focus-visible {
     font-size: 0.6875rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: var(--color-text-light);
+    color: var(--color-text-light-dark);
     margin-bottom: var(--spacing-sm);
 }
 
@@ -7231,6 +7222,9 @@ button.arena-card-action:focus-visible {
 }
 
 .content-cross-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     font-family: var(--font-family-display);
     font-size: 0.85rem;
     font-weight: 600;

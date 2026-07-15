@@ -172,6 +172,12 @@
     <div class="leaderboard-list">
         {{ range .Entries }}
         {{ template "leaderboard-entry" . }}
+        {{ else }}
+        <div class="history-empty">
+            <div class="empty-icon">🔍</div>
+            <div class="empty-message">Cap torró coincideix</div>
+            <div class="empty-hint">Cap torró coincideix amb aquests filtres. Prova de treure'n algun per veure més resultats.</div>
+        </div>
         {{ end }}
     </div>
 
