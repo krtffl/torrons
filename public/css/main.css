@@ -2866,7 +2866,13 @@ button.arena-card-action:focus-visible {
 .stats-title {
     font-size: var(--font-size-2xl);
     font-weight: 700;
-    color: var(--color-primary);
+    /* AA-contrast caramel: this shared title renders as text on cream on
+       every page that still uses it (friends, bracket, advent "Duel d'avui"),
+       so it must be --color-primary-dark, not the lighter --color-primary,
+       which fails contrast on cream (the "caramel is never text on cream"
+       rule). The redesigned stats/reveal pages use their own dark hero
+       titles and are unaffected. */
+    color: var(--color-primary-dark);
     margin-bottom: var(--spacing-sm);
 }
 
