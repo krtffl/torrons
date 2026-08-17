@@ -20,11 +20,23 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://torro.cat/#organization",
+      "name": "Torrorèndum",
+      "url": "https://torro.cat",
+      "logo": "https://torro.cat/public/assets/logo.png",
+      "description": "Projecte de fans independent i no oficial, sense cap relació amb Torrons Vicens: una comunitat que vota duels de torrons i en publica el rànquing i les dades obertament."
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Torrorèndum",
       "url": "https://torro.cat",
       "description": "Projecte de fans independent on es vota, es compara i es classifiquen torrons cada temporada de Nadal.",
       "inLanguage": "ca",
+      "publisher": { "@id": "https://torro.cat/#organization" },
       "mentions": {
         "@type": "Brand",
         "name": "Torrons Vicens"
@@ -454,6 +466,7 @@
         <a href="/classes" hx-get="/classes" hx-boost="true" hx-target="#main-content" hx-push-url="/classes">Categories</a>
         <a href="/leaderboard" hx-get="/leaderboard" hx-boost="true" hx-target="#main-content" hx-push-url="/leaderboard">Classificació</a>
         <a href="/ranquing-de-torrons" hx-get="/ranquing-de-torrons" hx-boost="true" hx-target="#main-content" hx-push-url="/ranquing-de-torrons">Rànquing de torrons</a>
+        <a href="/millors-torrons-vicens" hx-get="/millors-torrons-vicens" hx-boost="true" hx-target="#main-content" hx-push-url="/millors-torrons-vicens">Millors torrons Vicens</a>
         <a href="/bracket/5" hx-get="/bracket/5" hx-boost="true" hx-target="#main-content" hx-push-url="/bracket/5">Quadre</a>
         <a href="/premsa" hx-get="/premsa" hx-boost="true" hx-target="#main-content" hx-push-url="/premsa">Premsa</a>
         <a href="/sobre" hx-get="/sobre" hx-boost="true" hx-target="#main-content" hx-push-url="/sobre">Sobre / FAQ</a>

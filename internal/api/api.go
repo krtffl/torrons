@@ -88,7 +88,7 @@ func New(c *config.Config, runMigrations bool) *Torrons {
 		logger.Warn("[API - New] ADMIN_TOKEN is not set - bracket admin endpoints (create/advance) will reject all requests")
 	}
 
-	srv := http.New(c.Port, handler, c.TrustedProxies)
+	srv := http.New(c.Port, handler, c.TrustedProxies, c.IndexNowKey)
 
 	return &Torrons{
 		cfg: c,

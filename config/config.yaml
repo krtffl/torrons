@@ -26,3 +26,4 @@ logger:
 # Admin
 ##############################################################
 admin_token: "" # Required for POST /bracket/{classId}/create and /bracket/{bracketId}/advance. Set via ADMIN_TOKEN env var; endpoints reject all requests while empty.
+indexnow_key: "" # Optional. Enables IndexNow (Bing instant indexing, feeds ChatGPT answers). Set via INDEXNOW_KEY env var; a random 32+ char hex string.

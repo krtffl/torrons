@@ -1,6 +1,9 @@
 package domain
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
 // TorroStat is a single torró paired with a numeric value whose meaning
 // depends on which PressStatsRepo method produced it (a total vote count,
@@ -53,4 +56,10 @@ type PressStatsRepo interface {
 	// Results row per vote). Used by the public ranking page to state the
 	// size of the dataset behind the standings ("segons X vots").
 	TotalVotes(ctx context.Context) (int, error)
+
+	// LatestVoteTime returns the timestamp of the most recent recorded vote,
+	// or nil if no votes exist. Feeds the sitemap <lastmod> of the
+	// vote-driven pages and the IndexNow change detection - both must stay
+	// honest, so they key off real data changes, not render times.
+	LatestVoteTime(ctx context.Context) (*time.Time, error)
 }

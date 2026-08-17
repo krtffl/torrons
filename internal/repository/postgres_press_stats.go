@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/krtffl/torro/internal/domain"
 )
@@ -199,4 +200,20 @@ func (r *postgresPressStatsRepo) TotalVotes(ctx context.Context) (int, error) {
 	}
 
 	return votes, nil
+}
+
+// LatestVoteTime returns MAX("Timestamp") over Results - an index-backed
+// lookup (idx_results_timestamp) - or nil when no votes exist.
+func (r *postgresPressStatsRepo) LatestVoteTime(ctx context.Context) (*time.Time, error) {
+	row := r.db.QueryRowContext(ctx, `SELECT MAX("Timestamp") FROM "Results"`)
+
+	var latest sql.NullTime
+	if err := row.Scan(&latest); err != nil {
+		return nil, handleErrors(err)
+	}
+	if !latest.Valid {
+		return nil, nil
+	}
+
+	return &latest.Time, nil
 }

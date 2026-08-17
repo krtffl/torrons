@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/oxtoacart/bpool"
 
@@ -56,6 +57,18 @@ type fakeBracketRepo struct {
 	brackets map[string]*domain.Bracket // classId -> latest bracket, absent = none
 }
 
+// fakePressStatsRepo is a minimal stand-in for domain.PressStatsRepo, used
+// only by sitemapXML's use of LatestVoteTime (embedded-nil-interface trick,
+// same as fakeBracketRepo).
+type fakePressStatsRepo struct {
+	domain.PressStatsRepo
+	latestVote *time.Time
+}
+
+func (f *fakePressStatsRepo) LatestVoteTime(ctx context.Context) (*time.Time, error) {
+	return f.latestVote, nil
+}
+
 func (f *fakeBracketRepo) GetLatestByClass(ctx context.Context, classId string) (*domain.Bracket, error) {
 	return f.brackets[classId], nil
 }
@@ -100,6 +113,12 @@ func TestSitemapXML(t *testing.T) {
 			// to exercise the "no bracket yet" skip path.
 			"5": {Id: "bracket-1", ClassId: "5"},
 		}},
+		pressStatsRepo: &fakePressStatsRepo{
+			latestVote: func() *time.Time {
+				t := time.Date(2026, time.August, 15, 12, 0, 0, 0, time.UTC)
+				return &t
+			}(),
+		},
 	}
 
 	req := httptest.NewRequest(http.MethodGet, "/sitemap.xml", nil)
@@ -123,6 +142,9 @@ func TestSitemapXML(t *testing.T) {
 		"<loc>https://torro.cat/torro-agramunt-igp</loc>",
 		"<loc>https://torro.cat/torro-agramunt-vs-xixona</loc>",
 		"<loc>https://torro.cat/tipus-de-torrons</loc>",
+		"<loc>https://torro.cat/millors-torrons-vicens</loc>",
+		"<loc>https://torro.cat/es/turron-de-agramunt</loc>",
+		"<loc>https://torro.cat/ranquing-de-torrons</loc><lastmod>2026-08-15</lastmod>",
 	} {
 		if !strings.Contains(body, want) {
 			t.Errorf("sitemap missing expected URL %q, got: %s", want, body)

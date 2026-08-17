@@ -90,6 +90,36 @@ func (h *Handler) publicRanking(w http.ResponseWriter, r *http.Request) {
 	buf.WriteTo(w)
 }
 
+// millorsVicens handles GET /millors-torrons-vicens: a buying-guide framing
+// of the same cached standings, targeting the "millors torrons Vicens" /
+// "quin torró de Vicens comprar" query family (no answer page existed
+// anywhere for it at the 2026-08-17 baseline). Shares rankingContent's
+// cache, so it adds no query load.
+func (h *Handler) millorsVicens(w http.ResponseWriter, r *http.Request) {
+	logger.Info("[Handler - MillorsVicens] Incoming request")
+
+	content, err := h.rankingContent(r)
+	if err != nil {
+		logger.Error("[Handler - MillorsVicens] Couldn't build ranking. %v", err)
+		h.renderErrorPage(w)
+		return
+	}
+
+	content.HX = isHX(r)
+
+	buf := h.bpool.Get()
+	defer h.bpool.Put(buf)
+
+	if err := h.template.ExecuteTemplate(buf, "millors_vicens.html", content); err != nil {
+		logger.Error("[Handler - MillorsVicens] Couldn't execute template. %v", err)
+		h.renderErrorPage(w)
+		return
+	}
+
+	setStaticPageCacheHeaders(w)
+	buf.WriteTo(w)
+}
+
 // rankingContent returns the cached ranking payload, recomputing it when the
 // TTL lapses. On recompute failure it serves the last good value if one
 // exists, only surfacing the error when there is nothing cached at all.
