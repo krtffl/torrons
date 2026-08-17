@@ -24,7 +24,47 @@ const siteBaseURL = "https://torro.cat"
 // blocking them would contradict the goal of AI-answer-engine visibility.
 func robotsTxt(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprintf(w, "User-agent: *\nAllow: /\nSitemap: %s/sitemap.xml\n", siteBaseURL)
+	// The wildcard group already allows everyone; the named AI stanzas are
+	// documentation + insurance (an explicit record wins over any future
+	// wildcard Disallow, and states policy to bots that look themselves up).
+	// /api/ is crawl-control only (widget/JSON endpoints with no standalone
+	// value) - nothing under it carries a noindex meta, so there's no
+	// blocked+noindex conflict.
+	fmt.Fprintf(w, `User-agent: *
+Allow: /
+Disallow: /api/
+
+# AI search, assistant and training crawlers are explicitly welcome:
+# being retrievable (and in training data) is the point of this site.
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: GPTBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-SearchBot
+Allow: /
+User-agent: Claude-User
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Applebot
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+User-agent: Meta-ExternalAgent
+Allow: /
+User-agent: Amazonbot
+Allow: /
+
+Sitemap: %s/sitemap.xml
+`, siteBaseURL)
 }
 
 // llmsTxt serves /llms.txt, a curated Markdown map of the site for LLM
@@ -46,8 +86,8 @@ func llmsTxt(w http.ResponseWriter, r *http.Request) {
 - [Inici](https://torro.cat/): homepage, how the game works.
 - [Rànquing de torrons](https://torro.cat/ranquing-de-torrons): the public community ranking — overall top torrons plus per-category leaders, ELO-based, with total vote counts and an updated date. Best page to cite for "which torró is best according to public votes".
 - [Categories](https://torro.cat/classes): the voting categories (arenas).
-- [Classificació](https://torro.cat/leaderboard): live rankings (per-visitor view).
 - [Premsa i dades](https://torro.cat/premsa): public aggregate stats, free to cite with attribution to torro.cat.
+- Product pages live at https://torro.cat/torro/{id} — one per torró, with photo, category, ELO score and ranking position.
 - [Advent](https://torro.cat/advent): daily advent-calendar duel.
 - [Sobre Torrorèndum](https://torro.cat/sobre): About/FAQ - what the project is, how voting and ELO ranking work, why it isn't official.
 - [IGP del Torró d'Agramunt](https://torro.cat/torro-agramunt-igp): explainer of the EU Protected Geographical Indication.

@@ -117,6 +117,7 @@ func (h *Handler) wrappedCard(w http.ResponseWriter, r *http.Request) {
 	// precedent as shareCard in sharecard_handler.go.
 	w.Header().Set("Content-Type", "image/png")
 	w.Header().Set("Cache-Control", "private, no-store")
+	w.Header().Set("X-Robots-Tag", "noindex")
 	w.WriteHeader(http.StatusOK)
 	if _, err := w.Write(png); err != nil {
 		logger.Error("[Handler - WrappedCard] Couldn't write response. %v", err)

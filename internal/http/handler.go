@@ -581,6 +581,17 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	buf.WriteTo(w)
 }
 
+// notFound renders the branded 404 page ("notfound.html" define in
+// error.html) with recovery links, replacing chi's plain-text default.
+func (h *Handler) notFound(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusNotFound)
+	if err := h.template.ExecuteTemplate(w, "notfound.html", Content{}); err != nil {
+		logger.Error("[Handler - NotFound] Couldn't execute template. %v", err)
+		http.Error(w, "404 page not found", http.StatusNotFound)
+	}
+}
+
 func isHX(r *http.Request) bool {
 	if r.Header.Get("HX-Request") == "true" {
 		return true
