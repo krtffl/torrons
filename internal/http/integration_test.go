@@ -133,7 +133,7 @@ func setupIntegrationDB(t *testing.T) *sql.DB {
 func newIntegrationTemplate(t *testing.T) *template.Template {
 	t.Helper()
 
-	tmpls, err := template.New("").ParseFS(torrons.Public, "public/templates/*.html")
+	tmpls, err := template.New("").Funcs(templateFuncs).ParseFS(torrons.Public, "public/templates/*.html")
 	if err != nil {
 		t.Fatalf("failed to parse templates: %v", err)
 	}

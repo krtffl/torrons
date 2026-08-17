@@ -48,4 +48,9 @@ type PressStatsRepo interface {
 	// champion torró (as opposed to MostVotedTorro, which finds whichever
 	// torró has the most wins, not necessarily this one).
 	VotesForTorro(ctx context.Context, torroId string) (int, error)
+
+	// TotalVotes returns the total number of duel votes ever recorded (one
+	// Results row per vote). Used by the public ranking page to state the
+	// size of the dataset behind the standings ("segons X vots").
+	TotalVotes(ctx context.Context) (int, error)
 }

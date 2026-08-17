@@ -17,7 +17,7 @@ import (
 // is a zero-DB static page, so this renders the real parsed template tree
 // without needing a database.
 func TestStaticContentPages(t *testing.T) {
-	tmpls, err := template.New("").ParseFS(torrons.Public, "public/templates/*.html")
+	tmpls, err := template.New("").Funcs(templateFuncs).ParseFS(torrons.Public, "public/templates/*.html")
 	if err != nil {
 		t.Fatalf("failed to parse templates: %v", err)
 	}
@@ -64,7 +64,7 @@ func TestStaticContentPages(t *testing.T) {
 // second full page inside the existing header/topbar/footer, doubling them
 // on screen. See torro.cat production bug, 2026-07-09.
 func TestIndexHXFragment(t *testing.T) {
-	tmpls, err := template.New("").ParseFS(torrons.Public, "public/templates/*.html")
+	tmpls, err := template.New("").Funcs(templateFuncs).ParseFS(torrons.Public, "public/templates/*.html")
 	if err != nil {
 		t.Fatalf("failed to parse templates: %v", err)
 	}

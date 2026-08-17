@@ -186,3 +186,17 @@ func (r *postgresPressStatsRepo) torroNamesAndImages(ctx context.Context, torro1
 
 	return info, nil
 }
+
+// TotalVotes returns the all-time count of recorded duel votes (Results
+// rows). Callers cache it (see rankingCache in internal/http) so the count
+// scan doesn't run per request.
+func (r *postgresPressStatsRepo) TotalVotes(ctx context.Context) (int, error) {
+	row := r.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM "Results"`)
+
+	var votes int
+	if err := row.Scan(&votes); err != nil {
+		return 0, handleErrors(err)
+	}
+
+	return votes, nil
+}

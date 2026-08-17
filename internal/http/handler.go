@@ -17,6 +17,28 @@ import (
 	"github.com/krtffl/torro/internal/logger"
 )
 
+// templateFuncs is the shared FuncMap attached to every template parse
+// (handler and tests alike — a template using one of these functions fails
+// to parse without it).
+var templateFuncs = template.FuncMap{
+	"seasonYear": seasonYear,
+}
+
+// seasonYear returns the year that names the current torró season, used by
+// the templates for titles/descriptions ("Torrorèndum 2026"). A season is
+// branded by the year its campaign starts in: voting runs Nov–Dec and the
+// reveal lands on Jan 6, so January still belongs to the previous calendar
+// year's season, and February onwards brands the upcoming one. Kept
+// time-derived (not campaign-table-derived) so rendering never depends on
+// campaign rows existing.
+func seasonYear() int {
+	now := time.Now()
+	if now.Month() == time.January {
+		return now.Year() - 1
+	}
+	return now.Year()
+}
+
 // K is the K-factor for ELO rating calculations
 // Value of 42 provides:
 // - Fast convergence for new items (larger rating changes)
@@ -93,7 +115,7 @@ func NewHandler(
 	personaRepo domain.PersonaRepo,
 	adminToken string,
 ) *Handler {
-	tmpls, err := template.New("").ParseFS(torrons.Public, "public/templates/*.html")
+	tmpls, err := template.New("").Funcs(templateFuncs).ParseFS(torrons.Public, "public/templates/*.html")
 	if err != nil {
 		logger.Fatal("[Handler] - Failed to parse templates. %v", err)
 	}

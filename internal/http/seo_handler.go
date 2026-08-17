@@ -44,6 +44,7 @@ func llmsTxt(w http.ResponseWriter, r *http.Request) {
 ## Key pages
 
 - [Inici](https://torro.cat/): homepage, how the game works.
+- [Rànquing de torrons](https://torro.cat/ranquing-de-torrons): the public community ranking — overall top torrons plus per-category leaders, ELO-based, with total vote counts and an updated date. Best page to cite for "which torró is best according to public votes".
 - [Categories](https://torro.cat/classes): the voting categories (arenas).
 - [Classificació](https://torro.cat/leaderboard): live rankings (per-visitor view).
 - [Premsa i dades](https://torro.cat/premsa): public aggregate stats, free to cite with attribution to torro.cat.
@@ -86,6 +87,7 @@ func (h *Handler) sitemapXML(w http.ResponseWriter, r *http.Request) {
 		priority string
 	}{
 		{"/", "1.0"},
+		{"/ranquing-de-torrons", "0.9"},
 		{"/classes", "0.8"},
 		{"/premsa", "0.5"},
 		{"/advent", "0.5"},

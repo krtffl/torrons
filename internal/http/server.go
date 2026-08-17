@@ -228,6 +228,10 @@ func (srv *Server) Run() error {
 		// Leaderboard visualization
 		r.Get("/leaderboard", srv.handler.leaderboard)
 
+		// Public, indexable community ranking (the SEO/AEO counterpart of
+		// /leaderboard, which defaults to a personalized, noindexed view).
+		r.Get("/ranquing-de-torrons", srv.handler.publicRanking)
+
 		// User statistics page
 		r.Get("/stats", srv.handler.stats)
 

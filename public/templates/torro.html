@@ -4,9 +4,31 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{{ .Torro.Name }} - vota'l al Torrorèndum 2025 i compara'l amb la resta de torrons.">
+    <meta name="description" content="{{ .Torro.Name }}{{ if .Torro.HasClassName }} ({{ .Torro.ClassName }}){{ end }}: fitxa del producte, puntuació ELO i posició al rànquing comunitari. Vota'l en duels al Torrorèndum {{ seasonYear }} i compara'l amb la resta de torrons.">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <link rel="canonical" href="https://torro.cat/torro/{{ .Torro.Id }}">
+
+    <!-- Product entity for this torró. Deliberately WITHOUT aggregateRating:
+         our ELO score isn't a review-scale rating, and self-collected scores
+         on ranked content risk Google's review-snippet policies. The brand is
+         the product's maker (Torrons Vicens), which is accurate and distinct
+         from this site's publisher (the independent Torrorèndum project). -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "{{ .Torro.Name }}",
+      "url": "https://torro.cat/torro/{{ .Torro.Id }}",
+      "image": "https://torro.cat/public/images/{{ .Torro.Image }}",
+      {{ if .Torro.HasDescription }}"description": "{{ .Torro.Description }}",{{ end }}
+      {{ if .Torro.HasWeight }}"weight": "{{ .Torro.Weight }}",{{ end }}
+      {{ if .Torro.HasClassName }}"category": "{{ .Torro.ClassName }}",{{ end }}
+      "brand": {
+        "@type": "Brand",
+        "name": "Torrons Vicens"
+      }
+    }
+    </script>
 
     <script type="application/ld+json">
     {
@@ -23,29 +45,33 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://torro.cat/torro/{{ .Torro.Id }}">
-    <meta property="og:title" content="{{ .Torro.Name }} - Torrorèndum 2025">
-    <meta property="og:description" content="{{ .Torro.Name }} - vota'l al Torrorèndum 2025 i compara'l amb la resta de torrons.">
+    <meta property="og:title" content="{{ .Torro.Name }} - Torrorèndum {{ seasonYear }}">
+    <meta property="og:description" content="{{ .Torro.Name }} - vota'l al Torrorèndum {{ seasonYear }} i compara'l amb la resta de torrons.">
     <meta property="og:image" content="https://torro.cat/public/assets/og-image.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:locale" content="ca_ES">
-    <meta property="og:site_name" content="Torrorèndum 2025">
+    <meta property="og:site_name" content="Torrorèndum {{ seasonYear }}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://torro.cat/torro/{{ .Torro.Id }}">
-    <meta property="twitter:title" content="{{ .Torro.Name }} - Torrorèndum 2025">
-    <meta property="twitter:description" content="{{ .Torro.Name }} - vota'l al Torrorèndum 2025 i compara'l amb la resta de torrons.">
+    <meta property="twitter:title" content="{{ .Torro.Name }} - Torrorèndum {{ seasonYear }}">
+    <meta property="twitter:description" content="{{ .Torro.Name }} - vota'l al Torrorèndum {{ seasonYear }} i compara'l amb la resta de torrons.">
     <meta property="twitter:image" content="https://torro.cat/public/assets/og-image.jpg">
 
     <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/icons/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/public/icons/apple-touch-icon.png">
+    <link rel="manifest" href="/public/icons/site.webmanifest">
     <link rel="stylesheet" href="/public/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
     <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org@1.9.9/dist/ext/json-enc.js" integrity="sha384-nRnAvEUI7N/XvvowiMiq7oEI04gOXMCqD3Bidvedw+YNbj7zTQACPlRI3Jt3vYM4" crossorigin="anonymous"></script>
-    <title>{{ .Torro.Name }} - Torrorèndum 2025</title>
+    <title>{{ .Torro.Name }} - Torrorèndum {{ seasonYear }}</title>
   </head>
   <body hx-indicator="#loading-indicator">
       <!-- Global loading indicator -->

@@ -195,7 +195,7 @@ func (f *fakeClassRepo) List(ctx context.Context) ([]*domain.Class, error) {
 func newFriendsTestHandler(t *testing.T, circleRepo *fakeFriendCircleRepo, userRepo *fakeUserRepo, classRepo *fakeClassRepo) *Handler {
 	t.Helper()
 
-	tmpls, err := template.New("").ParseFS(torrons.Public, "public/templates/*.html")
+	tmpls, err := template.New("").Funcs(templateFuncs).ParseFS(torrons.Public, "public/templates/*.html")
 	if err != nil {
 		t.Fatalf("failed to parse templates: %v", err)
 	}

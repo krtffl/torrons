@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Primary Meta Tags -->
-    <title>Torrorèndum 2025 - Vota el millor torró</title>
-    <meta name="title" content="Torrorèndum 2025 - Vota el millor torró">
-    <meta name="description" content="Participa al Torrorèndum 2025! Vota i escull els teus torrons favorits. Compara, vota i descobreix els millors torrons amb el teu ranking personalitzat.">
-    <meta name="keywords" content="torrons, torró, votació, Nadal, torrons artesans, torrorèndum, millor torró, torrons 2025">
+    <title>Torrorèndum {{ seasonYear }} - Vota el millor torró</title>
+    <meta name="title" content="Torrorèndum {{ seasonYear }} - Vota el millor torró">
+    <meta name="description" content="Participa al Torrorèndum {{ seasonYear }}! Vota i escull els teus torrons favorits. Compara, vota i descobreix els millors torrons amb el teu ranking personalitzat.">
+    <meta name="keywords" content="torrons, torró, votació, Nadal, torrons artesans, torrorèndum, millor torró, torrons {{ seasonYear }}">
     <meta name="author" content="Torrorèndum">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <link rel="canonical" href="https://torro.cat">
@@ -49,19 +49,19 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://torro.cat/">
-    <meta property="og:title" content="Torrorèndum 2025 - Vota el millor torró">
-    <meta property="og:description" content="Participa al Torrorèndum 2025! Vota i escull els teus torrons favorits amb el teu ranking personalitzat.">
+    <meta property="og:title" content="Torrorèndum {{ seasonYear }} - Vota el millor torró">
+    <meta property="og:description" content="Participa al Torrorèndum {{ seasonYear }}! Vota i escull els teus torrons favorits amb el teu ranking personalitzat.">
     <meta property="og:image" content="https://torro.cat/public/assets/og-image.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:locale" content="ca_ES">
-    <meta property="og:site_name" content="Torrorèndum 2025">
+    <meta property="og:site_name" content="Torrorèndum {{ seasonYear }}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://torro.cat/">
-    <meta property="twitter:title" content="Torrorèndum 2025 - Vota el millor torró">
-    <meta property="twitter:description" content="Participa al Torrorèndum 2025! Vota els teus torrons favorits.">
+    <meta property="twitter:title" content="Torrorèndum {{ seasonYear }} - Vota el millor torró">
+    <meta property="twitter:description" content="Participa al Torrorèndum {{ seasonYear }}! Vota els teus torrons favorits.">
     <meta property="twitter:image" content="https://torro.cat/public/assets/og-image.jpg">
 
     <!-- Theme Color -->
@@ -69,6 +69,10 @@
     <meta name="msapplication-TileColor" content="#8A2638">
 
     <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/icons/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/public/icons/apple-touch-icon.png">
+    <link rel="manifest" href="/public/icons/site.webmanifest">
     <link rel="stylesheet" href="/public/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -449,6 +453,7 @@
         <a href="/" hx-get="/" hx-boost="true" hx-target="#main-content" hx-push-url="/">Inici</a>
         <a href="/classes" hx-get="/classes" hx-boost="true" hx-target="#main-content" hx-push-url="/classes">Categories</a>
         <a href="/leaderboard" hx-get="/leaderboard" hx-boost="true" hx-target="#main-content" hx-push-url="/leaderboard">Classificació</a>
+        <a href="/ranquing-de-torrons" hx-get="/ranquing-de-torrons" hx-boost="true" hx-target="#main-content" hx-push-url="/ranquing-de-torrons">Rànquing de torrons</a>
         <a href="/bracket/5" hx-get="/bracket/5" hx-boost="true" hx-target="#main-content" hx-push-url="/bracket/5">Quadre</a>
         <a href="/premsa" hx-get="/premsa" hx-boost="true" hx-target="#main-content" hx-push-url="/premsa">Premsa</a>
         <a href="/sobre" hx-get="/sobre" hx-boost="true" hx-target="#main-content" hx-push-url="/sobre">Sobre / FAQ</a>
