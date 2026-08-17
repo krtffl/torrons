@@ -1,0 +1,180 @@
+{{ if not .HX }}
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Quin torró de Torrons Vicens triar? Els més ben valorats {{ if gt .TotalVotes 0 }}segons {{ .TotalVotes }} vots{{ end }} en duels cara a cara: el top 10, el millor de cada categoria i com ho mesurem. Guia independent, no oficial.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://torro.cat/millors-torrons-vicens">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Els millors torrons Vicens {{ seasonYear }} segons els vots — Torrorèndum",
+      "description": "El top 10 de torrons de Torrons Vicens segons els duels votats per la comunitat independent del Torrorèndum (sistema ELO).",
+      "url": "https://torro.cat/millors-torrons-vicens",
+      "inLanguage": "ca",
+      "itemListOrder": "https://schema.org/ItemListOrderAscending",
+      "numberOfItems": {{ if gt (len .Entries) 10 }}10{{ else }}{{ len .Entries }}{{ end }},
+      "itemListElement": [
+        {{ range $i, $e := .Entries }}{{ if lt $i 10 }}{{ if $i }},{{ end }}{
+          "@type": "ListItem",
+          "position": {{ $e.Rank }},
+          "name": "{{ $e.TorronName }}",
+          "url": "https://torro.cat/torro/{{ $e.TorronId }}"
+        }{{ end }}{{ end }}
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Inici", "item": "https://torro.cat/"},
+        {"@type": "ListItem", "position": 2, "name": "Rànquing de torrons", "item": "https://torro.cat/ranquing-de-torrons"},
+        {"@type": "ListItem", "position": 3, "name": "Els millors torrons Vicens", "item": "https://torro.cat/millors-torrons-vicens"}
+      ]
+    }
+    </script>
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://torro.cat/millors-torrons-vicens">
+    <meta property="og:title" content="Els millors torrons Vicens {{ seasonYear }} segons els vots">
+    <meta property="og:description" content="Quin torró de Vicens triar? El top 10 i el millor de cada categoria, votat per la comunitat. Guia independent, no oficial.">
+    <meta property="og:image" content="https://torro.cat/public/assets/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="ca_ES">
+    <meta property="og:site_name" content="Torrorèndum {{ seasonYear }}">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://torro.cat/millors-torrons-vicens">
+    <meta name="twitter:title" content="Els millors torrons Vicens {{ seasonYear }} segons els vots">
+    <meta name="twitter:description" content="El top 10 i el millor de cada categoria, votat per la comunitat.">
+    <meta name="twitter:image" content="https://torro.cat/public/assets/og-image.jpg">
+
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/icons/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/public/icons/apple-touch-icon.png">
+    <link rel="manifest" href="/public/icons/site.webmanifest">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+    <script src="/public/js/htmx.min.js" defer></script>
+    <script src="/public/js/json-enc.js" defer></script>
+    <title>Els millors torrons Vicens {{ seasonYear }} segons els vots — Guia per triar</title>
+  </head>
+  <body hx-indicator="#loading-indicator">
+      <!-- Global loading indicator -->
+      <div id="loading-indicator"></div>
+
+      {{ template "header" . }}
+      {{ template "topbar" . }}
+      <div id="main-content">
+          {{ template "millors-vicens" . }}
+      </div>
+      {{ template "footer" . }}
+  </body>
+</html>
+{{ else }}
+      {{ template "millors-vicens" . }}
+{{ end }}
+
+{{ define "millors-vicens" }}
+<div id="content-page-container">
+    <nav class="content-breadcrumb" aria-label="Camí de navegació"><a href="/" hx-get="/" hx-boost="true" hx-target="#main-content" hx-push-url="/">Inici</a><span class="content-breadcrumb-sep" aria-hidden="true">&rsaquo;</span><a href="/ranquing-de-torrons" hx-get="/ranquing-de-torrons" hx-boost="true" hx-target="#main-content" hx-push-url="/ranquing-de-torrons">Rànquing de torrons</a><span class="content-breadcrumb-sep" aria-hidden="true">&rsaquo;</span><span aria-current="page">Els millors torrons Vicens</span></nav>
+    <div class="content-masthead">
+        <span class="content-eyebrow">Guia per triar</span>
+        <h1 class="content-title">Els millors torrons Vicens {{ seasonYear }} segons els vots</h1>
+        <p class="content-subtitle">
+            {{ if .Entries }}{{ with index .Entries 0 }}El torró de Torrons Vicens més ben valorat
+            {{ if gt $.TotalVotes 0 }}pels {{ $.TotalVotes }} vots{{ else }}pels duels{{ end }} de la
+            comunitat és <strong>{{ .TorronName }}</strong> (ELO {{ printf "%.0f" .Rating }},
+            dada del {{ $.UpdatedAt }}).{{ end }}{{ end }}
+            Aquesta guia independent resumeix el top 10 i el millor de cada categoria perquè
+            triïs sense haver de tastar els 107.
+        </p>
+    </div>
+
+    <div class="content-body">
+        <h2>El top 10</h2>
+        {{ if .Entries }}
+        <ol>
+            {{ range $i, $e := .Entries }}{{ if lt $i 10 }}
+            <li>
+                <a href="/torro/{{ $e.TorronId }}"
+                   hx-get="/torro/{{ $e.TorronId }}"
+                   hx-target="#main-content"
+                   hx-push-url="/torro/{{ $e.TorronId }}">{{ $e.TorronName }}</a>
+                — ELO {{ printf "%.0f" $e.Rating }}
+            </li>
+            {{ end }}{{ end }}
+        </ol>
+        <p>
+            La classificació completa, amb totes les posicions i els filtres per categoria,
+            és al <a href="/ranquing-de-torrons" hx-get="/ranquing-de-torrons" hx-target="#main-content" hx-push-url="/ranquing-de-torrons">rànquing de torrons</a>.
+        </p>
+        {{ else }}
+        <p>La temporada encara no ha arrencat: el top 10 apareixerà aquí a mesura que la comunitat voti.</p>
+        {{ end }}
+
+        {{ if .Categories }}
+        <h2>El millor de cada categoria</h2>
+        <p>Si ja saps quin estil et va (clàssic, xocolata, novetats o la línia d'autor), aquests són els líders actuals:</p>
+        {{ range .Categories }}
+        {{ if .Entries }}
+        {{ $top := index .Entries 0 }}
+        <p>
+            <strong>{{ .Class.Name }}:</strong>
+            <a href="/torro/{{ $top.TorronId }}"
+               hx-get="/torro/{{ $top.TorronId }}"
+               hx-target="#main-content"
+               hx-push-url="/torro/{{ $top.TorronId }}">{{ $top.TorronName }}</a>
+            ({{ printf "%.0f" $top.Rating }} ELO)
+        </p>
+        {{ end }}
+        {{ end }}
+        {{ end }}
+
+        <h2>Com ho sabem?</h2>
+        <p>
+            No som un jurat ni una cata patrocinada: cada visitant del Torrorèndum vota duels
+            cara a cara entre dos torrons, i un sistema de puntuació ELO (el mateix que ordena
+            jugadors d'escacs) converteix milers de preferències reals en aquesta classificació.
+            El mètode complet és explicat a
+            <a href="/sobre" hx-get="/sobre" hx-target="#main-content" hx-push-url="/sobre">Sobre el projecte</a>,
+            i les dades agregades són públiques i citables a
+            <a href="/premsa" hx-get="/premsa" hx-target="#main-content" hx-push-url="/premsa">Premsa i dades</a>.
+        </p>
+
+        <h2>On es compren?</h2>
+        <p>
+            El Torrorèndum no ven res: és un projecte de fans independent, sense cap relació
+            oficial amb Torrons Vicens. Els productes es troben a la
+            <a href="https://www.vicens.com" target="_blank" rel="noopener noreferrer">botiga oficial de Torrons Vicens</a>
+            i als seus punts de venda habituals.
+        </p>
+
+        <h2>I si no hi estàs d'acord?</h2>
+        <p>
+            Vota! El rànquing es mou amb cada duel:
+            <a href="/classes" hx-get="/classes" hx-target="#main-content" hx-push-url="/classes">tria una categoria</a>
+            i defensa el teu preferit. Amb prou vots també desbloquejaràs el teu rànquing
+            personal a la <a href="/leaderboard" hx-get="/leaderboard" hx-target="#main-content" hx-push-url="/leaderboard">classificació</a>.
+        </p>
+    </div>
+
+    <nav class="content-cross-links" aria-label="Més pàgines">
+        <a class="content-cross-link" href="/ranquing-de-torrons" hx-get="/ranquing-de-torrons" hx-boost="true" hx-target="#main-content" hx-push-url="/ranquing-de-torrons">Rànquing complet</a>
+        <a class="content-cross-link" href="/tipus-de-torrons" hx-get="/tipus-de-torrons" hx-boost="true" hx-target="#main-content" hx-push-url="/tipus-de-torrons">Tipus de torrons</a>
+        <a class="content-cross-link" href="/classes" hx-get="/classes" hx-boost="true" hx-target="#main-content" hx-push-url="/classes">Comença a votar</a>
+    </nav>
+</div>
+{{ end }}

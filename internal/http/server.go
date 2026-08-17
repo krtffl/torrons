@@ -27,12 +27,14 @@ type Server struct {
 	port           uint
 	handler        *Handler
 	trustedProxies []string
+	indexNowKey    string
 }
 
 func New(
 	port uint,
 	handler *Handler,
 	trustedProxies []string,
+	indexNowKey string,
 ) *Server {
 	ctx, shutdownFn := context.WithCancel(context.Background())
 
@@ -43,6 +45,7 @@ func New(
 		port:           port,
 		handler:        handler,
 		trustedProxies: trustedProxies,
+		indexNowKey:    indexNowKey,
 	}
 }
 
@@ -236,6 +239,25 @@ func (srv *Server) Run() error {
 		r.Get("/sitemap", srv.handler.sitemapXML)
 		r.Get("/llms", llmsTxt)
 
+		// IndexNow key-verification file ({key}.txt at the root, containing
+		// the key). Dotless registration for the same URLFormat reason as
+		// /robots above. The daily pinger itself starts in Run below. The
+		// key is validated first: chi panics on route patterns containing
+		// '{', '}' or '*', so a malformed key must disable IndexNow, not
+		// crash the whole server at startup.
+		if srv.indexNowKey != "" {
+			if !validIndexNowKey(srv.indexNowKey) {
+				logger.Warn("[HTTP Server] INDEXNOW_KEY is not a valid IndexNow key (a-z A-Z 0-9 and dashes only); IndexNow disabled")
+				srv.indexNowKey = ""
+			} else {
+				key := srv.indexNowKey
+				r.Get("/"+key, func(w http.ResponseWriter, r *http.Request) {
+					w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+					fmt.Fprint(w, key)
+				})
+			}
+		}
+
 		r.Get("/", srv.handler.index)
 
 		r.Get("/classes", srv.handler.classes)
@@ -325,6 +347,14 @@ func (srv *Server) Run() error {
 		r.Get("/torro-agramunt-igp", srv.handler.igpExplainer)
 		r.Get("/torro-agramunt-vs-xixona", srv.handler.agramuntVsXixona)
 		r.Get("/tipus-de-torrons", srv.handler.torroGlossary)
+
+		// Buying-guide framing of the public ranking ("quin torró de Vicens
+		// triar") - same cached data as /ranquing-de-torrons.
+		r.Get("/millors-torrons-vicens", srv.handler.millorsVicens)
+
+		// Spanish subtree (/es/...): hreflang-paired twins of the Catalan
+		// content pages, starting with the Agramunt IGP explainer.
+		r.Get("/es/turron-de-agramunt", srv.handler.turronAgramuntES)
 	})
 	// **********        **********
 
@@ -377,6 +407,10 @@ func (srv *Server) Run() error {
 		WriteTimeout:   15 * time.Second,
 		IdleTimeout:    60 * time.Second,
 		MaxHeaderBytes: 1 << 20, // 1 MB
+	}
+
+	if srv.indexNowKey != "" {
+		go srv.handler.runIndexNowPinger(srv.ctx, srv.indexNowKey)
 	}
 
 	go func() {

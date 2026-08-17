@@ -90,6 +90,7 @@
 
 {{ define "ranquing" }}
 <div id="content-page-container">
+    <nav class="content-breadcrumb" aria-label="Camí de navegació"><a href="/" hx-get="/" hx-boost="true" hx-target="#main-content" hx-push-url="/">Inici</a><span class="content-breadcrumb-sep" aria-hidden="true">&rsaquo;</span><span aria-current="page">Rànquing de torrons</span></nav>
     <div class="content-masthead">
         <span class="content-eyebrow">Classificació oberta</span>
         <h1 class="content-title">Rànquing de torrons {{ seasonYear }}</h1>
@@ -102,6 +103,23 @@
     </div>
 
     <div class="content-body">
+        {{ if .Entries }}
+        <!-- Direct, extractable answer for "quin és el millor torró?": one
+             claim, a number, a date - the shape assistants can quote. -->
+        <h2>Quin és el millor torró?</h2>
+        <p>
+            {{ with index .Entries 0 }}
+            Segons el Torrorèndum, el millor torró {{ if gt $.TotalVotes 0 }}segons {{ $.TotalVotes }} vots en duels cara a cara{{ else }}segons els duels de la comunitat{{ end }}
+            és <strong><a href="/torro/{{ .TorronId }}"
+                hx-get="/torro/{{ .TorronId }}"
+                hx-target="#main-content"
+                hx-push-url="/torro/{{ .TorronId }}">{{ .TorronName }}</a></strong>,
+            amb una puntuació ELO de {{ printf "%.0f" .Rating }} (dada del {{ $.UpdatedAt }}).
+            {{ end }}
+            El rànquing es mou a mesura que arriben vots nous: la resposta completa és la llista següent.
+        </p>
+        {{ end }}
+
         <h2>Els millors torrons segons la comunitat</h2>
         {{ if .Entries }}
         <div class="leaderboard-list">

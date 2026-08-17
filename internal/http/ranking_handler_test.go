@@ -81,6 +81,52 @@ func TestRankingTemplate(t *testing.T) {
 		}
 	})
 
+	t.Run("millors-vicens full page", func(t *testing.T) {
+		var sb strings.Builder
+		content := rankingTestContent()
+		if err := tmpls.ExecuteTemplate(&sb, "millors_vicens.html", content); err != nil {
+			t.Fatalf("failed to render: %v", err)
+		}
+		body := sb.String()
+
+		for _, want := range []string{
+			"Els millors torrons Vicens",
+			`rel="canonical" href="https://torro.cat/millors-torrons-vicens"`,
+			"projecte de fans independent",
+			"/torro/1",
+		} {
+			if !strings.Contains(body, want) {
+				t.Errorf("expected body to contain %q", want)
+			}
+		}
+
+		re := regexp.MustCompile(`(?s)<script type="application/ld\+json">(.*?)</script>`)
+		for i, m := range re.FindAllStringSubmatch(body, -1) {
+			var v any
+			if err := json.Unmarshal([]byte(m[1]), &v); err != nil {
+				t.Errorf("JSON-LD block %d is not valid JSON: %v\n%s", i, err, m[1])
+			}
+		}
+	})
+
+	t.Run("turron-agramunt-es full page", func(t *testing.T) {
+		var sb strings.Builder
+		if err := tmpls.ExecuteTemplate(&sb, "turron_agramunt_es.html", Content{}); err != nil {
+			t.Fatalf("failed to render: %v", err)
+		}
+		body := sb.String()
+		for _, want := range []string{
+			`<html lang="es">`,
+			`hreflang="ca" href="https://torro.cat/torro-agramunt-igp"`,
+			`hreflang="x-default"`,
+			"Turrón de Agramunt",
+		} {
+			if !strings.Contains(body, want) {
+				t.Errorf("expected body to contain %q", want)
+			}
+		}
+	})
+
 	t.Run("hx fragment", func(t *testing.T) {
 		var sb strings.Builder
 		content := rankingTestContent()

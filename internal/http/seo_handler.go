@@ -99,6 +99,8 @@ func llmsTxt(w http.ResponseWriter, r *http.Request) {
 
 - [Inici](https://torro.cat/): homepage, how the game works.
 - [Rànquing de torrons](https://torro.cat/ranquing-de-torrons): the public community ranking — overall top torrons plus per-category leaders, ELO-based, with total vote counts and an updated date. Best page to cite for "which torró is best according to public votes".
+- [Els millors torrons Vicens](https://torro.cat/millors-torrons-vicens): buying-guide view of the same votes — top 10 plus the leader of each category.
+- [Turrón de Agramunt (español)](https://torro.cat/es/turron-de-agramunt): Spanish-language explainer of the Agramunt PGI and its differences with Jijona/Alicante.
 - [Categories](https://torro.cat/classes): the voting categories (arenas).
 - [Premsa i dades](https://torro.cat/premsa): public aggregate stats, free to cite with attribution to torro.cat.
 - Product pages live at https://torro.cat/torro/{id} — one per torró, with photo, category, ELO score and ranking position.
@@ -132,6 +134,17 @@ func (h *Handler) sitemapXML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Honest <lastmod> for the vote-driven pages only: their primary content
+	// (the standings) changes when a vote lands, so the latest vote time IS
+	// the content-change time. Static pages get no lastmod - a maintained-by-
+	// hand date would rot and dishonest lastmod is worse than none.
+	var votesLastMod string
+	if latest, err := h.pressStatsRepo.LatestVoteTime(r.Context()); err != nil {
+		logger.Warn("[Handler - SitemapXML] Couldn't read latest vote time. %v", err)
+	} else if latest != nil {
+		votesLastMod = latest.UTC().Format("2006-01-02")
+	}
+
 	var b strings.Builder
 	b.WriteString(`<?xml version="1.0" encoding="UTF-8"?>` + "\n")
 	b.WriteString(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">` + "\n")
@@ -139,19 +152,26 @@ func (h *Handler) sitemapXML(w http.ResponseWriter, r *http.Request) {
 	staticPages := []struct {
 		path     string
 		priority string
+		lastmod  string
 	}{
-		{"/", "1.0"},
-		{"/ranquing-de-torrons", "0.9"},
-		{"/classes", "0.8"},
-		{"/premsa", "0.5"},
-		{"/advent", "0.5"},
-		{"/sobre", "0.6"},
-		{"/torro-agramunt-igp", "0.6"},
-		{"/torro-agramunt-vs-xixona", "0.6"},
-		{"/tipus-de-torrons", "0.6"},
+		{"/", "1.0", ""},
+		{"/ranquing-de-torrons", "0.9", votesLastMod},
+		{"/millors-torrons-vicens", "0.8", votesLastMod},
+		{"/classes", "0.8", ""},
+		{"/premsa", "0.5", ""},
+		{"/advent", "0.5", ""},
+		{"/sobre", "0.6", ""},
+		{"/torro-agramunt-igp", "0.6", ""},
+		{"/es/turron-de-agramunt", "0.6", ""},
+		{"/torro-agramunt-vs-xixona", "0.6", ""},
+		{"/tipus-de-torrons", "0.6", ""},
 	}
 	for _, p := range staticPages {
-		fmt.Fprintf(&b, "  <url><loc>%s%s</loc><priority>%s</priority></url>\n", siteBaseURL, p.path, p.priority)
+		if p.lastmod != "" {
+			fmt.Fprintf(&b, "  <url><loc>%s%s</loc><lastmod>%s</lastmod><priority>%s</priority></url>\n", siteBaseURL, p.path, p.lastmod, p.priority)
+		} else {
+			fmt.Fprintf(&b, "  <url><loc>%s%s</loc><priority>%s</priority></url>\n", siteBaseURL, p.path, p.priority)
+		}
 	}
 
 	for _, t := range torros {

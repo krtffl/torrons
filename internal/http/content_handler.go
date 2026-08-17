@@ -27,6 +27,14 @@ func (h *Handler) agramuntVsXixona(w http.ResponseWriter, r *http.Request) {
 	h.renderStaticPage(w, "comparativa.html", isHX(r))
 }
 
+// turronAgramuntES renders /es/turron-de-agramunt: the Spanish-language
+// twin of the IGP explainer (hreflang-paired with /torro-agramunt-igp).
+// First page of the /es/ subtree.
+func (h *Handler) turronAgramuntES(w http.ResponseWriter, r *http.Request) {
+	logger.Info("[Handler - TurronAgramuntES] Incoming request")
+	h.renderStaticPage(w, "turron_agramunt_es.html", isHX(r))
+}
+
 // torroGlossary renders /tipus-de-torrons: a glossary of common torró
 // variety names and terms.
 func (h *Handler) torroGlossary(w http.ResponseWriter, r *http.Request) {

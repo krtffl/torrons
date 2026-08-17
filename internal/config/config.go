@@ -59,6 +59,13 @@ type Config struct {
 	// through.
 	AdminToken string `mapstructure:"admin_token" yaml:"admin_token"`
 
+	// IndexNowKey enables IndexNow support (Bing/Yandex/etc. instant
+	// indexing; Bing's index feeds ChatGPT answers). When set, the server
+	// exposes /{key}.txt for endpoint verification and pings
+	// api.indexnow.org daily whenever the voting data actually changed.
+	// Empty (the default) disables the feature entirely.
+	IndexNowKey string `mapstructure:"indexnow_key" yaml:"indexnow_key"`
+
 	// TrustedProxies is the set of CIDR ranges whose requests are allowed to
 	// set the client IP via X-Forwarded-For / X-Real-IP. Requests from any
 	// other peer have those headers ignored and are keyed by their real TCP
@@ -150,6 +157,9 @@ func overrideWithEnvVars(config *Config) {
 	}
 	if token := secretEnv("ADMIN_TOKEN"); token != "" {
 		config.AdminToken = token
+	}
+	if key := secretEnv("INDEXNOW_KEY"); key != "" {
+		config.IndexNowKey = key
 	}
 	if proxies := os.Getenv("TRUSTED_PROXIES"); proxies != "" {
 		var list []string
