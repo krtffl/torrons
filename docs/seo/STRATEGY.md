@@ -70,21 +70,25 @@ htmx, explicit AI-crawler robots.txt, error/404 pages, trailing-slash 301s, full
 icon/manifest set, per-product og:images, X-Robots-Tag on personal PNGs.
 
 Remaining backlog (ordered):
-- [ ] **C-1** Organization JSON-LD sitewide (name, logo, description with the
-      independence disclosure verbatim, `sameAs` once handles exist) — currently only
-      WebSite+WebApplication on the homepage carry entity data.
-- [ ] **C-2** Quotable first-paragraph answers (40–80 words, number + date) on every
-      money page — partially done on /ranquing-de-torrons; extend to /sobre, IGP,
-      comparativa, glossari (GEO rec 7).
-- [ ] **C-3** Honest `<lastmod>` in the sitemap for the ranking page (from latest
-      Result timestamp) and content pages (from a maintained constant) — Google uses
-      honest lastmod for crawl scheduling; fake dates are worse than none.
+- [x] **C-1** Organization JSON-LD (homepage, @id-linked from WebSite.publisher,
+      disclosure machine-readable) — DONE 2026-08-17; add `sameAs` once social
+      handles exist.
+- [x] **C-2** Quotable answer lead on /ranquing-de-torrons ("Quin és el millor
+      torró?" with name, ELO, vote count, date) — DONE 2026-08-17; still open:
+      extend the 40–80-word direct-answer pattern to /sobre, IGP, comparativa,
+      glossari.
+- [x] **C-3** Honest `<lastmod>` for the vote-driven pages (from latest Result
+      timestamp) — DONE 2026-08-17; static pages deliberately get none.
 - [ ] **C-4** Self-host the two Google Fonts families (removes the last
-      render-blocking third-party + GDPR-gray dependency).
-- [ ] **C-5** Visible breadcrumb UI matching the BreadcrumbList markup.
+      render-blocking third-party + GDPR-gray dependency). Blocked from the CI
+      sandbox (fonts hosts egress-denied) — do from a normal dev machine.
+- [x] **C-5** Visible breadcrumb UI on content pages — DONE 2026-08-17.
 - [ ] **C-6** `web-vitals` INP/LCP field measurement on the vote flow (INP is the
       at-risk metric: click → ELO write → next-duel render must stay <200 ms).
-- [ ] **C-7** IndexNow ping hook (daily or on ranking-order change).
+      Depends on the analytics substrate (Pillar 1).
+- [x] **C-7** IndexNow support behind INDEXNOW_KEY (key route + daily
+      change-gated pinger) — DONE 2026-08-17; operator must generate a key and
+      set the env var.
 - [ ] **C-8** htmx 1.9.12/2.x upgrade evaluation (currently pinned 1.9.9).
 
 ### Pillar 3 — Content architecture (the page plan, from `research/keyword-universe.md`)
@@ -95,14 +99,14 @@ press/data page, 107 product pages, advent page (retitled).
 Build order (each page: exact-match title ≤60 chars = H1, quotable lead with numbers,
 FAQ block, interlinked hub-and-spoke):
 
-- [ ] **P0-a** "Quin és el millor torró?" evergreen answer page fed by live vote data
-      (or make /ranquing-de-torrons carry the question explicitly in an H2+lead).
-- [ ] **P0-b** "Els torrons Vicens més votats" guide (zero competition; disclosure
-      prominent).
-- [ ] **P0-c** Spanish twin of the IGP explainer: "Turrón de Agramunt: qué es, IGP,
-      diferencias con Jijona" — the highest-affinity ES gap (no editorial reference
-      exists; TasteAtlas ranks #1). First page of the `/es/` subtree.
-- [ ] **P0-d** ES ranking landing "Ranking de turrones (por votos)".
+- [x] **P0-a** /ranquing-de-torrons carries "Quin és el millor torró?" as an
+      H2 + quotable direct answer — DONE 2026-08-17.
+- [x] **P0-b** /millors-torrons-vicens buying guide (top 10 + per-category
+      leaders + methodology + official-shop pointer) — DONE 2026-08-17.
+- [x] **P0-c** /es/turron-de-agramunt Spanish IGP twin, hreflang-paired with
+      /torro-agramunt-igp (x-default = Catalan) — DONE 2026-08-17.
+- [ ] **P0-d** ES ranking landing "Ranking de turrones (por votos)" — next /es/
+      page; follow the millors_vicens pattern with Spanish copy + hreflang.
 - [ ] **P1-a** Seasonal hub "Torrons Nadal 2026: novetats i resultats" — **publish
       by early October**; freeze a "Classificació Nadal 2026" edition in January
       (year-labeled URLs are how every incumbent wins December queries).
