@@ -34,34 +34,48 @@ func robotsTxt(w http.ResponseWriter, r *http.Request) {
 Allow: /
 Disallow: /api/
 
-# AI search, assistant and training crawlers are explicitly welcome:
-# being retrievable (and in training data) is the point of this site.
+# AI search, assistant and training crawlers are explicitly welcome.
+# Named groups REPLACE the wildcard group for their bot (RFC 9309), so each
+# repeats the /api/ crawl-control disallow to keep policy identical.
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /api/
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /api/
 User-agent: GPTBot
 Allow: /
+Disallow: /api/
 User-agent: ClaudeBot
 Allow: /
+Disallow: /api/
 User-agent: Claude-SearchBot
 Allow: /
+Disallow: /api/
 User-agent: Claude-User
 Allow: /
+Disallow: /api/
 User-agent: PerplexityBot
 Allow: /
+Disallow: /api/
 User-agent: Perplexity-User
 Allow: /
+Disallow: /api/
 User-agent: Google-Extended
 Allow: /
+Disallow: /api/
 User-agent: Applebot
 Allow: /
+Disallow: /api/
 User-agent: Applebot-Extended
 Allow: /
+Disallow: /api/
 User-agent: Meta-ExternalAgent
 Allow: /
+Disallow: /api/
 User-agent: Amazonbot
 Allow: /
+Disallow: /api/
 
 Sitemap: %s/sitemap.xml
 `, siteBaseURL)

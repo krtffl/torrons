@@ -21,11 +21,11 @@
       "itemListOrder": "https://schema.org/ItemListOrderAscending",
       "numberOfItems": {{ len .Entries }},
       "itemListElement": [
-        {{ range .Entries }}{{ if gt .Rank 1 }},{{ end }}{
+        {{ range $i, $e := .Entries }}{{ if $i }},{{ end }}{
           "@type": "ListItem",
-          "position": {{ .Rank }},
-          "name": "{{ .TorronName }}",
-          "url": "https://torro.cat/torro/{{ .TorronId }}"
+          "position": {{ $e.Rank }},
+          "name": "{{ $e.TorronName }}",
+          "url": "https://torro.cat/torro/{{ $e.TorronId }}"
         }{{ end }}
       ]
     }

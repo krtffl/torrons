@@ -64,8 +64,20 @@ func (srv *Server) Run() error {
 	r.Use(middleware.URLFormat)
 	// 301 "/sobre/" -> "/sobre" instead of 404: trailing-slash typos and
 	// externally-mangled links keep their link equity. Registered after
-	// URLFormat so "/sobre.html/" also resolves.
-	r.Use(middleware.RedirectSlashes)
+	// URLFormat so "/sobre.html/" also resolves. Must NOT cover /public/*:
+	// http.FileServer canonicalizes directory URLs by ADDING a trailing
+	// slash, so the two middlewares would 301 each other forever on
+	// /public/<dir> URLs (go-chi/chi#343).
+	r.Use(func(next http.Handler) http.Handler {
+		redirecting := middleware.RedirectSlashes(next)
+		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+			if strings.HasPrefix(req.URL.Path, "/public/") {
+				next.ServeHTTP(w, req)
+				return
+			}
+			redirecting.ServeHTTP(w, req)
+		})
+	})
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
 	// Compress text responses (HTML/CSS/JS/JSON/XML/SVG). Everything was served

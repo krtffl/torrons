@@ -38,20 +38,17 @@ func (h *Handler) torroGlossary(w http.ResponseWriter, r *http.Request) {
 // beyond the HX flag) shared by every handler in this file, following the
 // same buffer/error-page convention as index() and classes().
 func (h *Handler) renderStaticPage(w http.ResponseWriter, templateName string, hx bool) {
-	setStaticPageCacheHeaders(w)
-
 	buf := h.bpool.Get()
 	defer h.bpool.Put(buf)
 
 	if err := h.template.ExecuteTemplate(buf, templateName, Content{HX: hx}); err != nil {
 		logger.Error("[Handler - StaticPage] Couldn't execute template %s. %v", templateName, err)
-		w.WriteHeader(http.StatusInternalServerError)
-		if execErr := h.template.ExecuteTemplate(w, "error.html", Content{}); execErr != nil {
-			logger.Error("[Handler - StaticPage] Failed to render error page. %v", execErr)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		}
+		h.renderErrorPage(w)
 		return
 	}
 
+	// Set only after a successful render so an error response can never be
+	// emitted with a public max-age and get pinned by a shared cache.
+	setStaticPageCacheHeaders(w)
 	buf.WriteTo(w)
 }

@@ -21,7 +21,8 @@ import (
 // (handler and tests alike — a template using one of these functions fails
 // to parse without it).
 var templateFuncs = template.FuncMap{
-	"seasonYear": seasonYear,
+	"seasonYear":     seasonYear,
+	"lastSeasonYear": lastSeasonYear,
 }
 
 // seasonYear returns the year that names the current torró season, used by
@@ -37,6 +38,19 @@ func seasonYear() int {
 		return now.Year() - 1
 	}
 	return now.Year()
+}
+
+// lastSeasonYear returns the year naming the most recently PLAYED season:
+// the in-progress one during Nov–Jan, otherwise the previous one. The
+// retrospective pages (wrapped, reveal, stats, history) summarize data from
+// that season, so from Feb through Oct they must keep last season's label
+// while seasonYear already brands the upcoming one.
+func lastSeasonYear() int {
+	now := time.Now()
+	if now.Month() >= time.November {
+		return now.Year()
+	}
+	return now.Year() - 1
 }
 
 // K is the K-factor for ELO rating calculations
@@ -147,26 +161,23 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 	buf := h.bpool.Get()
 	defer h.bpool.Put(buf)
 
+	if err := h.template.ExecuteTemplate(buf, "index.html", Content{
+		HX: isHX(r),
+	}); err != nil {
+		logger.Error("[Handler - Index] Couldn't execute template. %v", err)
+		h.renderErrorPage(w)
+		return
+	}
+
 	// Purely static (no DB dependency) - safe to cache. Same 1-hour TTL used
 	// for /public/* CSS/JS: short enough that a deploy propagates quickly,
 	// long enough to actually get cached. Vary on HX-Request because the
 	// template renders a full page shell vs. an htmx partial depending on it -
 	// without Vary a shared cache could serve the wrong variant to a client
 	// with a different HX-Request header than whoever populated the cache.
+	// Set only after a successful render so an error response is never
+	// cacheable.
 	setStaticPageCacheHeaders(w)
-
-	if err := h.template.ExecuteTemplate(buf, "index.html", Content{
-		HX: isHX(r),
-	}); err != nil {
-		logger.Error("[Handler - Index] Couldn't execute template. %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		if execErr := h.template.ExecuteTemplate(w, "error.html", Content{}); execErr != nil {
-			logger.Error("[Handler - Index] Failed to render error page. %v", execErr)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		}
-		return
-	}
-
 	buf.WriteTo(w)
 }
 
@@ -579,6 +590,18 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	}
 
 	buf.WriteTo(w)
+}
+
+// renderErrorPage writes the branded 500 page. Shared by handlers whose
+// error path has nothing page-specific to add beyond their own log line.
+// (Several older handlers still inline this same block; fold them into this
+// helper opportunistically when touching them.)
+func (h *Handler) renderErrorPage(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusInternalServerError)
+	if err := h.template.ExecuteTemplate(w, "error.html", Content{}); err != nil {
+		logger.Error("[Handler - ErrorPage] Failed to render error page. %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 }
 
 // notFound renders the branded 404 page ("notfound.html" define in

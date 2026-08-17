@@ -67,33 +67,26 @@ func (h *Handler) publicRanking(w http.ResponseWriter, r *http.Request) {
 	content, err := h.rankingContent(r)
 	if err != nil {
 		logger.Error("[Handler - PublicRanking] Couldn't build ranking. %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		if execErr := h.template.ExecuteTemplate(w, "error.html", Content{}); execErr != nil {
-			logger.Error("[Handler - PublicRanking] Failed to render error page. %v", execErr)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		}
+		h.renderErrorPage(w)
 		return
 	}
 
 	content.HX = isHX(r)
-
-	// Cacheable like the static content pages: identical for every visitor,
-	// and the underlying data is already memoized for rankingCacheTTL.
-	setStaticPageCacheHeaders(w)
 
 	buf := h.bpool.Get()
 	defer h.bpool.Put(buf)
 
 	if err := h.template.ExecuteTemplate(buf, "ranquing.html", content); err != nil {
 		logger.Error("[Handler - PublicRanking] Couldn't execute template. %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		if execErr := h.template.ExecuteTemplate(w, "error.html", Content{}); execErr != nil {
-			logger.Error("[Handler - PublicRanking] Failed to render error page. %v", execErr)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		}
+		h.renderErrorPage(w)
 		return
 	}
 
+	// Cacheable like the static content pages: identical for every visitor,
+	// and the underlying data is already memoized for rankingCacheTTL. Set
+	// only after the render succeeded, so an error response can never go out
+	// with a public max-age and get pinned by a shared cache.
+	setStaticPageCacheHeaders(w)
 	buf.WriteTo(w)
 }
 

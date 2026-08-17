@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Descobreix la teva personalitat torronaire - Torrorèndum {{ seasonYear }}">
+    <meta name="description" content="Descobreix la teva personalitat torronaire - Torrorèndum {{ lastSeasonYear }}">
     <!-- noindex: personal, per-user content. The shareable artifact here is
          the downloadable PNG card (GET /reveal/card), which is
          session-gated and never cached/shared across users by design — not
@@ -14,19 +14,19 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://torro.cat/reveal">
-    <meta property="og:title" content="La teva revelació - Torrorèndum {{ seasonYear }}">
-    <meta property="og:description" content="Descobreix la teva personalitat torronaire - Torrorèndum {{ seasonYear }}">
+    <meta property="og:title" content="La teva revelació - Torrorèndum {{ lastSeasonYear }}">
+    <meta property="og:description" content="Descobreix la teva personalitat torronaire - Torrorèndum {{ lastSeasonYear }}">
     <meta property="og:image" content="https://torro.cat/public/assets/og-image.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:locale" content="ca_ES">
-    <meta property="og:site_name" content="Torrorèndum {{ seasonYear }}">
+    <meta property="og:site_name" content="Torrorèndum {{ lastSeasonYear }}">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://torro.cat/reveal">
-    <meta name="twitter:title" content="La teva revelació - Torrorèndum {{ seasonYear }}">
-    <meta name="twitter:description" content="Descobreix la teva personalitat torronaire - Torrorèndum {{ seasonYear }}">
+    <meta name="twitter:title" content="La teva revelació - Torrorèndum {{ lastSeasonYear }}">
+    <meta name="twitter:description" content="Descobreix la teva personalitat torronaire - Torrorèndum {{ lastSeasonYear }}">
     <meta name="twitter:image" content="https://torro.cat/public/assets/og-image.jpg">
 
     <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
@@ -40,7 +40,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap">
     <script src="/public/js/htmx.min.js" defer></script>
     <script src="/public/js/json-enc.js" defer></script>
-    <title>La teva revelació - Torrorèndum {{ seasonYear }}</title>
+    <title>La teva revelació - Torrorèndum {{ lastSeasonYear }}</title>
   </head>
   <body hx-indicator="#loading-indicator">
       <!-- Global loading indicator -->
@@ -78,7 +78,7 @@
                 <span class="stats-eyebrow-mark" aria-hidden="true"></span>
                 Torrorèndum · revelació personal
             </div>
-            <span class="stats-season-pill">Torrorèndum {{ seasonYear }}</span>
+            <span class="stats-season-pill">Torrorèndum {{ lastSeasonYear }}</span>
         </div>
         <h1 class="stats-hero-title">La teva revelació</h1>
         <p class="stats-hero-subtitle">Descobreix quin tipus de votant ets, i quin torró t'ha convençut més.</p>
