@@ -79,7 +79,7 @@ func TestRobotsTxt(t *testing.T) {
 }
 
 func TestSitemapXML(t *testing.T) {
-	tmpls, err := template.New("").ParseFS(torrons.Public, "public/templates/*.html")
+	tmpls, err := template.New("").Funcs(templateFuncs).ParseFS(torrons.Public, "public/templates/*.html")
 	if err != nil {
 		t.Fatalf("failed to parse templates: %v", err)
 	}

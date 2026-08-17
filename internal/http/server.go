@@ -62,6 +62,22 @@ func (srv *Server) Run() error {
 	r.Use(middleware.RequestID)
 	r.Use(realIP.middleware)
 	r.Use(middleware.URLFormat)
+	// 301 "/sobre/" -> "/sobre" instead of 404: trailing-slash typos and
+	// externally-mangled links keep their link equity. Registered after
+	// URLFormat so "/sobre.html/" also resolves. Must NOT cover /public/*:
+	// http.FileServer canonicalizes directory URLs by ADDING a trailing
+	// slash, so the two middlewares would 301 each other forever on
+	// /public/<dir> URLs (go-chi/chi#343).
+	r.Use(func(next http.Handler) http.Handler {
+		redirecting := middleware.RedirectSlashes(next)
+		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+			if strings.HasPrefix(req.URL.Path, "/public/") {
+				next.ServeHTTP(w, req)
+				return
+			}
+			redirecting.ServeHTTP(w, req)
+		})
+	})
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
 	// Compress text responses (HTML/CSS/JS/JSON/XML/SVG). Everything was served
@@ -154,10 +170,11 @@ func (srv *Server) Run() error {
 				// Prevent clickjacking
 				w.Header().Set("X-Frame-Options", "DENY")
 
-				// Content Security Policy (configured for HTMX app)
+				// Content Security Policy (configured for HTMX app; htmx is
+				// self-hosted under /public/js/, so no script CDN origin)
 				w.Header().Set("Content-Security-Policy",
 					"default-src 'self'; "+
-						"script-src 'self' 'unsafe-inline' https://unpkg.com; "+
+						"script-src 'self' 'unsafe-inline'; "+
 						"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "+
 						"font-src 'self' https://fonts.gstatic.com; "+
 						"img-src 'self' data:")
@@ -196,6 +213,10 @@ func (srv *Server) Run() error {
 		publicAssets.ServeHTTP(w, r)
 	}))
 
+	// Branded 404 with recovery links instead of chi's plain-text default.
+	// Registered on the root router so it covers every unmatched path.
+	r.NotFound(srv.handler.notFound)
+
 	// ********** W E B  U I **********
 	r.Route("/", func(r chi.Router) {
 		// Default these routes to text/html so their template responses are
@@ -227,6 +248,10 @@ func (srv *Server) Run() error {
 
 		// Leaderboard visualization
 		r.Get("/leaderboard", srv.handler.leaderboard)
+
+		// Public, indexable community ranking (the SEO/AEO counterpart of
+		// /leaderboard, which defaults to a personalized, noindexed view).
+		r.Get("/ranquing-de-torrons", srv.handler.publicRanking)
 
 		// User statistics page
 		r.Get("/stats", srv.handler.stats)

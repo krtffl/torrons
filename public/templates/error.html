@@ -1,0 +1,75 @@
+<!-- Branded error pages. Every handler's failure path executes
+     "error.html" (this file's top-level content) AFTER WriteHeader(500);
+     the router's NotFound handler executes the "notfound.html" define with
+     a 404. Both are fully static - they reference no data fields, so they
+     can never fail on missing context, and they carry noindex so error
+     states are never indexed. -->
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, follow">
+    <title>Alguna cosa ha fallat - Torrorèndum</title>
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/main.css">
+  </head>
+  <body>
+      <div id="main-content">
+          <div id="content-page-container">
+              <div class="content-masthead">
+                  <span class="content-eyebrow">Error</span>
+                  <h1 class="content-title">Alguna cosa ha fallat</h1>
+                  <p class="content-subtitle">
+                      No hem pogut carregar aquesta pàgina. Torna-ho a provar d'aquí a un
+                      moment, o torna a l'inici.
+                  </p>
+              </div>
+              <div class="content-body">
+                  <p>
+                      <a href="/">Torna a l'inici</a> ·
+                      <a href="/ranquing-de-torrons">Rànquing de torrons</a> ·
+                      <a href="/classes">Vota</a>
+                  </p>
+              </div>
+          </div>
+      </div>
+  </body>
+</html>
+
+{{ define "notfound.html" }}
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, follow">
+    <title>Pàgina no trobada - Torrorèndum</title>
+    <link rel="icon" href="/public/icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/public/css/main.css">
+  </head>
+  <body>
+      <div id="main-content">
+          <div id="content-page-container">
+              <div class="content-masthead">
+                  <span class="content-eyebrow">404</span>
+                  <h1 class="content-title">Pàgina no trobada</h1>
+                  <p class="content-subtitle">
+                      Aquesta pàgina no existeix (o el torró s'ha acabat). Prova amb
+                      alguna d'aquestes:
+                  </p>
+              </div>
+              <div class="content-body">
+                  <p>
+                      <a href="/">Inici</a> ·
+                      <a href="/ranquing-de-torrons">Rànquing de torrons</a> ·
+                      <a href="/classes">Vota duels</a> ·
+                      <a href="/tipus-de-torrons">Tipus de torrons</a> ·
+                      <a href="/sobre">Sobre el projecte</a>
+                  </p>
+              </div>
+          </div>
+      </div>
+  </body>
+</html>
+{{ end }}
