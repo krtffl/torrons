@@ -241,13 +241,21 @@ func (srv *Server) Run() error {
 
 		// IndexNow key-verification file ({key}.txt at the root, containing
 		// the key). Dotless registration for the same URLFormat reason as
-		// /robots above. The daily pinger itself starts in Run below.
+		// /robots above. The daily pinger itself starts in Run below. The
+		// key is validated first: chi panics on route patterns containing
+		// '{', '}' or '*', so a malformed key must disable IndexNow, not
+		// crash the whole server at startup.
 		if srv.indexNowKey != "" {
-			key := srv.indexNowKey
-			r.Get("/"+key, func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-				fmt.Fprint(w, key)
-			})
+			if !validIndexNowKey(srv.indexNowKey) {
+				logger.Warn("[HTTP Server] INDEXNOW_KEY is not a valid IndexNow key (a-z A-Z 0-9 and dashes only); IndexNow disabled")
+				srv.indexNowKey = ""
+			} else {
+				key := srv.indexNowKey
+				r.Get("/"+key, func(w http.ResponseWriter, r *http.Request) {
+					w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+					fmt.Fprint(w, key)
+				})
+			}
 		}
 
 		r.Get("/", srv.handler.index)

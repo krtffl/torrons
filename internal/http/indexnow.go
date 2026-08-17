@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -29,16 +30,37 @@ var indexNowPages = []string{
 	siteBaseURL + "/millors-torrons-vicens",
 }
 
+// validIndexNowKey reports whether key matches the IndexNow spec's allowed
+// charset (a-z, A-Z, 0-9 and dashes, 8-128 chars). Anything else must not
+// be interpolated into a chi route pattern ('{', '}' and '*' panic the
+// router at startup) or a query string.
+func validIndexNowKey(key string) bool {
+	if len(key) < 8 || len(key) > 128 {
+		return false
+	}
+	for _, c := range key {
+		switch {
+		case c >= 'a' && c <= 'z', c >= 'A' && c <= 'Z', c >= '0' && c <= '9', c == '-':
+		default:
+			return false
+		}
+	}
+	return true
+}
+
 // runIndexNowPinger loops until ctx is cancelled, submitting the vote-driven
 // pages to IndexNow whenever a vote landed since the previous check. The
-// first check runs shortly after boot (so a deploy with fresh data
-// propagates without waiting a day), then every indexNowInterval.
+// first check runs shortly after boot, then every indexNowInterval.
 func (h *Handler) runIndexNowPinger(ctx context.Context, key string) {
 	// Small boot delay so a crash-looping process can't hammer the API.
 	timer := time.NewTimer(1 * time.Minute)
 	defer timer.Stop()
 
-	var lastSeen time.Time
+	// Seeded one interval back rather than at zero: a restart only
+	// re-submits when a vote actually landed within the last interval
+	// (content genuinely changed recently), instead of every boot
+	// re-announcing months-old data as if it were fresh.
+	lastSeen := time.Now().Add(-indexNowInterval)
 	for {
 		select {
 		case <-ctx.Done():
@@ -46,7 +68,12 @@ func (h *Handler) runIndexNowPinger(ctx context.Context, key string) {
 		case <-timer.C:
 		}
 
-		latest, err := h.pressStatsRepo.LatestVoteTime(ctx)
+		// Bounded like submitIndexNow's request: with the unbounded server
+		// ctx, one wedged query would silently kill this loop for the life
+		// of the process.
+		readCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
+		latest, err := h.pressStatsRepo.LatestVoteTime(readCtx)
+		cancel()
 		if err != nil {
 			logger.Warn("[IndexNow] Couldn't read latest vote time. %v", err)
 		} else if latest != nil && latest.After(lastSeen) {
@@ -88,7 +115,9 @@ func submitIndexNow(ctx context.Context, key string, urls []string) error {
 	if err != nil {
 		return err
 	}
+	// Drain before closing so the keep-alive connection can be reused.
 	defer resp.Body.Close()
+	defer io.Copy(io.Discard, resp.Body)
 
 	// 200 and 202 both mean accepted per the IndexNow spec.
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusAccepted {

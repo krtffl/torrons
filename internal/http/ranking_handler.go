@@ -62,11 +62,20 @@ var rankingCache struct {
 // no cookie, shows the same content to every visitor, and links every torró
 // detail page, unlike the personalized /leaderboard.
 func (h *Handler) publicRanking(w http.ResponseWriter, r *http.Request) {
-	logger.Info("[Handler - PublicRanking] Incoming request")
+	h.renderRankingPage(w, r, "ranquing.html", "PublicRanking")
+}
+
+// renderRankingPage renders one of the standings-backed public pages from
+// the shared rankingContent cache — the ranking-page counterpart of
+// renderStaticPage. Cache headers are set only after a successful render,
+// so an error response can never go out with a public max-age and get
+// pinned by a shared cache.
+func (h *Handler) renderRankingPage(w http.ResponseWriter, r *http.Request, templateName, logTag string) {
+	logger.Info("[Handler - %s] Incoming request", logTag)
 
 	content, err := h.rankingContent(r)
 	if err != nil {
-		logger.Error("[Handler - PublicRanking] Couldn't build ranking. %v", err)
+		logger.Error("[Handler - %s] Couldn't build ranking. %v", logTag, err)
 		h.renderErrorPage(w)
 		return
 	}
@@ -76,16 +85,12 @@ func (h *Handler) publicRanking(w http.ResponseWriter, r *http.Request) {
 	buf := h.bpool.Get()
 	defer h.bpool.Put(buf)
 
-	if err := h.template.ExecuteTemplate(buf, "ranquing.html", content); err != nil {
-		logger.Error("[Handler - PublicRanking] Couldn't execute template. %v", err)
+	if err := h.template.ExecuteTemplate(buf, templateName, content); err != nil {
+		logger.Error("[Handler - %s] Couldn't execute template. %v", logTag, err)
 		h.renderErrorPage(w)
 		return
 	}
 
-	// Cacheable like the static content pages: identical for every visitor,
-	// and the underlying data is already memoized for rankingCacheTTL. Set
-	// only after the render succeeded, so an error response can never go out
-	// with a public max-age and get pinned by a shared cache.
 	setStaticPageCacheHeaders(w)
 	buf.WriteTo(w)
 }
@@ -96,28 +101,7 @@ func (h *Handler) publicRanking(w http.ResponseWriter, r *http.Request) {
 // anywhere for it at the 2026-08-17 baseline). Shares rankingContent's
 // cache, so it adds no query load.
 func (h *Handler) millorsVicens(w http.ResponseWriter, r *http.Request) {
-	logger.Info("[Handler - MillorsVicens] Incoming request")
-
-	content, err := h.rankingContent(r)
-	if err != nil {
-		logger.Error("[Handler - MillorsVicens] Couldn't build ranking. %v", err)
-		h.renderErrorPage(w)
-		return
-	}
-
-	content.HX = isHX(r)
-
-	buf := h.bpool.Get()
-	defer h.bpool.Put(buf)
-
-	if err := h.template.ExecuteTemplate(buf, "millors_vicens.html", content); err != nil {
-		logger.Error("[Handler - MillorsVicens] Couldn't execute template. %v", err)
-		h.renderErrorPage(w)
-		return
-	}
-
-	setStaticPageCacheHeaders(w)
-	buf.WriteTo(w)
+	h.renderRankingPage(w, r, "millors_vicens.html", "MillorsVicens")
 }
 
 // rankingContent returns the cached ranking payload, recomputing it when the
