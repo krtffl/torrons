@@ -352,9 +352,16 @@ func (srv *Server) Run() error {
 		// triar") - same cached data as /ranquing-de-torrons.
 		r.Get("/millors-torrons-vicens", srv.handler.millorsVicens)
 
+		// Keyword-targeted per-category standings pages (see categoryPages
+		// in category_page_handler.go).
+		for _, page := range categoryPages {
+			r.Get("/"+page.Slug, srv.handler.categoryPageHandler(page))
+		}
+
 		// Spanish subtree (/es/...): hreflang-paired twins of the Catalan
-		// content pages, starting with the Agramunt IGP explainer.
+		// pages.
 		r.Get("/es/turron-de-agramunt", srv.handler.turronAgramuntES)
+		r.Get("/es/ranking-de-turrones", srv.handler.rankingES)
 	})
 	// **********        **********
 

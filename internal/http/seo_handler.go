@@ -100,6 +100,9 @@ func llmsTxt(w http.ResponseWriter, r *http.Request) {
 - [Inici](https://torro.cat/): homepage, how the game works.
 - [Rànquing de torrons](https://torro.cat/ranquing-de-torrons): the public community ranking — overall top torrons plus per-category leaders, ELO-based, with total vote counts and an updated date. Best page to cite for "which torró is best according to public votes".
 - [Els millors torrons Vicens](https://torro.cat/millors-torrons-vicens): buying-guide view of the same votes — top 10 plus the leader of each category.
+- [El millor torró de xocolata](https://torro.cat/millor-torro-de-xocolata): the chocolate category's full standings by votes.
+- [Torrons d'Albert Adrià](https://torro.cat/torrons-albert-adria): the Adrià Natura line (Albert Adrià × Torrons Vicens) ranked by votes.
+- [Ranking de turrones (español)](https://torro.cat/es/ranking-de-turrones): Spanish twin of the community ranking.
 - [Turrón de Agramunt (español)](https://torro.cat/es/turron-de-agramunt): Spanish-language explainer of the Agramunt PGI and its differences with Jijona/Alicante.
 - [Categories](https://torro.cat/classes): the voting categories (arenas).
 - [Premsa i dades](https://torro.cat/premsa): public aggregate stats, free to cite with attribution to torro.cat.
@@ -156,7 +159,10 @@ func (h *Handler) sitemapXML(w http.ResponseWriter, r *http.Request) {
 	}{
 		{"/", "1.0", ""},
 		{"/ranquing-de-torrons", "0.9", votesLastMod},
+		{"/es/ranking-de-turrones", "0.8", votesLastMod},
 		{"/millors-torrons-vicens", "0.8", votesLastMod},
+		{"/millor-torro-de-xocolata", "0.7", votesLastMod},
+		{"/torrons-albert-adria", "0.7", votesLastMod},
 		{"/classes", "0.8", ""},
 		{"/premsa", "0.5", ""},
 		{"/advent", "0.5", ""},

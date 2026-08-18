@@ -15,8 +15,11 @@ import (
 // short enough to stay scannable (per-category blocks cover the tail).
 const rankingTopN = 20
 
-// rankingPerCategoryN is how many leaders each category block shows.
-const rankingPerCategoryN = 3
+// rankingCategoryStoredN is how many leaders per category the cached
+// payload keeps. Templates showing fewer (the ranking page's per-category
+// blocks show 3) truncate at render time; the per-category pages
+// (/millor-torro-de-xocolata, /torrons-albert-adria) list all of them.
+const rankingCategoryStoredN = 10
 
 // RankingCategory is one category block on the public ranking page: the
 // class plus its current top entries.
@@ -34,9 +37,11 @@ type RankingContent struct {
 	Categories []RankingCategory
 	TotalVotes int
 	// UpdatedAt is the human-readable (Catalan) date the cached standings
-	// were computed, surfaced on-page as a freshness signal; UpdatedAtISO
-	// is the same instant for the <time datetime> attribute.
+	// were computed, surfaced on-page as a freshness signal; UpdatedAtES is
+	// the same date for the Spanish pages; UpdatedAtISO is the instant for
+	// the <time datetime> attribute.
 	UpdatedAt    string
+	UpdatedAtES  string
 	UpdatedAtISO string
 }
 
@@ -104,6 +109,12 @@ func (h *Handler) millorsVicens(w http.ResponseWriter, r *http.Request) {
 	h.renderRankingPage(w, r, "millors_vicens.html", "MillorsVicens")
 }
 
+// rankingES handles GET /es/ranking-de-turrones: the Spanish twin of the
+// public ranking page, hreflang-paired with /ranquing-de-torrons.
+func (h *Handler) rankingES(w http.ResponseWriter, r *http.Request) {
+	h.renderRankingPage(w, r, "ranking_es.html", "RankingES")
+}
+
 // rankingContent returns the cached ranking payload, recomputing it when the
 // TTL lapses. On recompute failure it serves the last good value if one
 // exists, only surfacing the error when there is nothing cached at all.
@@ -164,9 +175,10 @@ func (h *Handler) computeRankingContent(r *http.Request) (RankingContent, error)
 		if len(entries) == 0 {
 			continue
 		}
-		if len(entries) > rankingPerCategoryN {
-			entries = entries[:rankingPerCategoryN]
+		if len(entries) > rankingCategoryStoredN {
+			entries = entries[:rankingCategoryStoredN]
 		}
+		entries = calculateRatingPercentages(entries)
 		categories = append(categories, RankingCategory{Class: class, Entries: entries})
 	}
 
@@ -181,6 +193,7 @@ func (h *Handler) computeRankingContent(r *http.Request) (RankingContent, error)
 		Categories:   categories,
 		TotalVotes:   totalVotes,
 		UpdatedAt:    formatCatalanDate(now),
+		UpdatedAtES:  formatSpanishDate(now),
 		UpdatedAtISO: now.Format("2006-01-02"),
 	}, nil
 }
@@ -212,4 +225,26 @@ func formatCatalanDate(t time.Time) string {
 		particle = "d'"
 	}
 	return fmt.Sprintf("%d %s%s de %d", t.Day(), particle, month, t.Year())
+}
+
+// spanishMonths maps time.Month to lowercase Spanish month names for the
+// /es/ pages' visible dates.
+var spanishMonths = [...]string{
+	time.January:   "enero",
+	time.February:  "febrero",
+	time.March:     "marzo",
+	time.April:     "abril",
+	time.May:       "mayo",
+	time.June:      "junio",
+	time.July:      "julio",
+	time.August:    "agosto",
+	time.September: "septiembre",
+	time.October:   "octubre",
+	time.November:  "noviembre",
+	time.December:  "diciembre",
+}
+
+// formatSpanishDate renders t as a Spanish long date ("17 de agosto de 2026").
+func formatSpanishDate(t time.Time) string {
+	return fmt.Sprintf("%d de %s de %d", t.Day(), spanishMonths[t.Month()], t.Year())
 }

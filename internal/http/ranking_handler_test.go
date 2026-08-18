@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/json"
+	"html"
 	"html/template"
 	"regexp"
 	"strings"
@@ -105,6 +106,70 @@ func TestRankingTemplate(t *testing.T) {
 			var v any
 			if err := json.Unmarshal([]byte(m[1]), &v); err != nil {
 				t.Errorf("JSON-LD block %d is not valid JSON: %v\n%s", i, err, m[1])
+			}
+		}
+	})
+
+	t.Run("ranking-es full page", func(t *testing.T) {
+		var sb strings.Builder
+		content := rankingTestContent()
+		content.UpdatedAtES = "17 de agosto de 2026"
+		if err := tmpls.ExecuteTemplate(&sb, "ranking_es.html", content); err != nil {
+			t.Fatalf("failed to render: %v", err)
+		}
+		body := sb.String()
+		for _, want := range []string{
+			`<html lang="es">`,
+			`hreflang="ca" href="https://torro.cat/ranquing-de-torrons"`,
+			`rel="canonical" href="https://torro.cat/es/ranking-de-turrones"`,
+			"17 de agosto de 2026",
+			"/torro/1",
+		} {
+			if !strings.Contains(body, want) {
+				t.Errorf("expected body to contain %q", want)
+			}
+		}
+		re := regexp.MustCompile(`(?s)<script type="application/ld\+json">(.*?)</script>`)
+		for i, m := range re.FindAllStringSubmatch(body, -1) {
+			var v any
+			if err := json.Unmarshal([]byte(m[1]), &v); err != nil {
+				t.Errorf("JSON-LD block %d is not valid JSON: %v\n%s", i, err, m[1])
+			}
+		}
+	})
+
+	t.Run("category page full page", func(t *testing.T) {
+		for _, page := range categoryPages {
+			var sb strings.Builder
+			content := CategoryPageContent{
+				Page:         page,
+				Entries:      rankingTestContent().Entries,
+				TotalVotes:   12345,
+				UpdatedAt:    "17 d'agost de 2026",
+				UpdatedAtISO: "2026-08-17",
+			}
+			if err := tmpls.ExecuteTemplate(&sb, "category_ranking.html", content); err != nil {
+				t.Fatalf("failed to render %s: %v", page.Slug, err)
+			}
+			body := sb.String()
+			for _, want := range []string{
+				// Titles can contain apostrophes, which html/template
+				// escapes as &#39; in element content.
+				html.EscapeString(page.Title),
+				`rel="canonical" href="https://torro.cat/` + page.Slug + `"`,
+				"/torro/1",
+				"projecte de fans independent",
+			} {
+				if !strings.Contains(body, want) {
+					t.Errorf("%s: expected body to contain %q", page.Slug, want)
+				}
+			}
+			re := regexp.MustCompile(`(?s)<script type="application/ld\+json">(.*?)</script>`)
+			for i, m := range re.FindAllStringSubmatch(body, -1) {
+				var v any
+				if err := json.Unmarshal([]byte(m[1]), &v); err != nil {
+					t.Errorf("%s: JSON-LD block %d is not valid JSON: %v\n%s", page.Slug, i, err, m[1])
+				}
 			}
 		}
 	})
