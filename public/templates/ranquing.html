@@ -163,6 +163,8 @@
         {{ range .Categories }}
         <h3>{{ .Class.Name }}</h3>
         <ol>
+            {{/* Show the top 3 here; the cache stores rankingCategoryStoredN
+                 (10) per category for the dedicated category pages. */}}
             {{ range $i, $e := .Entries }}{{ if lt $i 3 }}
             <li>
                 <a href="/torro/{{ $e.TorronId }}"

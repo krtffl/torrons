@@ -178,7 +178,6 @@ func (h *Handler) computeRankingContent(r *http.Request) (RankingContent, error)
 		if len(entries) > rankingCategoryStoredN {
 			entries = entries[:rankingCategoryStoredN]
 		}
-		entries = calculateRatingPercentages(entries)
 		categories = append(categories, RankingCategory{Class: class, Entries: entries})
 	}
 

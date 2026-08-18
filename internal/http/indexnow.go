@@ -23,11 +23,21 @@ const indexNowEndpoint = "https://api.indexnow.org/indexnow"
 // stays far inside IndexNow's rate expectations.
 const indexNowInterval = 24 * time.Hour
 
-// indexNowPages are the vote-driven pages whose content genuinely changes
-// as votes arrive - the only URLs it is honest to re-submit on data change.
-var indexNowPages = []string{
-	siteBaseURL + "/ranquing-de-torrons",
-	siteBaseURL + "/millors-torrons-vicens",
+// indexNowPages returns the vote-driven pages whose content genuinely
+// changes as votes arrive - the only URLs it is honest to re-submit on data
+// change. Must stay in sync with the sitemap entries stamped with
+// votesLastMod (seo_handler.go); the per-category pages are derived from
+// categoryPages so new ones are picked up automatically.
+func indexNowPages() []string {
+	pages := []string{
+		siteBaseURL + "/ranquing-de-torrons",
+		siteBaseURL + "/es/ranking-de-turrones",
+		siteBaseURL + "/millors-torrons-vicens",
+	}
+	for _, p := range categoryPages {
+		pages = append(pages, siteBaseURL+"/"+p.Slug)
+	}
+	return pages
 }
 
 // validIndexNowKey reports whether key matches the IndexNow spec's allowed
@@ -77,11 +87,12 @@ func (h *Handler) runIndexNowPinger(ctx context.Context, key string) {
 		if err != nil {
 			logger.Warn("[IndexNow] Couldn't read latest vote time. %v", err)
 		} else if latest != nil && latest.After(lastSeen) {
-			if err := submitIndexNow(ctx, key, indexNowPages); err != nil {
+			pages := indexNowPages()
+			if err := submitIndexNow(ctx, key, pages); err != nil {
 				logger.Warn("[IndexNow] Submission failed. %v", err)
 			} else {
 				logger.Info("[IndexNow] Submitted %d URLs (data changed at %s)",
-					len(indexNowPages), latest.Format(time.RFC3339))
+					len(pages), latest.Format(time.RFC3339))
 				lastSeen = *latest
 			}
 		}

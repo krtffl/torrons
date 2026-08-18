@@ -24,8 +24,16 @@ func rankingTestContent() RankingContent {
 		},
 		Categories: []RankingCategory{
 			{
-				Class:   &domain.Class{Id: "1", Name: "Clàssics"},
-				Entries: []LeaderboardEntry{{Rank: 1, TorronId: "1", TorronName: "Crema Cremada", Rating: 1710.5}},
+				// 5 entries: more than ranquing.html's 3-per-category display
+				// cap, so the render-time truncation is actually exercised.
+				Class: &domain.Class{Id: "1", Name: "Clàssics"},
+				Entries: []LeaderboardEntry{
+					{Rank: 1, TorronId: "1", TorronName: "CatEntry1", Rating: 1710.5},
+					{Rank: 2, TorronId: "2", TorronName: "CatEntry2", Rating: 1700.0},
+					{Rank: 3, TorronId: "3", TorronName: "CatEntry3", Rating: 1690.0},
+					{Rank: 4, TorronId: "4", TorronName: "CatEntry4", Rating: 1680.0},
+					{Rank: 5, TorronId: "5", TorronName: "CatEntry5", Rating: 1670.0},
+				},
 			},
 		},
 		TotalVotes:   12345,
@@ -59,11 +67,18 @@ func TestRankingTemplate(t *testing.T) {
 			`"@type": "ItemList"`,
 			"/torro/1",
 			"Clàssics",
+			"CatEntry3",
 			"17 d&#39;agost de 2026",
 		} {
 			if !strings.Contains(body, want) {
 				t.Errorf("expected body to contain %q", want)
 			}
+		}
+
+		// The per-category block shows only the top 3; the cache stores more
+		// for the dedicated category pages.
+		if strings.Contains(body, "CatEntry4") {
+			t.Error("per-category block must truncate to 3 entries at render time")
 		}
 
 		// Every JSON-LD block must be valid JSON after template execution -
