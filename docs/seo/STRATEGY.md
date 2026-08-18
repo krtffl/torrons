@@ -73,10 +73,10 @@ Remaining backlog (ordered):
 - [x] **C-1** Organization JSON-LD (homepage, @id-linked from WebSite.publisher,
       disclosure machine-readable) — DONE 2026-08-17; add `sameAs` once social
       handles exist.
-- [x] **C-2** Quotable answer lead on /ranquing-de-torrons ("Quin és el millor
-      torró?" with name, ELO, vote count, date) — DONE 2026-08-17; still open:
-      extend the 40–80-word direct-answer pattern to /sobre, IGP, comparativa,
-      glossari.
+- [x] **C-2** Quotable answer leads — DONE 2026-08-17: /ranquing-de-torrons
+      ("Quin és el millor torró?"), /es/ranking-de-turrones, category pages,
+      and direct-answer subtitles on IGP + comparativa (glossari's lead was
+      already definitional).
 - [x] **C-3** Honest `<lastmod>` for the vote-driven pages (from latest Result
       timestamp) — DONE 2026-08-17; static pages deliberately get none.
 - [ ] **C-4** Self-host the two Google Fonts families (removes the last
@@ -105,19 +105,20 @@ FAQ block, interlinked hub-and-spoke):
       leaders + methodology + official-shop pointer) — DONE 2026-08-17.
 - [x] **P0-c** /es/turron-de-agramunt Spanish IGP twin, hreflang-paired with
       /torro-agramunt-igp (x-default = Catalan) — DONE 2026-08-17.
-- [ ] **P0-d** ES ranking landing "Ranking de turrones (por votos)" — next /es/
-      page; follow the millors_vicens pattern with Spanish copy + hreflang.
+- [x] **P0-d** /es/ranking-de-turrones Spanish ranking landing,
+      hreflang-paired with /ranquing-de-torrons — DONE 2026-08-17.
 - [ ] **P1-a** Seasonal hub "Torrons Nadal 2026: novetats i resultats" — **publish
       by early October**; freeze a "Classificació Nadal 2026" edition in January
       (year-labeled URLs are how every incumbent wins December queries).
-- [ ] **P1-b** Per-category best pages: xocolata, crema cremada (the most-Catalan
-      variety — unowned), festuc/pistacho (rising), praliné, sense sucre.
-- [ ] **P1-c** FAQ enrichment on /sobre or glossary: calories per type, caducitat/
-      conservació (15–18 months — clean featured-snippet shape), quin torró és típic
-      de Catalunya, diabetics/gluten (cite sources, no medical advice).
-- [ ] **P1-d** Adrià Natura line hub ("Albert Adrià × Vicens: la línia Natura,
-      rànquing per vots") — press gravity, no independent review exists. Use the
-      current line name "Adrià Natura"/"Natura", not the obsolete "Essència".
+- [ ] **P1-b** Per-category best pages — PARTIAL 2026-08-17:
+      /millor-torro-de-xocolata shipped (class-backed). Crema cremada, festuc,
+      praliné and sense sucre need variety tagging in the data model (products
+      aren't classed by variety) — blocked on a data change, not a page.
+- [x] **P1-c** FAQ enrichment on /sobre — DONE 2026-08-17 (caducitat/conservació,
+      típic de Catalunya, calories; visible + FAQPage schema in sync). Still open:
+      diabetics/gluten entries if sources are nailed down.
+- [x] **P1-d** /torrons-albert-adria Adrià Natura line hub (class-backed
+      standings, current line name) — DONE 2026-08-17.
 - [ ] **P1-e** Fira del Torró d'Agramunt 2026 section on the IGP page (dates
       published ~Sept; reliable pre-season traffic).
 - [ ] **P2** English one-pager (what is torró, turron vs torrone, "best turron in
