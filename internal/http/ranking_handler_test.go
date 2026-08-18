@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/json"
+	"html"
 	"html/template"
 	"regexp"
 	"strings"
@@ -23,8 +24,16 @@ func rankingTestContent() RankingContent {
 		},
 		Categories: []RankingCategory{
 			{
-				Class:   &domain.Class{Id: "1", Name: "Clàssics"},
-				Entries: []LeaderboardEntry{{Rank: 1, TorronId: "1", TorronName: "Crema Cremada", Rating: 1710.5}},
+				// 5 entries: more than ranquing.html's 3-per-category display
+				// cap, so the render-time truncation is actually exercised.
+				Class: &domain.Class{Id: "1", Name: "Clàssics"},
+				Entries: []LeaderboardEntry{
+					{Rank: 1, TorronId: "1", TorronName: "CatEntry1", Rating: 1710.5},
+					{Rank: 2, TorronId: "2", TorronName: "CatEntry2", Rating: 1700.0},
+					{Rank: 3, TorronId: "3", TorronName: "CatEntry3", Rating: 1690.0},
+					{Rank: 4, TorronId: "4", TorronName: "CatEntry4", Rating: 1680.0},
+					{Rank: 5, TorronId: "5", TorronName: "CatEntry5", Rating: 1670.0},
+				},
 			},
 		},
 		TotalVotes:   12345,
@@ -58,11 +67,18 @@ func TestRankingTemplate(t *testing.T) {
 			`"@type": "ItemList"`,
 			"/torro/1",
 			"Clàssics",
+			"CatEntry3",
 			"17 d&#39;agost de 2026",
 		} {
 			if !strings.Contains(body, want) {
 				t.Errorf("expected body to contain %q", want)
 			}
+		}
+
+		// The per-category block shows only the top 3; the cache stores more
+		// for the dedicated category pages.
+		if strings.Contains(body, "CatEntry4") {
+			t.Error("per-category block must truncate to 3 entries at render time")
 		}
 
 		// Every JSON-LD block must be valid JSON after template execution -
@@ -105,6 +121,70 @@ func TestRankingTemplate(t *testing.T) {
 			var v any
 			if err := json.Unmarshal([]byte(m[1]), &v); err != nil {
 				t.Errorf("JSON-LD block %d is not valid JSON: %v\n%s", i, err, m[1])
+			}
+		}
+	})
+
+	t.Run("ranking-es full page", func(t *testing.T) {
+		var sb strings.Builder
+		content := rankingTestContent()
+		content.UpdatedAtES = "17 de agosto de 2026"
+		if err := tmpls.ExecuteTemplate(&sb, "ranking_es.html", content); err != nil {
+			t.Fatalf("failed to render: %v", err)
+		}
+		body := sb.String()
+		for _, want := range []string{
+			`<html lang="es">`,
+			`hreflang="ca" href="https://torro.cat/ranquing-de-torrons"`,
+			`rel="canonical" href="https://torro.cat/es/ranking-de-turrones"`,
+			"17 de agosto de 2026",
+			"/torro/1",
+		} {
+			if !strings.Contains(body, want) {
+				t.Errorf("expected body to contain %q", want)
+			}
+		}
+		re := regexp.MustCompile(`(?s)<script type="application/ld\+json">(.*?)</script>`)
+		for i, m := range re.FindAllStringSubmatch(body, -1) {
+			var v any
+			if err := json.Unmarshal([]byte(m[1]), &v); err != nil {
+				t.Errorf("JSON-LD block %d is not valid JSON: %v\n%s", i, err, m[1])
+			}
+		}
+	})
+
+	t.Run("category page full page", func(t *testing.T) {
+		for _, page := range categoryPages {
+			var sb strings.Builder
+			content := CategoryPageContent{
+				Page:         page,
+				Entries:      rankingTestContent().Entries,
+				TotalVotes:   12345,
+				UpdatedAt:    "17 d'agost de 2026",
+				UpdatedAtISO: "2026-08-17",
+			}
+			if err := tmpls.ExecuteTemplate(&sb, "category_ranking.html", content); err != nil {
+				t.Fatalf("failed to render %s: %v", page.Slug, err)
+			}
+			body := sb.String()
+			for _, want := range []string{
+				// Titles can contain apostrophes, which html/template
+				// escapes as &#39; in element content.
+				html.EscapeString(page.Title),
+				`rel="canonical" href="https://torro.cat/` + page.Slug + `"`,
+				"/torro/1",
+				"projecte de fans independent",
+			} {
+				if !strings.Contains(body, want) {
+					t.Errorf("%s: expected body to contain %q", page.Slug, want)
+				}
+			}
+			re := regexp.MustCompile(`(?s)<script type="application/ld\+json">(.*?)</script>`)
+			for i, m := range re.FindAllStringSubmatch(body, -1) {
+				var v any
+				if err := json.Unmarshal([]byte(m[1]), &v); err != nil {
+					t.Errorf("%s: JSON-LD block %d is not valid JSON: %v\n%s", page.Slug, i, err, m[1])
+				}
 			}
 		}
 	})

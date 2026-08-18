@@ -145,6 +145,9 @@ func TestSitemapXML(t *testing.T) {
 		"<loc>https://torro.cat/millors-torrons-vicens</loc>",
 		"<loc>https://torro.cat/es/turron-de-agramunt</loc>",
 		"<loc>https://torro.cat/ranquing-de-torrons</loc><lastmod>2026-08-15</lastmod>",
+		"<loc>https://torro.cat/es/ranking-de-turrones</loc><lastmod>2026-08-15</lastmod>",
+		"<loc>https://torro.cat/millor-torro-de-xocolata</loc><lastmod>2026-08-15</lastmod>",
+		"<loc>https://torro.cat/torrons-albert-adria</loc><lastmod>2026-08-15</lastmod>",
 	} {
 		if !strings.Contains(body, want) {
 			t.Errorf("sitemap missing expected URL %q, got: %s", want, body)

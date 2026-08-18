@@ -7,6 +7,11 @@
     <meta name="description" content="Rànquing de torrons actualitzat: els millors torrons segons {{ if gt .TotalVotes 0 }}{{ .TotalVotes }} vots en{{ end }} duels cara a cara de la comunitat. Classificació ELO oberta, amb els líders de cada categoria.">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <link rel="canonical" href="https://torro.cat/ranquing-de-torrons">
+    <!-- Language pair with the Spanish twin (/es/ranking-de-turrones);
+         x-default = Catalan, the site's flagship language. -->
+    <link rel="alternate" hreflang="ca" href="https://torro.cat/ranquing-de-torrons">
+    <link rel="alternate" hreflang="es" href="https://torro.cat/es/ranking-de-turrones">
+    <link rel="alternate" hreflang="x-default" href="https://torro.cat/ranquing-de-torrons">
 
     <!-- The ItemList mirrors the visible overall standings: same order, same
          names, linking each torró's detail page. -->
@@ -158,17 +163,26 @@
         {{ range .Categories }}
         <h3>{{ .Class.Name }}</h3>
         <ol>
-            {{ range .Entries }}
+            {{/* Show the top 3 here; the cache stores rankingCategoryStoredN
+                 (10) per category for the dedicated category pages. */}}
+            {{ range $i, $e := .Entries }}{{ if lt $i 3 }}
             <li>
-                <a href="/torro/{{ .TorronId }}"
-                   hx-get="/torro/{{ .TorronId }}"
+                <a href="/torro/{{ $e.TorronId }}"
+                   hx-get="/torro/{{ $e.TorronId }}"
                    hx-target="#main-content"
-                   hx-push-url="/torro/{{ .TorronId }}">{{ .TorronName }}</a>
-                ({{ printf "%.0f" .Rating }} ELO)
+                   hx-push-url="/torro/{{ $e.TorronId }}">{{ $e.TorronName }}</a>
+                ({{ printf "%.0f" $e.Rating }} ELO)
             </li>
-            {{ end }}
+            {{ end }}{{ end }}
         </ol>
         {{ end }}
+        <p>
+            Dues categories tenen pàgina pròpia amb el rànquing sencer:
+            <a href="/millor-torro-de-xocolata" hx-get="/millor-torro-de-xocolata" hx-target="#main-content" hx-push-url="/millor-torro-de-xocolata">el millor torró de xocolata</a>
+            i
+            <a href="/torrons-albert-adria" hx-get="/torrons-albert-adria" hx-target="#main-content" hx-push-url="/torrons-albert-adria">els torrons d'Albert Adrià</a>.
+            També hi ha una <a href="/es/ranking-de-turrones" hx-get="/es/ranking-de-turrones" hx-target="#main-content" hx-push-url="/es/ranking-de-turrones">versión en español</a> d'aquesta pàgina.
+        </p>
         {{ end }}
 
         <h2>Com funciona aquest rànquing</h2>
