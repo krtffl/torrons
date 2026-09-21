@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS builder
+FROM --platform=$BUILDPLATFORM golang:1.25-alpine@sha256:1ae0735f00daffa3aaf1363a5184c0d2dc55c78e3db4ec70241cdac97bf84b59 AS builder
 
 ARG TARGETARCH
 
@@ -11,7 +11,7 @@ COPY . /app/
 
 RUN if [ "$TARGETARCH" = "arm64" ]; then make dist-arm64 ; else make dist ; fi
 
-FROM alpine:3.21
+FROM alpine:3.21@sha256:ce64758a109eb420d874a118f87920e625e12d3634e03b4a5573fd9f6e5d3507
 
 # Install ca-certificates for HTTPS connections
 RUN apk add --no-cache ca-certificates
