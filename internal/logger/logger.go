@@ -116,7 +116,7 @@ func Error(format string, args ...interface{}) {
 
 // Tracef logs a message at trace level. The message includes any fields passed.
 func Tracef(format string, args ...interface{}) {
-	log.Tracef(format, args)
+	log.Tracef(format, args...)
 }
 
 // Fatal logs a message at fatal level. The message includes any fields passed.
